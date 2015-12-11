@@ -142,15 +142,16 @@ public class TTGsonRequest<T extends ResponseMetadata> extends TTRequest<T> {
 
 
 		String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers)).trim();
-		if (getUrl().contains("getYouTubeRegionsFromDB") && json.length() > 2) {
-			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_____SRP");
-			json = json.substring(1, 1) + "[" + json.substring(1, json.length());
-			json = json.substring(json.length()-2, json.length()-2) + "[" + json.substring(json.length()-2, json.length());
-
-		} else if (getUrl().contains("getYouTubeCategoriesFromDB") && json.length() > 2) {
+		if (getUrl().contains("getYouTubeCategoriesFromDB") && json.length() > 2) {
             System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_____SRP");
             json = "{\"categories\":" + json + "}";
-        }
+        }  else if (getUrl().contains("getYouTubeRegionsFromDB") && json.length() > 2) {
+			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_____SRP");
+			json = "{\"regions\":" + json + "}";
+
+			System.out.println("JSON: " + json);
+
+		}
 	/*	if (getUrl().contains("/99api/" + Utils.version + "/searchProperty/") ||getUrl().contains("/99api/" + Utils.version + "/searchProjects/")) {
 			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_____SRP");
 			json=AndroidUtils.removefirstchar(json, '[');

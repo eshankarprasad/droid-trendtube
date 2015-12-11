@@ -26,16 +26,19 @@ import org.trendtube.app.constants.Constants;
 import org.trendtube.app.interfaces.BasicItemSelectedListener;
 import org.trendtube.app.model.BasicItem;
 import org.trendtube.app.model.CategoryModel;
+import org.trendtube.app.model.RegionModel;
 import org.trendtube.app.ui.TTProgressDialog;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
 import org.trendtube.app.volleytasks.FetchCategoriesVolleyTask;
+import org.trendtube.app.volleytasks.FetchRegionVolleyTask;
 
 import java.util.List;
 
 public class TrendTubeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener,
-        FetchCategoriesVolleyTask.FetchCategoriesListener,BasicItemSelectedListener {
+        FetchCategoriesVolleyTask.FetchCategoriesListener, BasicItemSelectedListener,
+        FetchRegionVolleyTask.FetchRegionListener {
 
     private static final String TAG = TrendTubeActivity.class.getSimpleName();
     private DrawerLayout mDrawerLayout;
@@ -180,13 +183,16 @@ public class TrendTubeActivity extends AppCompatActivity
 
     private void categoryButtonClicked() {
 
-        if (TTApplication.categories != null && TTApplication.categories.size() > 0) {
+        /*if (TTApplication.categories != null && TTApplication.categories.size() > 0) {
             showCategoryListDialog();
         } else {
             showProgressDialog();
             FetchCategoriesVolleyTask task = new FetchCategoriesVolleyTask(this, this);
             task.execute();
-        }
+        }*/
+
+        FetchRegionVolleyTask task = new FetchRegionVolleyTask(this, this);
+        task.execute();
     }
 
     private void showProgressDialog() {
@@ -256,5 +262,15 @@ public class TrendTubeActivity extends AppCompatActivity
         if (type == Constants.SpinnerType.CATEGORY.getSpinnerType()) {
             this.selectedCategory = item;
         }
+    }
+
+    @Override
+    public void onFetchedRegion(RegionModel response) {
+        MyLog.e(response.toString());
+    }
+
+    @Override
+    public void onErrorFetchedRegion(VolleyError error) {
+        MyLog.e("onErrorFetchedRegion");
     }
 }

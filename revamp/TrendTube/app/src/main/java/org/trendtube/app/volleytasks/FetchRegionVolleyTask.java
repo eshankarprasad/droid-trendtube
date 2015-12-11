@@ -7,6 +7,8 @@ import com.android.volley.VolleyError;
 
 import org.trendtube.app.constants.Config;
 import org.trendtube.app.interfaces.FetchVideosListener;
+import org.trendtube.app.model.CategoryModel;
+import org.trendtube.app.model.RegionModel;
 import org.trendtube.app.model.VideoModel;
 import org.trendtube.app.volley.NullResponseError;
 import org.trendtube.app.volley.TTGsonRequest;
@@ -17,20 +19,20 @@ import org.trendtube.app.volley.TTVolleyManager;
 /**
  * Created by shankarprasad on 24-07-2015.
  */
-public class FetchRegionVolleyTask implements TTResponseListener<VideoModel> {
+public class FetchRegionVolleyTask implements TTResponseListener<RegionModel> {
 
-    private FetchVideosListener listener;
+    private FetchRegionListener listener;
     private Activity activity;
 
-    public FetchRegionVolleyTask(Activity activity, FetchVideosListener fetchVideosListener) {
+    public FetchRegionVolleyTask(Activity activity, FetchRegionListener fetchVideosListener) {
         this.activity = activity;
         this.listener = fetchVideosListener;
     }
 
-    public void execute(String nextPageToken) {
+    public void execute() {
         try {
-            String url = Config.getPopularVideosUrl(nextPageToken);
-            TTGsonRequest<VideoModel> nNacresGsonRequest = new TTGsonRequest<VideoModel>(activity, url, null, this, VideoModel.class);
+            String url = Config.getRegionUrl();
+            TTGsonRequest<RegionModel> nNacresGsonRequest = new TTGsonRequest<RegionModel>(activity, url, null, this, RegionModel.class);
             nNacresGsonRequest.setTaskId(this);
             TTVolleyManager.addToQueue(nNacresGsonRequest, true);
         } catch (Exception e) {
@@ -41,10 +43,10 @@ public class FetchRegionVolleyTask implements TTResponseListener<VideoModel> {
     }
 
     @Override
-    public void onResponse(TTRequest<VideoModel> request, VideoModel response) {
+    public void onResponse(TTRequest<RegionModel> request, RegionModel response) {
         if (null != response) {
             if (this.listener != null) {
-                this.listener.onVideoFetched(response);
+                this.listener.onFetchedRegion(response);
             }
         } else {
             onErrorResponse(request, new NullResponseError());
@@ -53,9 +55,14 @@ public class FetchRegionVolleyTask implements TTResponseListener<VideoModel> {
     }
 
     @Override
-    public void onErrorResponse(TTRequest<VideoModel> request, VolleyError error) {
+    public void onErrorResponse(TTRequest<RegionModel> request, VolleyError error) {
         if (this.listener != null) {
-            this.listener.onVideoFetchedError(error);
+            this.listener.onErrorFetchedRegion(error);
         }
+    }
+
+    public interface FetchRegionListener {
+        public void onFetchedRegion(RegionModel response);
+        public void onErrorFetchedRegion(VolleyError error);
     }
 }
