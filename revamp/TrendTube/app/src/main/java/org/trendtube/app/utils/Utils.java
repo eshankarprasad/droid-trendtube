@@ -4,11 +4,20 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v4.app.FragmentActivity;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.NetworkError;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 
 import org.joda.time.Days;
@@ -228,5 +237,52 @@ public class Utils {
             editor.remove(Key);
             editor.commit();
         }
+    }
+
+    public static void handleError(Context context, VolleyError error) {
+        if (error==null) {
+            showErrorToast(context, Constants.APPLICATION_ERROR, Toast.LENGTH_SHORT);
+            return;
+        }
+        if (isNetworkError(error)) {
+            showErrorToast(context, Constants.CONNECTION_ERROR, Toast.LENGTH_SHORT);
+
+        } else if (error instanceof ServerError) {
+
+            showErrorToast(context, Constants.SERVER_ERROR, Toast.LENGTH_SHORT);
+
+        } else {
+            showErrorToast(context, Constants.APPLICATION_ERROR, Toast.LENGTH_SHORT);
+        }
+    }
+
+    public static boolean isNetworkError(VolleyError error) {
+        return (error instanceof TimeoutError || error instanceof NetworkError);
+    }
+
+    public static void showErrorToast(Context context, String text, int duration) {
+
+        Toast toast = Toast.makeText(context, text, duration);
+        View layout = LayoutInflater.from(context).inflate(R.layout.toast_error, null);
+        DisplayMetrics dm = new DisplayMetrics();
+        if (context instanceof Activity) {
+            MyLog.e("instance of activity");
+            ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(dm);
+        } else if (context instanceof FragmentActivity) {
+            ((FragmentActivity) context).getWindowManager().getDefaultDisplay().getMetrics(dm);
+        }
+        // RelativeLayout toastLayout = (RelativeLayout)
+        // layout.findViewById(R.id.toastLayout);
+        MyLog.e("Width: " + dm.widthPixels);
+        ((TextView) layout.findViewById(R.id.toastMsg)).setWidth(dm.widthPixels - 50);
+		/*
+		 * ((TextView) layout.findViewById(R.id.toastMsg)) .setHeight((int)
+		 * dm.heightPixels / 10);
+		 */
+        ((TextView) layout.findViewById(R.id.toastMsg)).setText(text);
+        toast.setView(layout);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+        return;
     }
 }

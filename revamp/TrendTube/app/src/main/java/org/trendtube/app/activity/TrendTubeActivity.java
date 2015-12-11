@@ -224,6 +224,7 @@ public class TrendTubeActivity extends AppCompatActivity
     @Override
     public void onCategoriesFetchedError(VolleyError error) {
         dismissProgressDialog();
+        Utils.handleError(this, error);
         error.printStackTrace();
     }
 

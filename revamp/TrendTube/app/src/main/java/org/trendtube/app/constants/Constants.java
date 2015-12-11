@@ -12,6 +12,10 @@ public class Constants {
     public static final String KEY_CATEGORY_NAME = "key_category_name";
     public static final int REQUEST_VIDEO_DETAIL = 3001;
 
+    public static final String CONNECTION_ERROR = "Please check your internet connection and try again";
+    public static final String SERVER_ERROR = "Server Error. Please Try Again after some time";
+    public static final String APPLICATION_ERROR = "Application Error. Please Try Again";
+
     public static enum SpinnerType {
 
         CATEGORY(1);

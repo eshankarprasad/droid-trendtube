@@ -22,6 +22,7 @@ import org.trendtube.app.model.VideoModel;
 import org.trendtube.app.ui.TTProgressWheel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
+import org.trendtube.app.utils.Utils;
 import org.trendtube.app.volleytasks.FetchTopViewedVideosVolleyTask;
 
 /**
@@ -114,6 +115,8 @@ public class TopViewedTrendingVideosFragment extends Fragment implements TopView
 
     @Override
     public void onVideoFetchedError(VolleyError error) {
-
+        progressWheel.setVisibility(View.GONE);
+        footerProgressWheel.setVisibility(View.GONE);
+        Utils.handleError(getActivity(), error);
     }
 }
