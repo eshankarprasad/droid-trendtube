@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_item_trending_videos"
+            android:checked="true"
+            android:icon="@drawable/ic_nav_trending_videos_white"
+            android:title="@string/nav_item_trending_videos" />
+        <item
+            android:id="@+id/nav_item_top_viewed_videsos"
+            android:icon="@drawable/ic_nav_top_viewed_videos_white"
+            android:title="@string/nav_item_top_viewed_videos" />
+    </group>
+
+    <item android:title="@string/nav_social_action">
+        <menu>
+            <item
+                android:id="@+id/nav_sub_menu_like"
+                android:icon="@drawable/ic_nav_sub_menu_like"
+                android:title="@string/nav_sub_menu_item_like" />
+        </menu>
+    </item>
+
+</menu>

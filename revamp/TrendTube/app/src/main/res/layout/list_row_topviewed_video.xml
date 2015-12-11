@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?android:attr/selectableItemBackground"
+    android:padding="@dimen/activity_horizontal_margin"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/img_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topviewed_video_tuple_height"
+        android:scaleType="centerCrop"
+        android:src="@drawable/image" />
+
+    <TextView
+        android:id="@+id/txt_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="2"
+        android:layout_marginTop="4dp"
+        android:text="My Text"
+        android:textSize="@dimen/topviewed_tuple_title_size"
+        android:textColor="@color/gray_charcoal_dark" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_channel_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="My Text"
+            android:textSize="@dimen/topviewed_tuple_subtitle_size"
+            android:textColor="@color/gray_concrete_dark" />
+
+        <TextView
+            android:id="@+id/txt_age_and_views"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="My Text"
+            android:textSize="@dimen/topviewed_tuple_subtitle_size"
+            android:textColor="@color/gray_concrete_dark" />
+
+    </LinearLayout>
+</LinearLayout>
