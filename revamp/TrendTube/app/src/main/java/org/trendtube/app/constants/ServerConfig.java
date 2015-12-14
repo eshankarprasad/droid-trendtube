@@ -9,6 +9,5 @@ public class ServerConfig {
     public static final String SERVER_KEY = "jhsdasr7645234jfsklj0938209sr923";
 
     public static final String REST_HOST = HOST + "/" + DIR;
-    public static final int RESULT_PER_PAGE = 10;
-    public static String REGION_CODE = "IN";
+    public static final int RESULT_PER_PAGE = 1;
 }

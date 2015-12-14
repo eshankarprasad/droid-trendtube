@@ -10,6 +10,8 @@ public class Constants {
     public static final String BUNDLE_VIDEO_ID = "bundle_video_id";
     public static final String KEY_CATEGORY_ID = "key_category_id";
     public static final String KEY_CATEGORY_NAME = "key_category_name";
+    public static final String KEY_REGION_ID = "key_region_id";
+    public static final String KEY_REGION_NAME = "key_region_name";
     public static final int REQUEST_VIDEO_DETAIL = 3001;
 
     public static final String CONNECTION_ERROR = "Please check your internet connection and try again";
@@ -18,7 +20,7 @@ public class Constants {
 
     public static enum SpinnerType {
 
-        CATEGORY(1);
+        CATEGORY(1), REGION(2);
         private int spinnerType;
 
         private SpinnerType(int sType) {

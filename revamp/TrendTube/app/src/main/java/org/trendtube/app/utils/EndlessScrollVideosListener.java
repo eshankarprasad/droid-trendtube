@@ -39,7 +39,7 @@ public abstract class EndlessScrollVideosListener extends RecyclerView.OnScrollL
 
             // Do something
             current_page++;
-            onLoadMore(current_page);
+            //onLoadMore(current_page);
             loading = true;
         }
     }

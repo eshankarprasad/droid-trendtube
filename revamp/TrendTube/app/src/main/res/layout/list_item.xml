@@ -2,16 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_clouds_light" >
+    android:background="?android:attr/selectableItemBackground" >
 
     <TextView
         android:id="@+id/txt_item"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:text="Locality"
         android:textColor="@color/gray_charcoal_light"
-        android:background="@drawable/selector_listview"
         android:textIsSelectable="false"
         android:textSize="14sp" />
 

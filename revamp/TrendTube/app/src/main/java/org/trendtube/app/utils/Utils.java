@@ -163,7 +163,7 @@ public class Utils {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Glide.with(activity).load(url).placeholder(placeHolder).into(imageView);
+                //Glide.with(activity).load(url).placeholder(placeHolder).into(imageView);
             }
         });
     }
@@ -175,7 +175,7 @@ public class Utils {
 
         dialog.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_dialog_title_bar);
         dialog.setContentView(R.layout.custom_dialog);
-        //dialog.getWindow().getAttributes().windowAnimations = R.style.PauseDialog;
+
         TextView dialogTitleTV = (TextView) dialog.findViewById(R.id.dialogTitle);
         final TextView dialogDone = (TextView) dialog.findViewById(R.id.done);
         dialogTitleTV.setText(dialogTitle);

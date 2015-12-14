@@ -10,17 +10,18 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
 import org.trendtube.app.R;
-import org.trendtube.app.adapter.BasicListViewAdapter;
+import org.trendtube.app.adapter.BasicRecyclerAdapter;
 import org.trendtube.app.adapter.TrendTubePagerAdapter;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.interfaces.BasicItemSelectedListener;
@@ -33,7 +34,9 @@ import org.trendtube.app.utils.Utils;
 import org.trendtube.app.volleytasks.FetchCategoriesVolleyTask;
 import org.trendtube.app.volleytasks.FetchRegionVolleyTask;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class TrendTubeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener,
@@ -44,7 +47,8 @@ public class TrendTubeActivity extends AppCompatActivity
     private DrawerLayout mDrawerLayout;
     private ViewPager mViewPager;
     private TTProgressDialog ttProgressDialog;
-    private BasicItem selectedCategory;
+    private BasicItem selectedCategory, selectedRegion;
+    private TextView txtRegion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,14 @@ public class TrendTubeActivity extends AppCompatActivity
         } else {
             selectedCategory = new BasicItem(Utils.getStringPreference(this, Constants.KEY_CATEGORY_ID),
                     Utils.getStringPreference(this, Constants.KEY_CATEGORY_NAME));
+        }
+
+        if ("".equals(Utils.getStringPreference(this, Constants.KEY_REGION_ID))
+                && "".equals(Utils.getStringPreference(this, Constants.KEY_REGION_NAME))) {
+            selectedRegion = new BasicItem("IN", "INDIA");
+        } else {
+            selectedRegion = new BasicItem(Utils.getStringPreference(this, Constants.KEY_REGION_ID),
+                    Utils.getStringPreference(this, Constants.KEY_REGION_NAME));
         }
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -122,6 +134,11 @@ public class TrendTubeActivity extends AppCompatActivity
         });
 
         setTitle(getString(R.string.nav_item_trending_videos));
+
+        View headerView = navigationView.inflateHeaderView(R.layout.drawer_header);
+        txtRegion = (TextView) headerView.findViewById(R.id.btn_region);
+        txtRegion.setText(selectedRegion.getName());
+        txtRegion.setOnClickListener(this);
     }
 
     /*@Override
@@ -178,21 +195,33 @@ public class TrendTubeActivity extends AppCompatActivity
             case R.id.fab_category:
                 categoryButtonClicked();
                 break;
+
+            case R.id.btn_region:
+                regionButtonClicked();
+                break;
+        }
+    }
+
+    private void regionButtonClicked() {
+
+        if (TTApplication.regions != null && TTApplication.regions.size() > 0) {
+            showRegionListDialog();
+        } else {
+            showProgressDialog();
+            FetchRegionVolleyTask task = new FetchRegionVolleyTask(this, this);
+            task.execute();
         }
     }
 
     private void categoryButtonClicked() {
 
-        /*if (TTApplication.categories != null && TTApplication.categories.size() > 0) {
+        if (TTApplication.categories != null && TTApplication.categories.size() > 0) {
             showCategoryListDialog();
         } else {
             showProgressDialog();
             FetchCategoriesVolleyTask task = new FetchCategoriesVolleyTask(this, this);
             task.execute();
-        }*/
-
-        FetchRegionVolleyTask task = new FetchRegionVolleyTask(this, this);
-        task.execute();
+        }
     }
 
     private void showProgressDialog() {
@@ -217,14 +246,32 @@ public class TrendTubeActivity extends AppCompatActivity
     public void onCategoriesFetched(CategoryModel response) {
         dismissProgressDialog();
         MyLog.e(response.toString());
-        TTApplication.categories = response.getCategories();
+        saveCategory(response);
         showCategoryListDialog();
+    }
+
+    private void saveCategory(CategoryModel categoryMap) {
+
+        Set<String> ids = categoryMap.getCategoryMap().keySet();
+        List<BasicItem> categories = new ArrayList<>();
+        for (String id : ids) {
+            BasicItem item = new BasicItem(id, categoryMap.getCategoryMap().get(id).getName());
+            categories.add(item);
+        }
+
+        TTApplication.categories = categories;
     }
 
     private void showCategoryListDialog() {
         showListViewDialog(this, getString(R.string.title_categories),
                 TTApplication.categories, selectedCategory,
                 Constants.SpinnerType.CATEGORY.getSpinnerType());
+    }
+
+    private void showRegionListDialog() {
+        showListViewDialog(this, getString(R.string.title_regions),
+                TTApplication.regions, selectedRegion,
+                Constants.SpinnerType.REGION.getSpinnerType());
     }
 
     @Override
@@ -237,36 +284,48 @@ public class TrendTubeActivity extends AppCompatActivity
     final public void showListViewDialog(final BasicItemSelectedListener listener, String title, List<BasicItem> items, BasicItem selectedItem, final int type) {
 
         final Dialog dialog = Utils.getBasicDialog(this, title);
-        final BasicListViewAdapter basicAdapter = new BasicListViewAdapter(this, items, selectedItem);
+        BasicRecyclerAdapter basicAdapter = new BasicRecyclerAdapter(this, dialog, items, selectedItem, this, type);
 
-        ListView listView = (ListView) dialog.findViewById(R.id.dropDownListInfoType);
+        RecyclerView listView = (RecyclerView) dialog.findViewById(R.id.dropDownListInfoType);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(listView.getContext());
+        listView.setLayoutManager(linearLayoutManager);
         listView.setAdapter(basicAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                BasicItem selectedItem = basicAdapter.getItem(position);
-                dialog.dismiss();
-                listener.onListViewItemSelected(selectedItem, type);
-            }
-        });
-
         if (!this.isFinishing() && !dialog.isShowing()) {
             dialog.show();
         }
-
     }
 
     @Override
     public void onListViewItemSelected(BasicItem item, int type) {
         if (type == Constants.SpinnerType.CATEGORY.getSpinnerType()) {
             this.selectedCategory = item;
+            Utils.setPreference(this, Constants.KEY_CATEGORY_ID, selectedCategory.getId());
+            Utils.setPreference(this, Constants.KEY_CATEGORY_NAME, selectedCategory.getName());
+        } else if (type == Constants.SpinnerType.REGION.getSpinnerType()) {
+            this.selectedRegion = item;
+            Utils.setPreference(this, Constants.KEY_REGION_ID, selectedRegion.getId());
+            Utils.setPreference(this, Constants.KEY_REGION_NAME, selectedRegion.getName());
+            txtRegion.setText(selectedRegion.getName());
         }
     }
 
     @Override
     public void onFetchedRegion(RegionModel response) {
         MyLog.e(response.toString());
+        dismissProgressDialog();
+        saveRegion(response);
+        showRegionListDialog();
+    }
+
+    private void saveRegion(RegionModel regionModel) {
+        Set<String> ids = regionModel.getRegionMap().keySet();
+        List<BasicItem> regions = new ArrayList<>();
+        for (String id : ids) {
+            BasicItem item = new BasicItem(id, regionModel.getRegionMap().get(id).getName());
+            regions.add(item);
+        }
+
+        TTApplication.regions = regions;
     }
 
     @Override

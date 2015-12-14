@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import org.trendtube.app.R;
 import org.trendtube.app.model.BasicItem;
+import org.trendtube.app.model.CategoryItem;
 
 import java.util.List;
 

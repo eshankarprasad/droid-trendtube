@@ -1,19 +1,19 @@
 package org.trendtube.app.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
- * Created by ankitgarg on 24/2/14.
+ * Created by shankar on 11/12/15.
  */
-public class BasicItem implements Serializable {
+public class RegionItem implements Serializable {
 
-  private String id;
-  private String name;
+    @SerializedName("youtube_region_id")
+    private String id;
 
-    public BasicItem(String id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+    @SerializedName("name")
+    private String name;
 
     public String getId() {
         return id;
@@ -33,7 +33,7 @@ public class BasicItem implements Serializable {
 
     @Override
     public String toString() {
-        return "BasicItem{" +
+        return "RegionItem{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 '}';

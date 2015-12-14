@@ -2,17 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_clouds_light" >
+    android:background="@color/white" >
 
     <include
         android:id="@+id/titleBar"
         layout="@layout/custom_dialog_title_bar" />
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/dropDownListInfoType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/titleBar">
-    </ListView>
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

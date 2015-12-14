@@ -144,10 +144,10 @@ public class TTGsonRequest<T extends ResponseMetadata> extends TTRequest<T> {
 		String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers)).trim();
 		if (getUrl().contains("getYouTubeCategoriesFromDB") && json.length() > 2) {
             System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_____SRP");
-            json = "{\"categories\":" + json + "}";
+            json = "{\"category_map\":" + json + "}";
         }  else if (getUrl().contains("getYouTubeRegionsFromDB") && json.length() > 2) {
 			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_____SRP");
-			json = "{\"regions\":" + json + "}";
+			json = "{\"region_map\":" + json + "}";
 
 			System.out.println("JSON: " + json);
 

@@ -29,7 +29,7 @@ import org.trendtube.app.volleytasks.FetchTopViewedVideosVolleyTask;
  * Created by shankar on 9/12/15.
  */
 
-public class TopViewedTrendingVideosFragment extends Fragment implements TopViewedVideosRecyclerAdapter.TopVideoItemSelectListener, FetchVideosListener {
+public class TopViewedVideosFragment extends Fragment implements TopViewedVideosRecyclerAdapter.TopVideoItemSelectListener, FetchVideosListener {
     private static final String TAB_POSITION = "tab_position";
     private RecyclerView recyclerView;
     private TopViewedVideosRecyclerAdapter adapter;
@@ -37,12 +37,12 @@ public class TopViewedTrendingVideosFragment extends Fragment implements TopView
     private TTProgressWheel progressWheel, footerProgressWheel;
     private int tabPosition;
 
-    public TopViewedTrendingVideosFragment() {
+    public TopViewedVideosFragment() {
 
     }
 
-    public static TopViewedTrendingVideosFragment newInstance(int tabPosition) {
-        TopViewedTrendingVideosFragment fragment = new TopViewedTrendingVideosFragment();
+    public static TopViewedVideosFragment newInstance(int tabPosition) {
+        TopViewedVideosFragment fragment = new TopViewedVideosFragment();
         Bundle args = new Bundle();
         args.putInt(TAB_POSITION, tabPosition);
         fragment.setArguments(args);

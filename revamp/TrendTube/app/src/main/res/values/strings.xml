@@ -14,6 +14,7 @@
     <string name="drawer_header_text">Region</string>
 
     <string name="title_categories">Categories</string>
+    <string name="title_regions">Regions</string>
 
     <string name="second_activity_text">My Second Demo Text</string>
     <string name="title_activity_second">SecondActivity</string>

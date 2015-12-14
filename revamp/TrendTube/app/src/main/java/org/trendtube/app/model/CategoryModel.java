@@ -2,28 +2,28 @@ package org.trendtube.app.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * Created by shankar on 11/12/15.
  */
 public class CategoryModel extends ResponseMetadata {
 
-    @SerializedName("categories")
-    private List<BasicItem> categories;
+    @SerializedName("category_map")
+    private Map<String, CategoryItem> categoryMap;
 
-    public List<BasicItem> getCategories() {
-        return categories;
+    public Map<String, CategoryItem> getCategoryMap() {
+        return categoryMap;
     }
 
-    public void setCategories(List<BasicItem> categories) {
-        this.categories = categories;
+    public void setCategoryMap(Map<String, CategoryItem> categoryMap) {
+        this.categoryMap = categoryMap;
     }
 
     @Override
     public String toString() {
         return "CategoryModel{" +
-                "categories=" + categories +
+                "categoryMap=" + categoryMap +
                 '}';
     }
 }

@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="150dp"
-              android:background="?attr/colorPrimaryDark"
-              android:padding="16dp"
-              android:theme="@style/ThemeOverlay.AppCompat.Dark"
-              android:gravity="bottom">
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:background="?attr/colorPrimaryDark"
+    android:gravity="bottom"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/btn_region"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:drawablePadding="8dp"
         android:text="@string/drawer_header_text"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:drawableLeft="@android:drawable/ic_menu_more"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground"/>
 
 </LinearLayout>

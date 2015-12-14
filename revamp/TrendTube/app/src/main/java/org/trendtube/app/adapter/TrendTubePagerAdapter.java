@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import org.trendtube.app.fragment.TopViewedTrendingVideosFragment;
+import org.trendtube.app.fragment.TopViewedVideosFragment;
 import org.trendtube.app.fragment.TrendingVideosFragment;
 
 /**
@@ -27,7 +27,7 @@ public class TrendTubePagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 return TrendingVideosFragment.newInstance(position);
             default:
-                return TopViewedTrendingVideosFragment.newInstance(position);
+                return TopViewedVideosFragment.newInstance(position);
         }
 
     }
