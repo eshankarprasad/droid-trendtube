@@ -18,6 +18,7 @@ public class Constants {
 
     public static final int REQUEST_REFRESH = 1;
     public static final int REQUEST_VIDEO_DETAIL = 3001;
+    public static final int REQUEST_SEARCH = 3002;
 
     public static final String CONNECTION_ERROR = "Please check your internet connection and try again";
     public static final String SERVER_ERROR = "Server Error. Please Try Again after some time";
@@ -25,6 +26,7 @@ public class Constants {
 
     public static final String TAG_TRENDING_VIDEO = "tag_trending_video";
     public static final String TAG_TOPVIEWED_VIDEO = "tag_topviewed_video";
+    public static final String BUNDLE_QUERY = "bundle_query";
 
     public static enum SpinnerType {
 

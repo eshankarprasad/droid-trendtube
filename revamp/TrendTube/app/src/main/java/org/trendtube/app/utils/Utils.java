@@ -11,6 +11,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -311,5 +313,24 @@ public class Utils {
 
     public static void showSnacK(View cordinatorLayout, String message, String actionLabel, int length, View.OnClickListener listener) {
         Snackbar.make(cordinatorLayout, message, length).setAction("Ok", listener).show();
+    }
+
+    public static void showKeyboard(Activity activity, EditText editText) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    public static void hideKeyboard(Activity activity, EditText editText) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+    }
+
+    public static void hideKeyboard(Activity activity) {
+
+        if (activity.getCurrentFocus() != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }

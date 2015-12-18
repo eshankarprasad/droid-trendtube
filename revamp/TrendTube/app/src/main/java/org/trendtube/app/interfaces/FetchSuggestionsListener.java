@@ -7,7 +7,7 @@ import org.trendtube.app.model.SuggestionModel;
 public interface FetchSuggestionsListener {
 
     public void onFetchedSuggestor(SuggestionModel result);
-
     public void onErrorFetchedSuggestor(VolleyError error);
+    public void onQueryCompleted(String query);
 
 }

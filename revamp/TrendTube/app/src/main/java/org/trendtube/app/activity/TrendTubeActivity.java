@@ -257,8 +257,7 @@ public class TrendTubeActivity extends AppCompatActivity
     }
 
     private void showSearchScreen() {
-
-        startActivityForResult(SearchActivity.newIntent(this), 2);
+        startActivityForResult(SearchActivity.newIntent(this), Constants.REQUEST_SEARCH);
     }
 
     @Override
@@ -472,5 +471,14 @@ public class TrendTubeActivity extends AppCompatActivity
         dismissProgressDialog();
         Utils.handleError(this, error);
         MyLog.e("onErrorFetchedRegion");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.REQUEST_SEARCH && resultCode == RESULT_OK) {
+            String query = data.getExtras().getString(Constants.BUNDLE_QUERY);
+            MyLog.e("Query Received: " + query);
+        }
     }
 }

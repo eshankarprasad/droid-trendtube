@@ -59,7 +59,7 @@ public class SuggestionAdapter extends BaseAdapter {
         ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.simple_list_item, null);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.search_list_item, null);
             holder.textview = (TextView) convertView.findViewById(R.id.txt_item);
             convertView.setTag(holder);
         } else {

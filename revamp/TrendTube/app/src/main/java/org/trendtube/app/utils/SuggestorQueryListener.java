@@ -47,7 +47,8 @@ public class SuggestorQueryListener implements SearchView.OnQueryTextListener, T
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        return false;
+        listener.onQueryCompleted(query);
+        return true;
     }
 
     @Override
@@ -77,7 +78,7 @@ public class SuggestorQueryListener implements SearchView.OnQueryTextListener, T
         timer.cancel();
         timer = new Timer();
         timer.schedule(task, DELAY);
-        return false;
+        return true;
     }
 }
 

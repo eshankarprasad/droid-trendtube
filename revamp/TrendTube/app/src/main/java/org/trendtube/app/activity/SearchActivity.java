@@ -20,9 +20,12 @@ import com.android.volley.VolleyError;
 
 import org.trendtube.app.R;
 import org.trendtube.app.adapter.SuggestionAdapter;
+import org.trendtube.app.constants.Constants;
 import org.trendtube.app.interfaces.FetchSuggestionsListener;
 import org.trendtube.app.model.SuggestionModel;
+import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.SuggestorQueryListener;
+import org.trendtube.app.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,7 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
 
     private SuggestionAdapter adapter;
     private ListView listView;
+    private SearchView searchView;
     private InputFilter searchInputFilter;
 
     public static Intent newIntent(Activity activity) {
@@ -84,7 +88,7 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                //onOkButtonClick(sug.getName());
+                onQueryCompleted(adapter.getItem(position));
             }
         });
         openOptionsMenu();
@@ -96,10 +100,11 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
         getMenuInflater().inflate(R.menu.menu_search, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.onActionViewExpanded();
         searchView.setOnQueryTextListener(new SuggestorQueryListener(this, this));
         searchView.setQueryHint(getString(R.string.hint_search));
+        searchView.setSubmitButtonEnabled(true);
         /*SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchAutoComplete.setHintTextColor(getResources().getColor(android.R.color.white));
         searchAutoComplete.setTextSize(14);*/
@@ -113,7 +118,7 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
 
             case android.R.id.home:
                 finish();
-                break;
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -203,5 +208,28 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
     @Override
     public void onErrorFetchedSuggestor(VolleyError error) {
         adapter.clearData();
+    }
+
+    @Override
+    public void onQueryCompleted(String query) {
+        MyLog.e("Query: " + query);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        searchView.setQuery(query, false);
+        Utils.hideKeyboard(this);
+
+        Intent intent = new Intent();
+        intent.putExtra(Constants.BUNDLE_QUERY, query);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
