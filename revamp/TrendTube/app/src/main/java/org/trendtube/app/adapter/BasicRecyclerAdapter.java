@@ -7,15 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.trendtube.app.R;
 import org.trendtube.app.interfaces.BasicItemSelectedListener;
 import org.trendtube.app.model.BasicItem;
-import org.trendtube.app.model.VideoItem;
-import org.trendtube.app.utils.MyLog;
-import org.trendtube.app.utils.Utils;
 
 import java.util.List;
 
@@ -42,7 +38,7 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.simple_list_item, viewGroup, false);
         return new ViewHolder(v);
     }
 

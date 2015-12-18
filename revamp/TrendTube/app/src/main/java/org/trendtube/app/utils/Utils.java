@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -18,7 +19,6 @@ import com.android.volley.NetworkError;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.bumptech.glide.Glide;
 
 import org.joda.time.Days;
 import org.joda.time.Hours;
@@ -29,6 +29,7 @@ import org.joda.time.Years;
 import org.trendtube.app.R;
 import org.trendtube.app.constants.Constants;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -90,9 +91,25 @@ public class Utils {
         return prefix + postfix;
     }
 
-    public static String calulateAge(String publishedAt) {
+    public static String calculateAge(long timestamp) {
 
-        String age = "";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        try {
+            date = output.parse(String.valueOf(new Timestamp(timestamp)));
+            //MyLog.e("Date: " + output.format(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        cal.setTime(date);
+
+        return calculateAge(cal);
+    }
+
+    public static String calculateAge(String publishedAt) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -107,6 +124,12 @@ public class Utils {
 
         cal.setTime(date);
 
+        return calculateAge(cal);
+    }
+
+    public static String calculateAge(Calendar cal) {
+
+        String age = "";
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
@@ -240,7 +263,7 @@ public class Utils {
     }
 
     public static void handleError(Context context, VolleyError error) {
-        if (error==null) {
+        if (error == null) {
             showErrorToast(context, Constants.APPLICATION_ERROR, Toast.LENGTH_SHORT);
             return;
         }
@@ -275,7 +298,7 @@ public class Utils {
         // layout.findViewById(R.id.toastLayout);
         MyLog.e("Width: " + dm.widthPixels);
         ((TextView) layout.findViewById(R.id.toastMsg)).setWidth(dm.widthPixels - 50);
-		/*
+        /*
 		 * ((TextView) layout.findViewById(R.id.toastMsg)) .setHeight((int)
 		 * dm.heightPixels / 10);
 		 */
@@ -284,5 +307,9 @@ public class Utils {
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
         return;
+    }
+
+    public static void showSnacK(View cordinatorLayout, String message, String actionLabel, int length, View.OnClickListener listener) {
+        Snackbar.make(cordinatorLayout, message, length).setAction("Ok", listener).show();
     }
 }

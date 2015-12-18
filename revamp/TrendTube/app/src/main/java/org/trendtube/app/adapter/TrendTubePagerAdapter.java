@@ -5,8 +5,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import org.trendtube.app.fragment.TopViewedVideosFragment;
-import org.trendtube.app.fragment.TrendingVideosFragment;
+import org.trendtube.app.fragment.DailyMotionVideosFragment;
+import org.trendtube.app.fragment.YouTubeVideosFragment;
+import org.trendtube.app.utils.MyLog;
 
 /**
  * Created by shankar on 9/12/15.
@@ -14,43 +15,47 @@ import org.trendtube.app.fragment.TrendingVideosFragment;
 public class TrendTubePagerAdapter extends FragmentStatePagerAdapter {
 
     private Activity activity;
+    private String[] items;
+    private YouTubeVideosFragment youTubeVideosFragment;
+    private DailyMotionVideosFragment dailyMotionVideosFragment;
 
-    public TrendTubePagerAdapter(Activity activity, FragmentManager fm) {
+    public TrendTubePagerAdapter(Activity activity, String[] items, FragmentManager fm) {
         super(fm);
         this.activity = activity;
+        this.items = items;
     }
 
     @Override
     public Fragment getItem(int position) {
 
+        MyLog.e("Tab Position: " + position);
+
         switch (position) {
             case 0:
-                return TrendingVideosFragment.newInstance(position);
+                youTubeVideosFragment = YouTubeVideosFragment.newInstance(position);
+                return youTubeVideosFragment;
             default:
-                return TopViewedVideosFragment.newInstance(position);
+                dailyMotionVideosFragment = DailyMotionVideosFragment.newInstance(position);
+                return dailyMotionVideosFragment;
         }
+    }
 
+    public Fragment getCurrentFragment(int position) {
+        switch (position) {
+            case 0:
+                return youTubeVideosFragment;
+            default:
+                return dailyMotionVideosFragment;
+        }
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return items.length;
     }
 
-    /*@Override
+    @Override
     public CharSequence getPageTitle(int position) {
-
-        switch (position) {
-            case 0:
-                activity.setTitle(activity.getString(R.string.nav_item_trending_videos));
-                //return activity.getString(R.string.nav_item_trending_videos);
-                break;
-            default:
-                activity.setTitle(activity.getString(R.string.nav_item_top_viewed_videos));
-                //return activity.getString(R.string.nav_item_top_viewed_videos);
-                break;
-        }
-
-        return "";
-    }*/
+        return items[position];
+    }
 }

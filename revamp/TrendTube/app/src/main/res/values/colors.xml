@@ -28,4 +28,6 @@
 
     <color name="gray_charcoal_light">#656d78</color>
     <color name="gray_charcoal_dark">#434a54</color>
+
+    <color name="progress_bar_color">@color/blue_charcoal_dark</color>
 </resources>

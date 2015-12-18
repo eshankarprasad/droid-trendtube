@@ -3,6 +3,7 @@
     package="org.trendtube.app">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:name=".activity.TTApplication"
         android:allowBackup="true"
@@ -14,18 +15,31 @@
             android:name="org.trendtube.app.utils.GlideConfiguration"
             android:value="GlideModule" />
 
+        <!--<receiver android:name=".receiver.NetworkChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>-->
+
         <activity
             android:name=".activity.TrendTubeActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activity.SecondActivity"
             android:label="@string/title_activity_second">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.TrendTubeActivity" />
+        </activity>
+        <activity
+            android:name=".activity.SearchActivity"
+            android:label="@string/title_activity_search">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.TrendTubeActivity" />

@@ -12,11 +12,19 @@ public class Constants {
     public static final String KEY_CATEGORY_NAME = "key_category_name";
     public static final String KEY_REGION_ID = "key_region_id";
     public static final String KEY_REGION_NAME = "key_region_name";
+
+    public static final String INTENT_FILTER_CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
+    public static final String INTENT_FILTER_WI_FI_STATE_CHANGE = "android.net.wifi.WIFI_STATE_CHANGED";
+
+    public static final int REQUEST_REFRESH = 1;
     public static final int REQUEST_VIDEO_DETAIL = 3001;
 
     public static final String CONNECTION_ERROR = "Please check your internet connection and try again";
     public static final String SERVER_ERROR = "Server Error. Please Try Again after some time";
-    public static final String APPLICATION_ERROR = "Application Error. Please Try Again";
+    public static final String APPLICATION_ERROR = "Applcation Error. Please Try Again";
+
+    public static final String TAG_TRENDING_VIDEO = "tag_trending_video";
+    public static final String TAG_TOPVIEWED_VIDEO = "tag_topviewed_video";
 
     public static enum SpinnerType {
 

@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import org.trendtube.app.R;
 import org.trendtube.app.model.BasicItem;
-import org.trendtube.app.model.CategoryItem;
 
 import java.util.List;
 
@@ -48,7 +47,7 @@ public class BasicListViewAdapter extends ArrayAdapter<BasicItem> {
     public View getView(int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item, parent, false);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.simple_list_item, parent, false);
             holder = new ViewHolder();
             holder.textView = (TextView) convertView.findViewById(R.id.txt_item);
             convertView.setTag(holder);

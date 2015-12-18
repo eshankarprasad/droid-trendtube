@@ -17,13 +17,13 @@ import java.util.List;
 /**
  * Created by echessa on 7/24/15.
  */
-public class TopViewedVideosRecyclerAdapter extends RecyclerView.Adapter<TopViewedVideosRecyclerAdapter.ViewHolder> {
+public class DailyMotionRecyclerAdapter extends RecyclerView.Adapter<DailyMotionRecyclerAdapter.ViewHolder> {
 
     private List<VideoItem> mItems;
     private Activity activity;
     private TopVideoItemSelectListener listener;
 
-    public TopViewedVideosRecyclerAdapter(Activity activity, List<VideoItem> items, TopVideoItemSelectListener listener) {
+    public DailyMotionRecyclerAdapter(Activity activity, List<VideoItem> items, TopVideoItemSelectListener listener) {
         this.activity = activity;
         mItems = items;
         this.listener = listener;
@@ -46,7 +46,7 @@ public class TopViewedVideosRecyclerAdapter extends RecyclerView.Adapter<TopView
         Utils.displayImage(activity, item.getSnippet().getThumbnails().getHighImage().getUrl(), R.drawable.image, viewHolder.imgThumbnail);
         viewHolder.txtTitle.setText(item.getSnippet().getTitle());
         viewHolder.txtChannelTitle.setText(item.getSnippet().getChannelTitle());
-        viewHolder.txtAgeAndViews.setText(Utils.calulateAge(item.getSnippet().getPublishedAt()) + " . " + Utils.calculateViewCount(item.getStatistics().getViewCount()) + " views");
+        viewHolder.txtAgeAndViews.setText(Utils.calculateAge(item.getSnippet().getPublishedAt()) + " . " + Utils.calculateViewCount(item.getStatistics().getViewCount()) + " views");
     }
 
     @Override

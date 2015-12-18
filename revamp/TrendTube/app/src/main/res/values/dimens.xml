@@ -14,4 +14,6 @@
     <dimen name="topviewed_tuple_title_size">16sp</dimen>
     <dimen name="topviewed_tuple_subtitle_size">14sp</dimen>
 
+    <dimen name="simple_list_item_text_size">16sp</dimen>
+
 </resources>

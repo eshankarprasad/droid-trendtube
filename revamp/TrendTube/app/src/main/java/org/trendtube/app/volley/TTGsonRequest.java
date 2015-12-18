@@ -1,6 +1,7 @@
 package org.trendtube.app.volley;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -14,6 +15,8 @@ import com.google.gson.JsonSyntaxException;
 import org.trendtube.app.model.ResponseMetadata;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 /**
  * Created by shankar on 9/12/15.
@@ -36,7 +39,6 @@ public class TTGsonRequest<T extends ResponseMetadata> extends TTRequest<T> {
 	 */
 	public TTGsonRequest(Context activity, String url, Map<String, String> params, TTResponseListener<T> listener, Class<T> clazz) {
 		this(activity, params==null? Request.Method.GET: Request.Method.POST, url, params, listener, null, clazz, Request.Priority.NORMAL);
-
       //  setRetryPolicy(new TTRetryPolicy(100,3, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
@@ -103,28 +105,20 @@ public class TTGsonRequest<T extends ResponseMetadata> extends TTRequest<T> {
 	public TTGsonRequest(Context activity, int method, String url, Map<String, String> params, TTResponseListener<T> listener, Object taskId, Class<T> clazz, Request.Priority priority) {
 		super(activity, method, url, params, listener, taskId, priority);
 		this.mClazz = clazz;
-
 	}
 
 	@Override
 	protected void deliverResponse(T response) {
-
         super.deliverResponse(response);
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		System.out.println(response);
 	}
 
 	@Override
 	protected Response<T> parseNetworkResponse(NetworkResponse response) {
-
-
         try {
-			
-			String json=changeData(response);
-            System.out.println("============"+getUrl());
-
+			String json = changeData(response);
 			Response<T> success = Response.success(new GsonBuilder().create().fromJson(json, mClazz), HttpHeaderParser.parseCacheHeaders(response));
-			if (success!=null) {
+			if (success != null) {
 				Response.error(new NullResponseError());
 			}
 			return success;
@@ -133,59 +127,44 @@ public class TTGsonRequest<T extends ResponseMetadata> extends TTRequest<T> {
 		} catch (JsonSyntaxException e) {
 			return Response.error(new ParseError(e));
 		}catch (Exception e) {
-			System.out.println(mClazz+"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 			return Response.error(new VolleyError(e));
 		}
 	}
 
 	private String changeData(NetworkResponse response) throws UnsupportedEncodingException {
 
-
 		String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers)).trim();
 		if (getUrl().contains("getYouTubeCategoriesFromDB") && json.length() > 2) {
-            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_____SRP");
+
+            System.err.println("Response Data Changed! -> getYouTubeCategoriesFromDB");
             json = "{\"category_map\":" + json + "}";
         }  else if (getUrl().contains("getYouTubeRegionsFromDB") && json.length() > 2) {
-			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_____SRP");
+			System.err.println("Response Data Changed! -> getYouTubeRegionsFromDB");
 			json = "{\"region_map\":" + json + "}";
+		}  else if (getUrl().contains("suggestqueries.google.com") && json.length() > 2) {
+			System.err.println("Response Data Changed! -> suggestqueries.google.com");
+            int startIndex = json.indexOf("[[");
+            int lastIndex = json.indexOf(",0]]");
 
-			System.out.println("JSON: " + json);
+            if (lastIndex < 0) {
+                lastIndex = json.lastIndexOf("]]");
+            }
 
+            System.err.println("Start Index: " + startIndex);
+            System.err.println("Last Index: " + lastIndex);
+
+            json = json.substring(startIndex+2, lastIndex).replaceAll("0\\],\\[", "").replaceAll("0,\\[10\\]\\],\\[", "").replaceAll(",0,\\[10\\]", "");
+            json = "{\"suggestions\":[" + json + "]}";
 		}
-	/*	if (getUrl().contains("/99api/" + Utils.version + "/searchProperty/") ||getUrl().contains("/99api/" + Utils.version + "/searchProjects/")) {
-			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_____SRP");
-			json=AndroidUtils.removefirstchar(json, '[');
-			json=AndroidUtils.removelastchar(json, ']');
-			
-		}else*/ /*if (getUrl().contains("/99api/" + Utils.version + "/refinecluster/") &&  (getUrl().contains("clusterType=Possession")|| getUrl().contains("clusterType=Building"))) {
-			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_____1");
-			json="{\"Top_Results_Array\":"+json+"}";
-		}*//*else if (getUrl().contains("/getnewprojectdetail/") && getUrl().contains("?rtype=json&tab=adv")) {
-			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_____2");
-			json="{\"Top_Results_Array\":"+json+"}";
-		}*//*else if (getUrl().contains("/searchdata/")) {
-			json="{\"data\":"+json+"}";
-		}*
-		else if(getUrl().contains("/societyprojectlist/")){
-			json="{\"Top_Results_Array\":"+json+"}";
-		}*//*else if (getUrl().contains("/contactus/")) {
-			json="{\"contact\":"+json+"}";
-		}*/
-
-       /* else if(getUrl().contains("/societyprojectlist/")){
-            json="{\"Top_Results_Array\":"+json+"}";
-        }*/
-		System.out.println(getUrl());
-		System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::");
-		System.out.println(json);
+		System.err.println("Changed Url: " + getUrl());
+		System.err.println("Changed JSON: " + json);
 		return json;
-		
 	}
 	@Override
 	public void deliverError(VolleyError error) {
-        System.out.println("=================%%%%%%  "+getUrl());
+        System.err.println("Error Url: " + getUrl());
+		System.err.println("Model: " + mClazz);
         super.deliverError(error);
-		System.out.println("%%%%%%%%%%%%%%%%%%%%%% "+mClazz);
 	}
 
 }

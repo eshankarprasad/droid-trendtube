@@ -16,7 +16,6 @@ public abstract class TTRequest<T> extends Request<T> {
 
 	private Priority mPriority = Priority.NORMAL;
 	private final Map<String, String> mParams;
-
 	private final TTResponseListener<T> mListener;
 	private Context mContext;
 	private TTGlobalListener mNNacresGlobalListener;
@@ -48,8 +47,7 @@ public abstract class TTRequest<T> extends Request<T> {
 		this.mTaskId = taskId;
 
         setRetryPolicy(new TTRetryPolicy(60000,0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-		removeNullValuesFromParams();
-
+		//removeNullValuesFromParams();
 	}
 	/*@Override
 	public Request<?> setRetryPolicy(RetryPolicy retryPolicy) {
@@ -77,7 +75,8 @@ public abstract class TTRequest<T> extends Request<T> {
 		return(super.setRetryPolicy(retryPolicy));
 	}
 */
-	private void removeNullValuesFromParams() {
+	/*private void removeNullValuesFromParams() {
+
 		if (mParams != null) {
 			Iterator<String> itr = mParams.keySet().iterator();
 			while (itr.hasNext()) {
@@ -89,7 +88,6 @@ public abstract class TTRequest<T> extends Request<T> {
 						System.out.println("This Key is getting Null value : " + key);
 					}
 				}
-
 			}
 
 			if (debug) {
@@ -105,24 +103,18 @@ public abstract class TTRequest<T> extends Request<T> {
 					}else {
 						urlParams+="&"+key+"="+value;
 					}
-					
-					
-					
 				}
 				System.out.println("get url----------------------------------------------------------------------");
 				System.out.println(getUrl()+urlParams);
 				System.out.println("End===================================================================End");
-				
 			}
 		}else {
 			System.out.println(getUrl());
 		}
-
-	}
+	}*/
 
 	@Override
 	public Map<String, String> getParams() throws AuthFailureError {
-
 		return mParams;
 	}
 
@@ -135,18 +127,18 @@ public abstract class TTRequest<T> extends Request<T> {
 		mPriority = priority;
 	}
 
-//    @Override
-//    public RetryPolicy getRetryPolicy() {
-//        System.out.println("==============getRetryPolicy "+getUrl());
-//        return super.getRetryPolicy();
-//    }
-//
-//    @Override
-//    public Request<?> setRetryPolicy(RetryPolicy retryPolicy) {
-//        defaultRetryPolicy=null;
-//        defaultRetryPolicy=null;
-//        return super.setRetryPolicy(retryPolicy);
-//    }
+    /*@Override
+    public RetryPolicy getRetryPolicy() {
+        System.out.println("==============getRetryPolicy "+getUrl());
+        return super.getRetryPolicy();
+    }
+
+    @Override
+    public Request<?> setRetryPolicy(RetryPolicy retryPolicy) {
+        defaultRetryPolicy=null;
+        defaultRetryPolicy=null;
+        return super.setRetryPolicy(retryPolicy);
+    }*/
 
     @Override
 	protected void deliverResponse(T response) {
@@ -156,14 +148,9 @@ public abstract class TTRequest<T> extends Request<T> {
 	@Override
 	public void deliverError(VolleyError error) {
 		mListener.onErrorResponse(this, error);
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Error");
-		System.out.println(getUrl());
-		System.out.println("----------------------------------");
-		System.out.println(mParams+"");
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Error");
-		System.out.println(error);
-		
-
+		System.err.println("Error Url: " + getUrl());
+		System.err.println("Error Param: " + mParams);
+		System.err.println("Error: " + error);
 	}
 
 	public Context getContext() {

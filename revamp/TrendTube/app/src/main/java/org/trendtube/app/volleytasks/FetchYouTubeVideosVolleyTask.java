@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.android.volley.ParseError;
 import com.android.volley.VolleyError;
 
+import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.constants.Config;
 import org.trendtube.app.interfaces.FetchVideosListener;
 import org.trendtube.app.model.VideoModel;
@@ -17,19 +18,24 @@ import org.trendtube.app.volley.TTVolleyManager;
 /**
  * Created by shankarprasad on 24-07-2015.
  */
-public class FetchTopViewedVideosVolleyTask implements TTResponseListener<VideoModel> {
+public class FetchYouTubeVideosVolleyTask implements TTResponseListener<VideoModel> {
 
     private FetchVideosListener listener;
     private Activity activity;
 
-    public FetchTopViewedVideosVolleyTask(Activity activity, FetchVideosListener fetchVideosListener) {
+    public FetchYouTubeVideosVolleyTask(Activity activity, FetchVideosListener fetchVideosListener) {
         this.activity = activity;
         this.listener = fetchVideosListener;
     }
 
-    public void execute(String token) {
+    public void execute(String nextPageToken) {
         try {
-            String url = Config.getTopViewedVideosUrl(token);
+            String url = null;
+            if (TTApplication.navIndex == 0) {
+                url = Config.getYouTubeMostPopularVideosUrl(nextPageToken);
+            } else {
+                url = Config.getYouTubeMostViewedVideosUrl(nextPageToken);
+            }
             TTGsonRequest<VideoModel> nNacresGsonRequest = new TTGsonRequest<VideoModel>(activity, url, null, this, VideoModel.class);
             nNacresGsonRequest.setTaskId(this);
             TTVolleyManager.addToQueue(nNacresGsonRequest, true);

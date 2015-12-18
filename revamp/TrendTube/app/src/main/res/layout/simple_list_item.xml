@@ -8,10 +8,10 @@
         android:id="@+id/txt_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Locality"
+        android:padding="16dp"
+        android:text="Simple List Item"
         android:textColor="@color/gray_charcoal_light"
         android:textIsSelectable="false"
-        android:textSize="14sp" />
+        android:textSize="@dimen/simple_list_item_text_size" />
 
 </RelativeLayout>

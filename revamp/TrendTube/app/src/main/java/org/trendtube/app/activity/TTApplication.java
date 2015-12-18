@@ -2,15 +2,10 @@ package org.trendtube.app.activity;
 
 import android.app.Application;
 
-import org.trendtube.app.constants.Constants;
 import org.trendtube.app.model.BasicItem;
-import org.trendtube.app.model.CategoryItem;
-import org.trendtube.app.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by shankar on 11/12/15.
@@ -18,16 +13,20 @@ import java.util.Map;
 public class TTApplication extends Application {
     public static List<BasicItem> categories;
     public static List<BasicItem> regions;
-    public static String region;
-    public static String categoty;
+    public static String regionId;
+    public static String categotyId;
+    public static int navIndex;
+    public static int fragmentIndex;
 
     @Override
     public void onCreate() {
         super.onCreate();
         categories = new ArrayList<>();
         regions = new ArrayList<>();
-        categoty = "0";
-        region = "IN";
+        categotyId = "0";
+        regionId = "IN";
+        navIndex = 0;
+        fragmentIndex = 0;
     }
 
     @Override
