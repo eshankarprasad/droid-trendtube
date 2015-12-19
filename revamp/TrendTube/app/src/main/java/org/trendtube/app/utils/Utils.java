@@ -21,6 +21,7 @@ import com.android.volley.NetworkError;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
 
 import org.joda.time.Days;
 import org.joda.time.Hours;
@@ -332,5 +333,9 @@ public class Utils {
             InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
         }
+    }
+
+    public static String encodeBankSpaces(String text) {
+        return text.replaceAll(" ", "%20");
     }
 }

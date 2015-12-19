@@ -23,20 +23,21 @@ import org.trendtube.app.interfaces.FetchVideosListener;
 import org.trendtube.app.interfaces.FragmentListener;
 import org.trendtube.app.interfaces.NetworkChangeListener;
 import org.trendtube.app.model.BasicItem;
-import org.trendtube.app.model.VideoModel;
+import org.trendtube.app.model.YouTubeVideoModel;
 import org.trendtube.app.receiver.NetworkChangeReceiver;
 import org.trendtube.app.ui.TTProgressWheel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
 import org.trendtube.app.volleytasks.FetchYouTubeVideosVolleyTask;
+import org.trendtube.app.volleytasks.SearchYouTubeVideoVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
 public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAdapter.OnTrendTubeItemSelectListener,
-        FetchVideosListener, FragmentListener, NetworkChangeListener {
+        FetchVideosListener, NetworkChangeListener, SearchYouTubeVideoVolleyTask.SearchYouTubeVideoListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private RecyclerView recyclerView;
@@ -46,6 +47,7 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
     private TTProgressWheel progressWheel, footerProgressWheel;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
+    private boolean isSearch = false;
 
     public YouTubeVideosFragment() {
 
@@ -87,16 +89,6 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Constants.REQUEST_REFRESH && resultCode == getActivity().RESULT_OK) {
-            nextPageToken = "";
-            adapter = null;
-            loadVideoContent();
-        }
-    }
-
-    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
@@ -109,22 +101,24 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
     }
 
     private void registerReceiver() {
-        if (receiver == null) {
+        /*if (receiver == null) {
             receiver = new NetworkChangeReceiver(this);
             intentFilter = new IntentFilter();
             intentFilter.addAction(Constants.INTENT_FILTER_CONNECTIVITY_CHANGE);
             intentFilter.addAction(Constants.INTENT_FILTER_WI_FI_STATE_CHANGE);
         }
-        getActivity().registerReceiver(receiver, intentFilter);
+        getActivity().registerReceiver(receiver, intentFilter);*/
     }
 
     private void unregisterReceiver() {
-        MyLog.e("unregisterReceiver");
-        try {
-            getActivity().unregisterReceiver(receiver);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        /*MyLog.e("unregisterReceiver");
+        if (receiver != null) {
+            try {
+                getActivity().unregisterReceiver(receiver);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }*/
     }
 
     @Override
@@ -139,8 +133,13 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
         } else {
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
-        FetchYouTubeVideosVolleyTask task = new FetchYouTubeVideosVolleyTask(getActivity(), this);
-        task.execute(nextPageToken);
+        if (isSearch) {
+            SearchYouTubeVideoVolleyTask searchYouTubeVideoVolleyTask = new SearchYouTubeVideoVolleyTask(getActivity(), this);
+            searchYouTubeVideoVolleyTask.execute(nextPageToken, TTApplication.query);
+        } else {
+            FetchYouTubeVideosVolleyTask task = new FetchYouTubeVideosVolleyTask(getActivity(), this);
+            task.execute(nextPageToken);
+        }
     }
 
     @Override
@@ -155,7 +154,7 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
     }
 
     @Override
-    public void onVideoFetched(VideoModel response) {
+    public void onVideoFetched(YouTubeVideoModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
         nextPageToken = response.getNextPageToken();
@@ -183,17 +182,9 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
         registerReceiver();
     }
 
-    @Override
-    public void callRegionUpdate(BasicItem selectedRegion) {
-        MyLog.e("callRegionUpdate");
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
-    }
-
-    @Override
-    public void callCategoryUpdate(BasicItem selectedCategory) {
-        MyLog.e("callCategoryUpdate");
+    public void refreshVideos() {
+        isSearch = false;
+        MyLog.e("refreshVideos");
         nextPageToken = "";
         adapter = null;
         loadVideoContent();
@@ -208,5 +199,40 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
     @Override
     public void onNetworkDisconnected() {
         //Toast.makeText(getActivity(), "Network Unavailable Do operations", Toast.LENGTH_SHORT).show();
+    }
+
+    public void startSearchVideos() {
+        isSearch = true;
+        nextPageToken = "";
+        adapter = null;
+        loadVideoContent();
+    }
+
+    @Override
+    public void onSuccessYouTubeSearch(YouTubeVideoModel response) {
+        progressWheel.setVisibility(View.GONE);
+        footerProgressWheel.setVisibility(View.GONE);
+        nextPageToken = response.getNextPageToken();
+        if (adapter == null) {
+            adapter = new YouTubeRecyclerAdapter(getActivity(), response.getVideoItems(), this);
+            recyclerView.setAdapter(adapter);
+        } else if ("".equals(nextPageToken)) {
+            adapter.setItems(response.getVideoItems());
+            adapter.notifyDataSetChanged();
+        } else {
+            adapter.addItems(response.getVideoItems());
+            adapter.notifyDataSetChanged();
+        }
+        unregisterReceiver();
+    }
+
+    @Override
+    public void onErrorYouTubeSearch(VolleyError error) {
+        progressWheel.setVisibility(View.GONE);
+        footerProgressWheel.setVisibility(View.GONE);
+        progressWheel.setVisibility(View.GONE);
+        footerProgressWheel.setVisibility(View.GONE);
+        Utils.handleError(getActivity(), error);
+        registerReceiver();
     }
 }

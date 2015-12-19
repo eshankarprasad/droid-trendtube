@@ -40,7 +40,7 @@ public class YouTubeRecyclerAdapter extends RecyclerView.Adapter<YouTubeRecycler
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_trending_video, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_youtube_video, viewGroup, false);
         v.setTag(mItems.get(i).getSnippet().getTitle());
         return new ViewHolder(v, listener);
     }

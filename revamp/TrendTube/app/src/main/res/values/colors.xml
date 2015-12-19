@@ -25,6 +25,7 @@
 
     <color name="gray_concrete_light">#ccd1d9</color>
     <color name="gray_concrete_dark">#aab2bd</color>
+    <color name="transparent">@android:color/transparent</color>
 
     <color name="gray_charcoal_light">#656d78</color>
     <color name="gray_charcoal_dark">#434a54</color>

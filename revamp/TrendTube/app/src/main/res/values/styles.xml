@@ -10,8 +10,8 @@
 
     <style name="SearchAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/gray_concrete_light</item>
-        <item name="colorPrimaryDark">@color/gray_concrete_dark</item>
+        <item name="colorPrimary">@color/gray_clouds_dark</item>
+        <item name="colorPrimaryDark">@color/gray_concrete_light</item>
         <item name="colorAccent">@color/gray_concrete_light</item>
     </style>
 

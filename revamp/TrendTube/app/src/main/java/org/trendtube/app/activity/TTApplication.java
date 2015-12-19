@@ -17,6 +17,7 @@ public class TTApplication extends Application {
     public static String categotyId;
     public static int navIndex;
     public static int fragmentIndex;
+    public static String query;
 
     @Override
     public void onCreate() {
@@ -27,6 +28,7 @@ public class TTApplication extends Application {
         regionId = "IN";
         navIndex = 0;
         fragmentIndex = 0;
+        query = "";
     }
 
     @Override
@@ -35,6 +37,7 @@ public class TTApplication extends Application {
         categories = null;
         regions.clear();
         regions = null;
+        query = null;
         super.onTerminate();
     }
 }

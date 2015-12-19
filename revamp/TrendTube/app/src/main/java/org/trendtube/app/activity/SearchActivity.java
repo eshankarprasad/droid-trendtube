@@ -2,6 +2,7 @@ package org.trendtube.app.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -37,6 +38,7 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
     private ListView listView;
     private SearchView searchView;
     private InputFilter searchInputFilter;
+    //private int fragmentIndex = 0;
 
     public static Intent newIntent(Activity activity) {
         return new Intent(activity, SearchActivity.class);
@@ -52,6 +54,8 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        //fragmentIndex = getIntent().getExtras().getInt(Constants.BUNDLE_FRAGMENT_INDEX);
 
         searchInputFilter = new InputFilter() {
 
@@ -104,7 +108,13 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
         searchView.onActionViewExpanded();
         searchView.setOnQueryTextListener(new SuggestorQueryListener(this, this));
         searchView.setQueryHint(getString(R.string.hint_search));
-        searchView.setSubmitButtonEnabled(true);
+
+        /*int searchPlateId = searchView.getContext().getResources()
+                .getIdentifier("android:id/search_plate", null, null);
+        View searchPlateView = searchView.findViewById(searchPlateId);
+        if (searchPlateView != null) {
+            searchPlateView.setBackgroundColor(Color.TRANSPARENT);
+        }*/
         /*SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchAutoComplete.setHintTextColor(getResources().getColor(android.R.color.white));
         searchAutoComplete.setTextSize(14);*/
@@ -115,12 +125,10 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-
             case android.R.id.home:
                 finish();
                 return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -226,10 +234,14 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
         });
         searchView.setQuery(query, false);
         Utils.hideKeyboard(this);
-
-        Intent intent = new Intent();
-        intent.putExtra(Constants.BUNDLE_QUERY, query);
-        setResult(RESULT_OK, intent);
+        if ("".equals(query.trim())) {
+            setResult(RESULT_CANCELED);
+        } else {
+            Intent intent = new Intent();
+            intent.putExtra(Constants.BUNDLE_QUERY, query);
+            //intent.putExtra(Constants.BUNDLE_FRAGMENT_INDEX, fragmentIndex);
+            setResult(RESULT_OK, intent);
+        }
         finish();
     }
 }

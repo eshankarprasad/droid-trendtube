@@ -18,8 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:divider="@color/gray_concrete_dark"
-        android:dividerHeight="0.5dp"
+        android:divider="@color/transparent"
+        android:dividerHeight="0dp"
         android:fadeScrollbars="false"/>
 
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import org.trendtube.app.fragment.DailyMotionVideosFragment;
+import org.trendtube.app.fragment.VimeoVideosFragment;
 import org.trendtube.app.fragment.YouTubeVideosFragment;
 import org.trendtube.app.utils.MyLog;
 
@@ -18,6 +19,7 @@ public class TrendTubePagerAdapter extends FragmentStatePagerAdapter {
     private String[] items;
     private YouTubeVideosFragment youTubeVideosFragment;
     private DailyMotionVideosFragment dailyMotionVideosFragment;
+    private VimeoVideosFragment vimeoVideosFragment;
 
     public TrendTubePagerAdapter(Activity activity, String[] items, FragmentManager fm) {
         super(fm);
@@ -34,9 +36,12 @@ public class TrendTubePagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 youTubeVideosFragment = YouTubeVideosFragment.newInstance(position);
                 return youTubeVideosFragment;
-            default:
+            case 1:
                 dailyMotionVideosFragment = DailyMotionVideosFragment.newInstance(position);
                 return dailyMotionVideosFragment;
+            default:
+                vimeoVideosFragment = VimeoVideosFragment.newInstance(position);
+                return vimeoVideosFragment;
         }
     }
 
@@ -44,8 +49,10 @@ public class TrendTubePagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 return youTubeVideosFragment;
-            default:
+            case 1:
                 return dailyMotionVideosFragment;
+            default:
+                return vimeoVideosFragment;
         }
     }
 
@@ -57,5 +64,10 @@ public class TrendTubePagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return items[position];
+    }
+
+    public void setItems(String[] items) {
+        this.items = items;
+        notifyDataSetChanged();
     }
 }

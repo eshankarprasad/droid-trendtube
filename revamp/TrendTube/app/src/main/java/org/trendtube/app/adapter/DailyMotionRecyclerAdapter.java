@@ -35,7 +35,7 @@ public class DailyMotionRecyclerAdapter extends RecyclerView.Adapter<DailyMotion
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_topviewed_video, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_dailymotion_video, viewGroup, false);
         v.setTag(mItems.get(i).getSnippet().getTitle());
         return new ViewHolder(v, listener);
     }

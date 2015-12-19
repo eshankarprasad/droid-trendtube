@@ -2,6 +2,7 @@ package org.trendtube.app.constants;
 
 import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.utils.MyLog;
+import org.trendtube.app.utils.Utils;
 
 /**
  * Created by shankar on 9/12/15.
@@ -59,6 +60,24 @@ public class Config extends ServerConfig {
     }
 
     public static String getSuggestionUrl(CharSequence query) {
-        return "http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=en&q=" + query;
+        return "http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=en&q=" + Utils.encodeBankSpaces(query.toString());
+    }
+
+    public static String getSearchYouTubeVideosUrl(String token, String query) {
+        //http://www.trendtube.org/YouTubeApi/searchVideosByQuery?server_key=jhsdasr7645234jfsklj0938209sr923&resultPerPage=1&pageToken=1
+        if ("".equals(token)) {
+            return REST_HOST_YOUTUBE + "/searchVideosByQuery?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&q=" + Utils.encodeBankSpaces(query);
+        } else {
+            return REST_HOST_YOUTUBE + "/searchVideosByQuery?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&pageToken=" + token + "&q=" + Utils.encodeBankSpaces(query);
+        }
+    }
+
+    public static String getSearchDailyMotionVideosUrl(String token, String query) {
+
+        if ("".equals(token)) {
+            return REST_HOST_DAILYMOTION + "/searchVideosByQuery?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&q=" + Utils.encodeBankSpaces(query);
+        } else {
+            return REST_HOST_DAILYMOTION + "/searchVideosByQuery?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&pageToken=" + token + "&q=" + Utils.encodeBankSpaces(query);
+        }
     }
 }

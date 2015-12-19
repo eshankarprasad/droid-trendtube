@@ -27,19 +27,16 @@ import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
 import org.trendtube.app.volleytasks.FetchDailyMotionVideosVolleyTask;
-import org.trendtube.app.volleytasks.SearchDailyMotionVideoVolleyTask;
-
-import java.util.List;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
-public class DailyMotionVideosFragment extends Fragment implements DailyMotionRecyclerAdapter_Test.TopVideoItemSelectListener,
-        FetchDailyMotionVideosVolleyTask.FetchDailyMotionVideoListener, NetworkChangeListener, SearchDailyMotionVideoVolleyTask.SearchDailyMotionVideoListener {
+public class VimeoVideosFragment extends Fragment implements DailyMotionRecyclerAdapter_Test.TopVideoItemSelectListener,
+        FetchDailyMotionVideosVolleyTask.FetchDailyMotionVideoListener, NetworkChangeListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
-    private int navIndex = -1;
+    private int mTrend = -1;
     private RecyclerView recyclerView;
     private DailyMotionRecyclerAdapter_Test adapter;
     private String nextPageToken;
@@ -47,14 +44,14 @@ public class DailyMotionVideosFragment extends Fragment implements DailyMotionRe
     private int tabPosition;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
-    private String searchQuery = "";
+    private boolean isSearch = false;
 
-    public DailyMotionVideosFragment() {
+    public VimeoVideosFragment() {
 
     }
 
-    public static DailyMotionVideosFragment newInstance(int tabPosition) {
-        DailyMotionVideosFragment fragment = new DailyMotionVideosFragment();
+    public static VimeoVideosFragment newInstance(int tabPosition) {
+        VimeoVideosFragment fragment = new VimeoVideosFragment();
         Bundle args = new Bundle();
         args.putInt(TAB_POSITION, tabPosition);
         fragment.setArguments(args);
@@ -66,7 +63,7 @@ public class DailyMotionVideosFragment extends Fragment implements DailyMotionRe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle args = getArguments();
         tabPosition = args.getInt(TAB_POSITION);
-        rootView = inflater.inflate(R.layout.fragment_dailymotion_video_list, null);
+        rootView = inflater.inflate(R.layout.fragment_vimeo_video_list, null);
         return rootView;
     }
 
@@ -76,37 +73,32 @@ public class DailyMotionVideosFragment extends Fragment implements DailyMotionRe
         if (isVisibleToUser) {
 
             getActivity().findViewById(R.id.fab_category).setVisibility(View.GONE);
-            TTApplication.fragmentIndex = 1;
+            TTApplication.fragmentIndex = 3;
 
-            if (navIndex != TTApplication.navIndex || !searchQuery.equals(TTApplication.query)) {
-                searchQuery = TTApplication.query;
-                initViews();
+            if (mTrend == TTApplication.navIndex) {
+                // Do nothing
+            } else {
+                nextPageToken = "";
+                recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
+                progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
+                footerProgressWheel = (TTProgressWheel) rootView.findViewById(R.id.footer_progress_bar);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
+                recyclerView.setLayoutManager(linearLayoutManager);
+                recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
+                    @Override
+                    public void onLoadMore(int currentPage) {
+                        MyLog.e("Current Page: " + currentPage);
+                        if (nextPageToken == null) {
+                            MyLog.e("End of loading");
+                        } else {
+                            loadVideoContent();
+                        }
+                    }
+                });
+                loadVideoContent();
+                mTrend = TTApplication.navIndex;
             }
         }
-    }
-
-    private void initViews() {
-        nextPageToken = "";
-        if (recyclerView == null) {
-            recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
-            progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
-            footerProgressWheel = (TTProgressWheel) rootView.findViewById(R.id.footer_progress_bar);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
-            recyclerView.setLayoutManager(linearLayoutManager);
-            recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
-                @Override
-                public void onLoadMore(int currentPage) {
-                    MyLog.e("Current Page: " + currentPage);
-                    if (nextPageToken == null) {
-                        MyLog.e("End of loading more daily motion video");
-                    } else {
-                        loadVideoContent();
-                    }
-                }
-            });
-        }
-        loadVideoContent();
-        navIndex = TTApplication.navIndex;
     }
 
     private void loadVideoContent() {
@@ -115,36 +107,29 @@ public class DailyMotionVideosFragment extends Fragment implements DailyMotionRe
         } else {
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
-
-        if ("".equals(searchQuery)) {
-            FetchDailyMotionVideosVolleyTask task = new FetchDailyMotionVideosVolleyTask(getActivity(), this);
-            task.execute(nextPageToken);
-        } else {
-            SearchDailyMotionVideoVolleyTask task = new SearchDailyMotionVideoVolleyTask(getActivity(), this);
-            task.execute(nextPageToken, searchQuery);
-        }
+        FetchDailyMotionVideosVolleyTask task = new FetchDailyMotionVideosVolleyTask(getActivity(), this);
+        task.execute(nextPageToken);
     }
 
-
     private void registerReceiver() {
-        /*if (receiver == null) {
+        if (receiver == null) {
             receiver = new NetworkChangeReceiver(this);
             intentFilter = new IntentFilter();
             intentFilter.addAction(Constants.INTENT_FILTER_CONNECTIVITY_CHANGE);
             intentFilter.addAction(Constants.INTENT_FILTER_WI_FI_STATE_CHANGE);
         }
-        getActivity().registerReceiver(receiver, intentFilter);*/
+        getActivity().registerReceiver(receiver, intentFilter);
     }
 
     private void unregisterReceiver() {
-        /*MyLog.e("unregisterReceiver");
+        MyLog.e("unregisterReceiver");
         if (receiver != null) {
             try {
                 getActivity().unregisterReceiver(receiver);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }*/
+        }
     }
 
     @Override
@@ -176,10 +161,6 @@ public class DailyMotionVideosFragment extends Fragment implements DailyMotionRe
 
     @Override
     public void onFetchedDailyMotionVideos(DailyMotionVideoModel response) {
-        loadVideos(response);
-    }
-
-    private void loadVideos(DailyMotionVideoModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
         if (adapter == null) {
@@ -204,10 +185,6 @@ public class DailyMotionVideosFragment extends Fragment implements DailyMotionRe
 
     @Override
     public void onFetchedErrorDailyMotionVideos(VolleyError error) {
-        loadError(error);
-    }
-
-    private void loadError(VolleyError error) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
         Utils.handleError(getActivity(), error);
@@ -225,13 +202,7 @@ public class DailyMotionVideosFragment extends Fragment implements DailyMotionRe
         //Toast.makeText(getActivity(), "Network Unavailable Do operations", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onSuccessDailyMotionSearch(DailyMotionVideoModel response) {
-        loadVideos(response);
-    }
-
-    @Override
-    public void onErrorDailyMotionSearch(VolleyError error) {
-        loadError(error);
+    public void startSearchVideos() {
+        isSearch = true;
     }
 }

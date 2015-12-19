@@ -6,9 +6,7 @@ import com.android.volley.ParseError;
 import com.android.volley.VolleyError;
 
 import org.trendtube.app.constants.Config;
-import org.trendtube.app.interfaces.FetchVideosListener;
 import org.trendtube.app.model.CategoryModel;
-import org.trendtube.app.model.VideoModel;
 import org.trendtube.app.volley.NullResponseError;
 import org.trendtube.app.volley.TTGsonRequest;
 import org.trendtube.app.volley.TTRequest;

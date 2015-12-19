@@ -24,9 +24,8 @@ public class Constants {
     public static final String SERVER_ERROR = "Server Error. Please Try Again after some time";
     public static final String APPLICATION_ERROR = "Applcation Error. Please Try Again";
 
-    public static final String TAG_TRENDING_VIDEO = "tag_trending_video";
-    public static final String TAG_TOPVIEWED_VIDEO = "tag_topviewed_video";
     public static final String BUNDLE_QUERY = "bundle_query";
+    public static final String BUNDLE_FRAGMENT_INDEX = "bundle_fragment_index";
 
     public static enum SpinnerType {
 

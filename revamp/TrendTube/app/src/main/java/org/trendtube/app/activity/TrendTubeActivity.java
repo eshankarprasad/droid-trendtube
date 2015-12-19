@@ -30,16 +30,24 @@ import org.trendtube.app.R;
 import org.trendtube.app.adapter.BasicRecyclerAdapter;
 import org.trendtube.app.adapter.TrendTubePagerAdapter;
 import org.trendtube.app.constants.Constants;
+import org.trendtube.app.fragment.DailyMotionVideosFragment;
+import org.trendtube.app.fragment.VimeoVideosFragment;
+import org.trendtube.app.fragment.YouTubeVideosFragment;
 import org.trendtube.app.interfaces.BasicItemSelectedListener;
 import org.trendtube.app.model.BasicItem;
 import org.trendtube.app.model.CategoryModel;
+import org.trendtube.app.model.DailyMotionVideoModel;
 import org.trendtube.app.model.RegionModel;
+import org.trendtube.app.model.YouTubeVideoModel;
 import org.trendtube.app.ui.TTProgressDialog;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.ServiceManager;
 import org.trendtube.app.utils.Utils;
+import org.trendtube.app.volley.TTResponseListener;
 import org.trendtube.app.volleytasks.FetchCategoriesVolleyTask;
 import org.trendtube.app.volleytasks.FetchRegionVolleyTask;
+import org.trendtube.app.volleytasks.SearchDailyMotionVideoVolleyTask;
+import org.trendtube.app.volleytasks.SearchYouTubeVideoVolleyTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +90,8 @@ public class TrendTubeActivity extends AppCompatActivity
     private TextView txtRegion;
     private TrendTubePagerAdapter pagerAdapter;
     private List<String> testList;
+    private TabLayout mTabLayout;
+    private NavigationView mNavigationView;
     private Filter mSearchFilter;
 
     @Override
@@ -127,67 +137,25 @@ public class TrendTubeActivity extends AppCompatActivity
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(0);
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+        mNavigationView.setCheckedItem(0);
         setTitle(R.string.nav_item_trending_videos);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_category);
         fab.setOnClickListener(this);
-        /*fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Snackbar.make(findViewById(R.id.coordinator), "Select CategoryModel", Snackbar.LENGTH_LONG).setAction("All", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(TrendTubeActivity.this, "CategoryModel will be shown", Toast.LENGTH_LONG).show();
-                    }
-                }).show();
-            }
-        });*/
 
         pagerAdapter = new TrendTubePagerAdapter(TrendTubeActivity.this, getResources().getStringArray(R.array.tab_items_normal), getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(pagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
-        tabLayout.setupWithViewPager(mViewPager);
+        mTabLayout = (TabLayout) findViewById(R.id.tablayout);
+        mTabLayout.setupWithViewPager(mViewPager);
 
-        /*tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-                navigationView.getMenu().getItem(tab.getPosition()).setChecked(true);
-                mViewPager.setCurrentItem(tab.getPosition(), true);
-                switch (tab.getPosition()) {
-                    case 0:
-                        setTitle(getString(R.string.nav_item_trending_videos));
-                        fragmentListener = (FragmentListener) pagerAdapter.getCurrentFragment(0);
-                        break;
-                    case 1:
-                        setTitle(getString(R.string.nav_item_top_viewed_videos));
-                        fragmentListener = (FragmentListener) pagerAdapter.getCurrentFragment(1);
-                        break;
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });*/
-
-        View headerView = navigationView.inflateHeaderView(R.layout.drawer_header);
+        View headerView = mNavigationView.inflateHeaderView(R.layout.drawer_header);
         txtRegion = (TextView) headerView.findViewById(R.id.btn_region);
         txtRegion.setText(selectedRegion.getName());
         txtRegion.setOnClickListener(this);
-
-        //receiver = new NetworkChangeReceiver();
     }
 
     @Override
@@ -257,26 +225,34 @@ public class TrendTubeActivity extends AppCompatActivity
     }
 
     private void showSearchScreen() {
-        startActivityForResult(SearchActivity.newIntent(this), Constants.REQUEST_SEARCH);
+        MyLog.e("TTApplication.fragmentIndex: " + TTApplication.fragmentIndex);
+        Intent intent = SearchActivity.newIntent(this);
+        //intent.putExtra(Constants.BUNDLE_FRAGMENT_INDEX, TTApplication.fragmentIndex);
+        startActivityForResult(intent, Constants.REQUEST_SEARCH);
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         menuItem.setChecked(true);
         mDrawerLayout.closeDrawers();
-
         switch (menuItem.getItemId()) {
             case R.id.nav_item_trending_videos:
                 TTApplication.navIndex = 0;
+                TTApplication.query = "";
                 mViewPager.setCurrentItem(0);
-                pagerAdapter.getCurrentFragment(0).onActivityResult(Constants.REQUEST_REFRESH, RESULT_OK, null);
+                onFilterVideos();
                 setTitle(menuItem.getTitle());
+                pagerAdapter.setItems(getResources().getStringArray(R.array.tab_items_normal));
+                mTabLayout.setupWithViewPager(mViewPager);
                 break;
             case R.id.nav_item_top_viewed_videsos:
                 TTApplication.navIndex = 1;
+                TTApplication.query = "";
                 mViewPager.setCurrentItem(0);
-                pagerAdapter.getCurrentFragment(0).onActivityResult(Constants.REQUEST_REFRESH, RESULT_OK, null);
+                onFilterVideos();
                 setTitle(menuItem.getTitle());
+                pagerAdapter.setItems(getResources().getStringArray(R.array.tab_items_normal));
+                mTabLayout.setupWithViewPager(mViewPager);
                 break;
             case R.id.nav_sub_menu_like:
                 like();
@@ -409,7 +385,6 @@ public class TrendTubeActivity extends AppCompatActivity
 
         final Dialog dialog = Utils.getBasicDialog(this, title);
         BasicRecyclerAdapter basicAdapter = new BasicRecyclerAdapter(this, dialog, items, selectedItem, this, type);
-
         RecyclerView listView = (RecyclerView) dialog.findViewById(R.id.dropDownListInfoType);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(listView.getContext());
         listView.setLayoutManager(linearLayoutManager);
@@ -427,25 +402,22 @@ public class TrendTubeActivity extends AppCompatActivity
             TTApplication.categotyId = selectedCategory.getId();
             Utils.setPreference(this, Constants.KEY_CATEGORY_ID, selectedCategory.getId());
             Utils.setPreference(this, Constants.KEY_CATEGORY_NAME, selectedCategory.getName());
-            onCategoryChanged();
+            onFilterVideos();
         } else if (type == Constants.SpinnerType.REGION.getSpinnerType()) {
             this.selectedRegion = item;
             TTApplication.regionId = selectedRegion.getId();
             Utils.setPreference(this, Constants.KEY_REGION_ID, selectedRegion.getId());
             Utils.setPreference(this, Constants.KEY_REGION_NAME, selectedRegion.getName());
             txtRegion.setText(selectedRegion.getName());
-            onRegionChanged();
+            onFilterVideos();
         }
         mDrawerLayout.closeDrawers();
     }
 
-    private void onRegionChanged() {
-        pagerAdapter.getCurrentFragment(TTApplication.fragmentIndex).onActivityResult(Constants.REQUEST_REFRESH, RESULT_OK, null);
+    private void onFilterVideos() {
+        ((YouTubeVideosFragment) pagerAdapter.getCurrentFragment(0)).refreshVideos();
     }
 
-    private void onCategoryChanged() {
-        pagerAdapter.getCurrentFragment(TTApplication.fragmentIndex).onActivityResult(Constants.REQUEST_REFRESH, RESULT_OK, null);
-    }
 
     @Override
     public void onFetchedRegion(RegionModel response) {
@@ -462,7 +434,6 @@ public class TrendTubeActivity extends AppCompatActivity
             BasicItem item = new BasicItem(id, regionModel.getRegionMap().get(id).getName());
             regions.add(item);
         }
-
         TTApplication.regions = regions;
     }
 
@@ -478,7 +449,54 @@ public class TrendTubeActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.REQUEST_SEARCH && resultCode == RESULT_OK) {
             String query = data.getExtras().getString(Constants.BUNDLE_QUERY);
+            //int fragmentIndex = data.getExtras().getInt(Constants.BUNDLE_FRAGMENT_INDEX);
             MyLog.e("Query Received: " + query);
+
+            pagerAdapter.setItems(getResources().getStringArray(R.array.tab_items_search));
+            mTabLayout.setupWithViewPager(mViewPager);
+            mNavigationView.getMenu().findItem(R.id.nav_item_trending_videos).setChecked(false);
+            mNavigationView.getMenu().findItem(R.id.nav_item_top_viewed_videsos).setChecked(false);
+
+            TTApplication.query = query;
+            ((YouTubeVideosFragment) pagerAdapter.getCurrentFragment(0)).startSearchVideos();
+            /*((DailyMotionVideosFragment) pagerAdapter.getCurrentFragment(1)).startSearchVideos();
+            ((VimeoVideosFragment) pagerAdapter.getCurrentFragment(2)).startSearchVideos();*/
+
+            /*MyLog.e("TTApplication.fragmentIndex: " + TTApplication.fragmentIndex);
+            TTApplication.query = query;
+            switch (TTApplication.fragmentIndex) {
+                case 0:
+                    SearchYouTubeVideoVolleyTask searchYouTubeVideoVolleyTask = new SearchYouTubeVideoVolleyTask(this, this);
+                    searchYouTubeVideoVolleyTask.execute(searchPageToken, query);
+                    break;
+                case 1:
+                    SearchDailyMotionVideoVolleyTask task = new SearchDailyMotionVideoVolleyTask(this, this);
+                    task.execute(searchPageToken, query);
+                    break;
+            }*/
         }
     }
+
+    /*@Override
+    public void onSuccessYouTubeSearch(YouTubeVideoModel response) {
+        dismissProgressDialog();
+        ((YouTubeVideosFragment)pagerAdapter.getCurrentFragment(0)).setSearchVideoModel(response);
+        MyLog.e(response.toString());
+    }
+
+    @Override
+    public void onErrorYouTubeSearch(VolleyError error) {
+        dismissProgressDialog();
+    }
+
+    @Override
+    public void onSuccessDailyMotionSearch(DailyMotionVideoModel response) {
+        dismissProgressDialog();
+        MyLog.e(response.toString());
+    }
+
+    @Override
+    public void onErrorDailyMotionSearch(VolleyError error) {
+        dismissProgressDialog();
+    }*/
 }

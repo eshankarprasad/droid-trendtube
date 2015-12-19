@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by shankar on 10/12/15.
  */
-public class VideoModel extends ResponseMetadata {
+public class YouTubeVideoModel extends ResponseMetadata {
 
     @SerializedName("id")
     private String id;
@@ -78,7 +78,7 @@ public class VideoModel extends ResponseMetadata {
 
     @Override
     public String toString() {
-        return "VideoModel{" +
+        return "YouTubeVideoModel{" +
                 "id='" + id + '\'' +
                 ", kind='" + kind + '\'' +
                 ", etag='" + etag + '\'' +
