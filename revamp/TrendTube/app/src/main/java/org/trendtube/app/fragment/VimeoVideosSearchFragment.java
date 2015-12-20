@@ -17,41 +17,40 @@ import com.android.volley.VolleyError;
 import org.trendtube.app.R;
 import org.trendtube.app.activity.SecondActivity;
 import org.trendtube.app.activity.TTApplication;
-import org.trendtube.app.adapter.DailyMotionRecyclerAdapter_Test;
+import org.trendtube.app.adapter.VimeoRecyclerAdapter;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.interfaces.NetworkChangeListener;
-import org.trendtube.app.model.DailyMotionVideoModel;
+import org.trendtube.app.model.VimeoVideoModel;
 import org.trendtube.app.receiver.NetworkChangeReceiver;
 import org.trendtube.app.ui.TTProgressWheel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.FetchDailyMotionVideosVolleyTask;
+import org.trendtube.app.volleytasks.SearchVimeoVideoVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
-public class VimeoVideosFragment extends Fragment implements DailyMotionRecyclerAdapter_Test.TopVideoItemSelectListener,
-        FetchDailyMotionVideosVolleyTask.FetchDailyMotionVideoListener, NetworkChangeListener {
+public class VimeoVideosSearchFragment extends Fragment implements VimeoRecyclerAdapter.VimeoItemSelectListener,
+        SearchVimeoVideoVolleyTask.SearchVimeoVideoListener, NetworkChangeListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
-    private int mTrend = -1;
     private RecyclerView recyclerView;
-    private DailyMotionRecyclerAdapter_Test adapter;
+    private VimeoRecyclerAdapter adapter;
     private String nextPageToken;
     private TTProgressWheel progressWheel, footerProgressWheel;
     private int tabPosition;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
-    private boolean isSearch = false;
+    private String searchQuery = "";
 
-    public VimeoVideosFragment() {
+    public VimeoVideosSearchFragment() {
 
     }
 
-    public static VimeoVideosFragment newInstance(int tabPosition) {
-        VimeoVideosFragment fragment = new VimeoVideosFragment();
+    public static VimeoVideosSearchFragment newInstance(int tabPosition) {
+        VimeoVideosSearchFragment fragment = new VimeoVideosSearchFragment();
         Bundle args = new Bundle();
         args.putInt(TAB_POSITION, tabPosition);
         fragment.setArguments(args);
@@ -71,34 +70,36 @@ public class VimeoVideosFragment extends Fragment implements DailyMotionRecycler
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-
             getActivity().findViewById(R.id.fab_category).setVisibility(View.GONE);
-            TTApplication.fragmentIndex = 3;
-
-            if (mTrend == TTApplication.navIndex) {
-                // Do nothing
-            } else {
-                nextPageToken = "";
-                recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
-                progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
-                footerProgressWheel = (TTProgressWheel) rootView.findViewById(R.id.footer_progress_bar);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
-                recyclerView.setLayoutManager(linearLayoutManager);
-                recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
-                    @Override
-                    public void onLoadMore(int currentPage) {
-                        MyLog.e("Current Page: " + currentPage);
-                        if (nextPageToken == null) {
-                            MyLog.e("End of loading");
-                        } else {
-                            loadVideoContent();
-                        }
-                    }
-                });
-                loadVideoContent();
-                mTrend = TTApplication.navIndex;
+            if (!searchQuery.equals(TTApplication.query)) {
+                searchQuery = TTApplication.query;
+                initViews();
             }
         }
+    }
+
+    private void initViews() {
+        nextPageToken = "";
+        if (recyclerView == null) {
+            recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
+            progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
+            footerProgressWheel = (TTProgressWheel) rootView.findViewById(R.id.footer_progress_bar);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
+                @Override
+                public void onLoadMore(int currentPage) {
+                    MyLog.e("Current Page: (Vimeo) " + currentPage);
+                    if (nextPageToken == null) {
+                        MyLog.e("End of loading");
+                    } else {
+                        loadVideoContent();
+                    }
+                }
+            });
+        }
+        loadVideoContent();
+        searchQuery = TTApplication.query;
     }
 
     private void loadVideoContent() {
@@ -107,33 +108,33 @@ public class VimeoVideosFragment extends Fragment implements DailyMotionRecycler
         } else {
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
-        FetchDailyMotionVideosVolleyTask task = new FetchDailyMotionVideosVolleyTask(getActivity(), this);
-        task.execute(nextPageToken);
+        SearchVimeoVideoVolleyTask task = new SearchVimeoVideoVolleyTask(getActivity(), this);
+        task.execute(nextPageToken, searchQuery);
     }
 
     private void registerReceiver() {
-        if (receiver == null) {
+        /*if (receiver == null) {
             receiver = new NetworkChangeReceiver(this);
             intentFilter = new IntentFilter();
             intentFilter.addAction(Constants.INTENT_FILTER_CONNECTIVITY_CHANGE);
             intentFilter.addAction(Constants.INTENT_FILTER_WI_FI_STATE_CHANGE);
         }
-        getActivity().registerReceiver(receiver, intentFilter);
+        getActivity().registerReceiver(receiver, intentFilter);*/
     }
 
     private void unregisterReceiver() {
-        MyLog.e("unregisterReceiver");
+        /*MyLog.e("unregisterReceiver");
         if (receiver != null) {
             try {
                 getActivity().unregisterReceiver(receiver);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     @Override
-    public void onTopVideoItemSelected(Object videoId) {
+    public void onVimeoItemSelected(Object videoId) {
 
         String video = (String) videoId;
         Toast.makeText(getActivity(), video, Toast.LENGTH_SHORT).show();
@@ -160,35 +161,9 @@ public class VimeoVideosFragment extends Fragment implements DailyMotionRecycler
     }*/
 
     @Override
-    public void onFetchedDailyMotionVideos(DailyMotionVideoModel response) {
-        progressWheel.setVisibility(View.GONE);
-        footerProgressWheel.setVisibility(View.GONE);
-        if (adapter == null) {
-            adapter = new DailyMotionRecyclerAdapter_Test(getActivity(), response.getList(), this);
-            recyclerView.setAdapter(adapter);
-        } else if ("".equals(nextPageToken)) {
-            adapter.setItems(response.getList());
-            adapter.notifyDataSetChanged();
-        } else {
-            adapter.addItems(response.getList());
-            adapter.notifyDataSetChanged();
-        }
-        nextPageToken = String.valueOf(response.getPage() + 1);
-        unregisterReceiver();
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         unregisterReceiver();
-    }
-
-    @Override
-    public void onFetchedErrorDailyMotionVideos(VolleyError error) {
-        progressWheel.setVisibility(View.GONE);
-        footerProgressWheel.setVisibility(View.GONE);
-        Utils.handleError(getActivity(), error);
-        registerReceiver();
     }
 
     @Override
@@ -202,7 +177,29 @@ public class VimeoVideosFragment extends Fragment implements DailyMotionRecycler
         //Toast.makeText(getActivity(), "Network Unavailable Do operations", Toast.LENGTH_SHORT).show();
     }
 
-    public void startSearchVideos() {
-        isSearch = true;
+    @Override
+    public void onSuccessVimeoSearch(VimeoVideoModel response) {
+        progressWheel.setVisibility(View.GONE);
+        footerProgressWheel.setVisibility(View.GONE);
+        if (adapter == null) {
+            adapter = new VimeoRecyclerAdapter(getActivity(), response.getList(), this);
+            recyclerView.setAdapter(adapter);
+        } else if ("".equals(nextPageToken)) {
+            adapter.setItems(response.getList());
+            adapter.notifyDataSetChanged();
+        } else {
+            adapter.addItems(response.getList());
+            adapter.notifyDataSetChanged();
+        }
+        nextPageToken = String.valueOf(response.getPage() + 1);
+        unregisterReceiver();
+    }
+
+    @Override
+    public void onErrorVimeoSearch(VolleyError error) {
+        progressWheel.setVisibility(View.GONE);
+        footerProgressWheel.setVisibility(View.GONE);
+        Utils.handleError(getActivity(), error);
+        registerReceiver();
     }
 }

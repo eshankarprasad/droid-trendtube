@@ -47,12 +47,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class TrendTubeActivity extends AppCompatActivity
+public class TrendTubeSearchResultActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener,
         FetchCategoriesVolleyTask.FetchCategoriesListener, BasicItemSelectedListener,
         FetchRegionVolleyTask.FetchRegionListener {
 
-    private static final String TAG = TrendTubeActivity.class.getSimpleName();
+    private static final String TAG = TrendTubeSearchResultActivity.class.getSimpleName();
     private final BroadcastReceiver networkReceiver = new BroadcastReceiver() {
 
         @Override
@@ -89,7 +89,7 @@ public class TrendTubeActivity extends AppCompatActivity
     private Filter mSearchFilter;
 
     public static Intent newIntent(Activity activity) {
-        return new Intent(activity, TrendTubeActivity.class);
+        return new Intent(activity, TrendTubeSearchResultActivity.class);
     }
 
     @Override
@@ -137,13 +137,11 @@ public class TrendTubeActivity extends AppCompatActivity
 
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         mNavigationView.setNavigationItemSelectedListener(this);
-        mNavigationView.setCheckedItem(TTApplication.navIndex);
-        setTitle(R.string.nav_item_trending_videos);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_category);
         fab.setOnClickListener(this);
 
-        pagerAdapter = new TrendTubePagerAdapter(TrendTubeActivity.this, getResources().getStringArray(R.array.tab_items_normal), getSupportFragmentManager());
+        pagerAdapter = new TrendTubePagerAdapter(TrendTubeSearchResultActivity.this, getResources().getStringArray(R.array.tab_items_search), getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(pagerAdapter);
 
@@ -237,20 +235,14 @@ public class TrendTubeActivity extends AppCompatActivity
             case R.id.nav_item_trending_videos:
                 TTApplication.navIndex = 0;
                 TTApplication.query = "";
-                mViewPager.setCurrentItem(0);
-                onFilterVideos();
-                setTitle(menuItem.getTitle());
-                pagerAdapter.setItems(getResources().getStringArray(R.array.tab_items_normal));
-                mTabLayout.setupWithViewPager(mViewPager);
+                finish();
+                startActivity(TrendTubeActivity.newIntent(this));
                 break;
             case R.id.nav_item_top_viewed_videsos:
                 TTApplication.navIndex = 1;
                 TTApplication.query = "";
-                mViewPager.setCurrentItem(0);
-                onFilterVideos();
-                setTitle(menuItem.getTitle());
-                pagerAdapter.setItems(getResources().getStringArray(R.array.tab_items_normal));
-                mTabLayout.setupWithViewPager(mViewPager);
+                finish();
+                startActivity(TrendTubeActivity.newIntent(this));
                 break;
             case R.id.nav_sub_menu_like:
                 like();
@@ -447,34 +439,8 @@ public class TrendTubeActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.REQUEST_SEARCH && resultCode == RESULT_OK) {
             String query = data.getExtras().getString(Constants.BUNDLE_QUERY);
-            //int fragmentIndex = data.getExtras().getInt(Constants.BUNDLE_FRAGMENT_INDEX);
             MyLog.e("Query Received: " + query);
             TTApplication.query = query;
-            finish();
-            startActivity(TrendTubeSearchResultActivity.newIntent(this));
         }
     }
-
-    /*@Override
-    public void onSuccessYouTubeSearch(YouTubeVideoModel response) {
-        dismissProgressDialog();
-        ((YouTubeVideosFragment)pagerAdapter.getCurrentFragment(0)).setSearchVideoModel(response);
-        MyLog.e(response.toString());
-    }
-
-    @Override
-    public void onErrorYouTubeSearch(VolleyError error) {
-        dismissProgressDialog();
-    }
-
-    @Override
-    public void onSuccessDailyMotionSearch(DailyMotionVideoModel response) {
-        dismissProgressDialog();
-        MyLog.e(response.toString());
-    }
-
-    @Override
-    public void onErrorDailyMotionSearch(VolleyError error) {
-        dismissProgressDialog();
-    }*/
 }

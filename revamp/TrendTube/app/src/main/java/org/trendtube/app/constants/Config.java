@@ -80,4 +80,13 @@ public class Config extends ServerConfig {
             return REST_HOST_DAILYMOTION + "/searchVideosByQuery?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&pageToken=" + token + "&q=" + Utils.encodeBankSpaces(query);
         }
     }
+
+    public static String getSearchVimeoVideosUrl(String token, String query) {
+
+        if ("".equals(token)) {
+            return REST_HOST_VIMEO + "/searchVideosByQuery?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&q=" + Utils.encodeBankSpaces(query);
+        } else {
+            return REST_HOST_VIMEO + "/searchVideosByQuery?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&pageToken=" + token + "&q=" + Utils.encodeBankSpaces(query);
+        }
+    }
 }

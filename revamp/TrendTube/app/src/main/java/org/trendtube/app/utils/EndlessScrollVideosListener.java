@@ -18,6 +18,7 @@ public abstract class EndlessScrollVideosListener extends RecyclerView.OnScrollL
 
     public EndlessScrollVideosListener(LinearLayoutManager linearLayoutManager) {
         this.mLinearLayoutManager = linearLayoutManager;
+        current_page = 1;
     }
 
     @Override
@@ -39,7 +40,7 @@ public abstract class EndlessScrollVideosListener extends RecyclerView.OnScrollL
 
             // Do something
             current_page++;
-            //onLoadMore(current_page);
+            onLoadMore(current_page);
             loading = true;
         }
     }

@@ -13,14 +13,15 @@ import org.trendtube.app.utils.MyLog;
 /**
  * Created by shankar on 9/12/15.
  */
-public class TrendTubePagerAdapter extends FragmentStatePagerAdapter {
+public class TrendTubeSearchPagerAdapter extends FragmentStatePagerAdapter {
 
     private Activity activity;
     private String[] items;
     private YouTubeVideosFragment youTubeVideosFragment;
     private DailyMotionVideosFragment dailyMotionVideosFragment;
+    private VimeoVideosSearchFragment vimeoVideosSearchFragment;
 
-    public TrendTubePagerAdapter(Activity activity, String[] items, FragmentManager fm) {
+    public TrendTubeSearchPagerAdapter(Activity activity, String[] items, FragmentManager fm) {
         super(fm);
         this.activity = activity;
         this.items = items;
@@ -35,9 +36,12 @@ public class TrendTubePagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 youTubeVideosFragment = YouTubeVideosFragment.newInstance(position);
                 return youTubeVideosFragment;
-            default:
+            case 1:
                 dailyMotionVideosFragment = DailyMotionVideosFragment.newInstance(position);
                 return dailyMotionVideosFragment;
+            default:
+                vimeoVideosSearchFragment = VimeoVideosSearchFragment.newInstance(position);
+                return vimeoVideosSearchFragment;
         }
     }
 
@@ -45,8 +49,10 @@ public class TrendTubePagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 return youTubeVideosFragment;
-            default:
+            case 1:
                 return dailyMotionVideosFragment;
+            default:
+                return vimeoVideosSearchFragment;
         }
     }
 

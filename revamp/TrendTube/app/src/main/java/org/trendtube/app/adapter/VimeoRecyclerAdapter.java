@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.trendtube.app.R;
-import org.trendtube.app.model.Item;
+import org.trendtube.app.model.VimeoVideoItem;
 import org.trendtube.app.utils.Utils;
 
 import java.util.List;
@@ -17,41 +17,41 @@ import java.util.List;
 /**
  * Created by echessa on 7/24/15.
  */
-public class DailyMotionRecyclerAdapter_Test extends RecyclerView.Adapter<DailyMotionRecyclerAdapter_Test.ViewHolder> {
+public class VimeoRecyclerAdapter extends RecyclerView.Adapter<VimeoRecyclerAdapter.ViewHolder> {
 
-    private List<Item> mItems;
+    private List<VimeoVideoItem> mItems;
     private Activity activity;
-    private TopVideoItemSelectListener listener;
+    private VimeoItemSelectListener listener;
 
-    public DailyMotionRecyclerAdapter_Test(Activity activity, List<Item> items, TopVideoItemSelectListener listener) {
+    public VimeoRecyclerAdapter(Activity activity, List<VimeoVideoItem> items, VimeoItemSelectListener listener) {
         this.activity = activity;
         mItems = items;
         this.listener = listener;
     }
 
-    public void addItems(List<Item> items) {
+    public void addItems(List<VimeoVideoItem> items) {
         mItems.addAll(items);
     }
 
-    public void setItems(List<Item> items) {
+    public void setItems(List<VimeoVideoItem> items) {
         mItems.clear();
         mItems.addAll(items);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_dailymotion_video, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_vimeo_video, viewGroup, false);
         v.setTag(mItems.get(i).getTitle());
         return new ViewHolder(v, listener);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        Item item = mItems.get(i);
-        Utils.displayImage(activity, item.getThumbnailLargeUrl(), R.drawable.image, viewHolder.imgThumbnail);
+        VimeoVideoItem item = mItems.get(i);
+        Utils.displayImage(activity, item.getThumbnail(), R.drawable.image, viewHolder.imgThumbnail);
         viewHolder.txtTitle.setText(item.getTitle());
-        viewHolder.txtChannelTitle.setText(item.getChannel());
-        viewHolder.txtAgeAndViews.setText(Utils.calculateAge(item.getCreatedTime()) + " . " + Utils.calculateViewCount(item.getViewsTotal() + "") + " views");
+        //viewHolder.txtChannelTitle.setText(item.getChannel());
+        viewHolder.txtAgeAndViews.setText(Utils.calculateAge(item.getCreatedTime()) + " . " + Utils.calculateViewCount(item.getViewsCount() + "") + " views");
     }
 
     @Override
@@ -59,23 +59,23 @@ public class DailyMotionRecyclerAdapter_Test extends RecyclerView.Adapter<DailyM
         return mItems.size();
     }
 
-    public interface TopVideoItemSelectListener {
-        public void onTopVideoItemSelected(Object videoId);
+    public interface VimeoItemSelectListener {
+        public void onVimeoItemSelected(Object videoId);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final ImageView imgThumbnail;
         private final TextView txtTitle;
-        private final TextView txtChannelTitle;
+        //private final TextView txtChannelTitle;
         private final TextView txtAgeAndViews;
-        private final TopVideoItemSelectListener listener;
+        private final VimeoItemSelectListener listener;
 
-        ViewHolder(View v, TopVideoItemSelectListener listener) {
+        ViewHolder(View v, VimeoItemSelectListener listener) {
             super(v);
             imgThumbnail = (ImageView) v.findViewById(R.id.img_thumbnail);
             txtTitle = (TextView) v.findViewById(R.id.txt_title);
-            txtChannelTitle = (TextView) v.findViewById(R.id.txt_channel_title);
+            //txtChannelTitle = (TextView) v.findViewById(R.id.txt_channel_title);
             txtAgeAndViews = (TextView) v.findViewById(R.id.txt_age_and_views);
             v.setOnClickListener(this);
             this.listener = listener;
@@ -83,7 +83,7 @@ public class DailyMotionRecyclerAdapter_Test extends RecyclerView.Adapter<DailyM
 
         @Override
         public void onClick(View v) {
-            listener.onTopVideoItemSelected(v.getTag());
+            listener.onVimeoItemSelected(v.getTag());
         }
     }
 
