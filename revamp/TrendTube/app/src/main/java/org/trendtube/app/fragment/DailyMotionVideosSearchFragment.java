@@ -34,7 +34,7 @@ import org.trendtube.app.volleytasks.SearchDailyMotionVideoVolleyTask;
  */
 
 public class DailyMotionVideosSearchFragment extends Fragment implements DailyMotionRecyclerAdapter_Test.TopVideoItemSelectListener,
-        FetchDailyMotionTrendingVideosVolleyTask.FetchDailyMotionTrendingVideoListener, NetworkChangeListener, SearchDailyMotionVideoVolleyTask.SearchDailyMotionVideoListener {
+        NetworkChangeListener, SearchDailyMotionVideoVolleyTask.SearchDailyMotionVideoListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private int navIndex = -1;
@@ -72,7 +72,6 @@ public class DailyMotionVideosSearchFragment extends Fragment implements DailyMo
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            getActivity().findViewById(R.id.fab_category).setVisibility(View.GONE);
             TTApplication.fragmentIndex = 1;
             if (navIndex != TTApplication.navIndex || !searchQuery.equals(TTApplication.query)) {
                 searchQuery = TTApplication.query;
@@ -111,14 +110,8 @@ public class DailyMotionVideosSearchFragment extends Fragment implements DailyMo
         } else {
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
-
-        if ("".equals(searchQuery)) {
-            FetchDailyMotionTrendingVideosVolleyTask task = new FetchDailyMotionTrendingVideosVolleyTask(getActivity(), this);
-            task.execute(nextPageToken);
-        } else {
-            SearchDailyMotionVideoVolleyTask task = new SearchDailyMotionVideoVolleyTask(getActivity(), this);
-            task.execute(nextPageToken, searchQuery);
-        }
+        SearchDailyMotionVideoVolleyTask task = new SearchDailyMotionVideoVolleyTask(getActivity(), this);
+        task.execute(nextPageToken, searchQuery);
     }
 
 
@@ -154,27 +147,6 @@ public class DailyMotionVideosSearchFragment extends Fragment implements DailyMo
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
     }
 
-    /*@Override
-    public void callRegionUpdate(BasicItem selectedRegion) {
-        MyLog.e("callRegionUpdate");
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
-    }
-
-    @Override
-    public void callCategoryUpdate(BasicItem selectedCategory) {
-        MyLog.e("callCategoryUpdate");
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
-    }*/
-
-    @Override
-    public void onFetchedDailyMotionTrendingVideos(DailyMotionTrendingVideoModel response) {
-        loadVideos(response);
-    }
-
     private void loadVideos(DailyMotionTrendingVideoModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
@@ -198,11 +170,6 @@ public class DailyMotionVideosSearchFragment extends Fragment implements DailyMo
         unregisterReceiver();
     }
 
-    @Override
-    public void onFetchedErrorDailyMotionTrendingVideos(VolleyError error) {
-        loadError(error);
-    }
-
     private void loadError(VolleyError error) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
@@ -213,7 +180,7 @@ public class DailyMotionVideosSearchFragment extends Fragment implements DailyMo
     @Override
     public void onNetworkConnected() {
         //Toast.makeText(getActivity(), "Network Available Do operations", Toast.LENGTH_SHORT).show();
-        loadVideoContent();
+        //loadVideoContent();
     }
 
     @Override

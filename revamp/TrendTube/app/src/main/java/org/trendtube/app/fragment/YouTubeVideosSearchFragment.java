@@ -35,7 +35,7 @@ import org.trendtube.app.volleytasks.SearchYouTubeVideoVolleyTask;
  */
 
 public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecyclerAdapter.OnTrendTubeItemSelectListener,
-        FetchVideosListener, NetworkChangeListener, SearchYouTubeVideoVolleyTask.SearchYouTubeVideoListener {
+        NetworkChangeListener, SearchYouTubeVideoVolleyTask.SearchYouTubeVideoListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private RecyclerView recyclerView;
@@ -90,7 +90,6 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             TTApplication.fragmentIndex = 0;
-            getActivity().findViewById(R.id.fab_category).setVisibility(View.VISIBLE);
             if (adapter != null && adapter.getItemCount() == 0) {
                 registerReceiver();
             }
@@ -130,13 +129,8 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
         } else {
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
-        if ("".equals(TTApplication.query)) {
-            FetchYouTubeTrendingVideosVolleyTask task = new FetchYouTubeTrendingVideosVolleyTask(getActivity(), this);
-            task.execute(nextPageToken);
-        } else {
-            SearchYouTubeVideoVolleyTask searchYouTubeVideoVolleyTask = new SearchYouTubeVideoVolleyTask(getActivity(), this);
-            searchYouTubeVideoVolleyTask.execute(nextPageToken, TTApplication.query);
-        }
+        SearchYouTubeVideoVolleyTask task = new SearchYouTubeVideoVolleyTask(getActivity(), this);
+        task.execute(nextPageToken, TTApplication.query);
     }
 
     @Override
@@ -150,56 +144,16 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
     }
 
-    @Override
-    public void onVideoFetched(YouTubeVideoModel response) {
-        progressWheel.setVisibility(View.GONE);
-        footerProgressWheel.setVisibility(View.GONE);
-        if (adapter == null) {
-            adapter = new YouTubeRecyclerAdapter(getActivity(), response.getVideoItems(), this);
-            recyclerView.setAdapter(adapter);
-        } else if ("".equals(nextPageToken)) {
-            adapter.setItems(response.getVideoItems());
-            adapter.notifyDataSetChanged();
-        } else {
-            adapter.addItems(response.getVideoItems());
-            adapter.notifyDataSetChanged();
-        }
-        nextPageToken = response.getNextPageToken();
-        unregisterReceiver();
-    }
-
-    @Override
-    public void onVideoFetchedError(VolleyError error) {
-        progressWheel.setVisibility(View.GONE);
-        footerProgressWheel.setVisibility(View.GONE);
-        progressWheel.setVisibility(View.GONE);
-        footerProgressWheel.setVisibility(View.GONE);
-        Utils.handleError(getActivity(), error);
-        registerReceiver();
-    }
-
-    public void refreshVideos() {
-        MyLog.e("refreshVideos");
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
-    }
 
     @Override
     public void onNetworkConnected() {
         //Toast.makeText(getActivity(), "Network Available Do operations", Toast.LENGTH_SHORT).show();
-        loadVideoContent();
+        //loadVideoContent();
     }
 
     @Override
     public void onNetworkDisconnected() {
         //Toast.makeText(getActivity(), "Network Unavailable Do operations", Toast.LENGTH_SHORT).show();
-    }
-
-    public void startSearchVideos() {
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
     }
 
     @Override

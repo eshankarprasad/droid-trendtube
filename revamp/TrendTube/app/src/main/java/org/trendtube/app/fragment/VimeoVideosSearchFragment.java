@@ -70,7 +70,6 @@ public class VimeoVideosSearchFragment extends Fragment implements VimeoRecycler
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            getActivity().findViewById(R.id.fab_category).setVisibility(View.GONE);
             if (!searchQuery.equals(TTApplication.query)) {
                 searchQuery = TTApplication.query;
                 initViews();

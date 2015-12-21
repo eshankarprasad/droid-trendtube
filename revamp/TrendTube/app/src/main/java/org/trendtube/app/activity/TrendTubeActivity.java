@@ -130,36 +130,6 @@ public class TrendTubeActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_trend_tube, menu);
-
-        /*MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
-            @Override
-            public boolean onQueryTextSubmit(String text) {
-                Toast.makeText(getApplicationContext(), "Search Text: "+ text, Toast.LENGTH_SHORT).show();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String text) {
-                //Toast.makeText(getApplicationContext(), "sssssss "+text, Toast.LENGTH_LONG).show();
-                *//*if (TextUtils.isEmpty(text)) {
-                    mSearchFilter.filter(null);
-                } else {
-                    mSearchFilter.filter(text);
-                }*//*
-                return true;
-            }
-        });*/
-
-
-        //mSearchView.setOnQueryTextListener(this);
-        //searchView.setQueryHint(getString(R.string.action_search));
-        /*SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchAutoComplete.setHintTextColor(getResources().getColor(android.R.color.white));
-        searchAutoComplete.setTextSize(14);*/
         return true;
     }
 
@@ -185,8 +155,8 @@ public class TrendTubeActivity extends AppCompatActivity
     private void showSearchScreen() {
         MyLog.e("TTApplication.fragmentIndex: " + TTApplication.fragmentIndex);
         Intent intent = SearchActivity.newIntent(this);
-        //intent.putExtra(Constants.BUNDLE_FRAGMENT_INDEX, TTApplication.fragmentIndex);
         startActivityForResult(intent, Constants.REQUEST_SEARCH);
+        Utils.animateActivity(this, "zero");
     }
 
     @Override
@@ -197,19 +167,13 @@ public class TrendTubeActivity extends AppCompatActivity
             case R.id.nav_item_trending_videos:
                 TTApplication.navIndex = 0;
                 TTApplication.query = "";
-
-                mViewPager.setAdapter(null);
                 mViewPager.setAdapter(trendingVideoPagerAdapter);
-
                 setTitle(menuItem.getTitle());
                 break;
             case R.id.nav_item_top_viewed_videsos:
                 TTApplication.navIndex = 1;
                 TTApplication.query = "";
-
-                mViewPager.setAdapter(null);
                 mViewPager.setAdapter(topVideosPagerAdapter);
-
                 setTitle(menuItem.getTitle());
                 break;
             case R.id.nav_sub_menu_like:
@@ -412,6 +376,7 @@ public class TrendTubeActivity extends AppCompatActivity
             TTApplication.query = query;
             finish();
             startActivity(TrendTubeSearchResultActivity.newIntent(this));
+            Utils.animateActivity(this, "zero");
         }
     }
 

@@ -55,8 +55,6 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        //fragmentIndex = getIntent().getExtras().getInt(Constants.BUNDLE_FRAGMENT_INDEX);
-
         searchInputFilter = new InputFilter() {
 
             @Override
@@ -108,16 +106,6 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
         searchView.onActionViewExpanded();
         searchView.setOnQueryTextListener(new SuggestorQueryListener(this, this));
         searchView.setQueryHint(getString(R.string.hint_search));
-
-        /*int searchPlateId = searchView.getContext().getResources()
-                .getIdentifier("android:id/search_plate", null, null);
-        View searchPlateView = searchView.findViewById(searchPlateId);
-        if (searchPlateView != null) {
-            searchPlateView.setBackgroundColor(Color.TRANSPARENT);
-        }*/
-        /*SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchAutoComplete.setHintTextColor(getResources().getColor(android.R.color.white));
-        searchAutoComplete.setTextSize(14);*/
         return true;
     }
 
@@ -130,6 +118,12 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        Utils.animateActivity(this, "down");
     }
 
     private void onOkButtonClick(String locality) {

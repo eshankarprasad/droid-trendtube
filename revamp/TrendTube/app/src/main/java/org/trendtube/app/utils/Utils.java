@@ -337,4 +337,25 @@ public class Utils {
     public static String encodeBankSpaces(String text) {
         return text.replaceAll(" ", "%20");
     }
+
+    public static void animateActivity(Activity activity, String action) {
+        if (action.equalsIgnoreCase("next")) {
+
+            activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+        } else if (action.equalsIgnoreCase("back")) {
+            activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+
+        } else if (action.equalsIgnoreCase("up")) {
+            activity.overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+        } else if (action.equalsIgnoreCase("down")) {
+            //activity.overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+            activity.overridePendingTransition(0, R.anim.push_down_out);
+        } else if (action.equalsIgnoreCase("fadein")) {
+            activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        } else if (action.equalsIgnoreCase("zero")) {
+            activity.overridePendingTransition(R.anim.zero_duration,
+                    R.anim.zero_duration);
+        }
+    }
 }

@@ -6,8 +6,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import org.trendtube.app.fragment.DailyMotionTrendingVideosFragment;
+import org.trendtube.app.fragment.DailyMotionVideosSearchFragment;
 import org.trendtube.app.fragment.VimeoVideosSearchFragment;
 import org.trendtube.app.fragment.YouTubeTrendingVideosFragment;
+import org.trendtube.app.fragment.YouTubeVideosSearchFragment;
 import org.trendtube.app.utils.MyLog;
 
 /**
@@ -29,9 +31,9 @@ public class TrendTubeSearchPagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                return YouTubeTrendingVideosFragment.newInstance(position);
+                return YouTubeVideosSearchFragment.newInstance(position);
             case 1:
-                return DailyMotionTrendingVideosFragment.newInstance(position);
+                return DailyMotionVideosSearchFragment.newInstance(position);
             default:
                 return VimeoVideosSearchFragment.newInstance(position);
         }
