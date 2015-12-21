@@ -110,7 +110,7 @@ public class TTGsonRequest<T extends ResponseMetadata> extends TTRequest<T> {
 	@Override
 	protected void deliverResponse(T response) {
         super.deliverResponse(response);
-		System.out.println(response);
+		//System.out.println(response);
 	}
 
 	@Override
@@ -150,14 +150,14 @@ public class TTGsonRequest<T extends ResponseMetadata> extends TTRequest<T> {
                 lastIndex = json.lastIndexOf("]]");
             }
 
-            System.err.println("Start Index: " + startIndex);
-            System.err.println("Last Index: " + lastIndex);
+            //System.err.println("Start Index: " + startIndex);
+            //System.err.println("Last Index: " + lastIndex);
 
             json = json.substring(startIndex+2, lastIndex).replaceAll("0\\],\\[", "").replaceAll("0,\\[10\\]\\],\\[", "").replaceAll(",0,\\[10\\]", "");
             json = "{\"suggestions\":[" + json + "]}";
 		}
-		System.err.println("Final Url: " + getUrl());
-		System.err.println("Final JSON: " + json);
+		//System.err.println("Final Url: " + getUrl());
+		//System.err.println("Final JSON: " + json);
 		return json;
 	}
 	@Override

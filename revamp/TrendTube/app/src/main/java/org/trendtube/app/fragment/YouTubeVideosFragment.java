@@ -42,6 +42,7 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
     private int tabPosition;
     private String nextPageToken;
     private TTProgressWheel progressWheel, footerProgressWheel;
+    private EndlessScrollVideosListener endlessScrollVideosListener;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
 
@@ -60,16 +61,23 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        MyLog.e("onCreateView");
         Bundle args = getArguments();
         tabPosition = args.getInt(TAB_POSITION);
-        rootView = inflater.inflate(R.layout.fragment_youtube_video_list, null);
+        rootView = inflater.inflate(R.layout.fragment_youtube_video_list, container, false);
+        initView();
+        loadVideoContent();
+        return rootView;
+    }
+
+    private void initView() {
         nextPageToken = "";
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
         progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
         footerProgressWheel = (TTProgressWheel) rootView.findViewById(R.id.footer_progress_bar);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
+        endlessScrollVideosListener = new EndlessScrollVideosListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int currentPage) {
                 MyLog.e("Current Page: (YouTube) " + currentPage);
@@ -79,9 +87,8 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
                     loadVideoContent();
                 }
             }
-        });
-        loadVideoContent();
-        return rootView;
+        };
+        recyclerView.addOnScrollListener(endlessScrollVideosListener);
     }
 
     @Override
@@ -159,6 +166,7 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
             adapter.notifyDataSetChanged();
         }
         nextPageToken = response.getNextPageToken();
+        MyLog.e("nextPageToken: " + nextPageToken);
         unregisterReceiver();
     }
 
@@ -174,8 +182,8 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
 
     public void refreshVideos() {
         MyLog.e("refreshVideos");
-        nextPageToken = "";
-        adapter = null;
+        recyclerView.removeOnScrollListener(endlessScrollVideosListener);
+        initView();
         loadVideoContent();
     }
 

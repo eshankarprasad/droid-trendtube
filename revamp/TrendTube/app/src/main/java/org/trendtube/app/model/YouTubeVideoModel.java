@@ -22,6 +22,9 @@ public class YouTubeVideoModel extends ResponseMetadata {
     @SerializedName("nextPageToken")
     private String nextPageToken;
 
+    @SerializedName("prevPageToken")
+    private String prevPageToken;
+
     @SerializedName("pageInfo")
     private PageInfo pageInfo;
 
@@ -60,6 +63,14 @@ public class YouTubeVideoModel extends ResponseMetadata {
         this.nextPageToken = nextPageToken;
     }
 
+    public String getPrevPageToken() {
+        return prevPageToken;
+    }
+
+    public void setPrevPageToken(String prevPageToken) {
+        this.prevPageToken = prevPageToken;
+    }
+
     public PageInfo getPageInfo() {
         return pageInfo;
     }
@@ -83,6 +94,7 @@ public class YouTubeVideoModel extends ResponseMetadata {
                 ", kind='" + kind + '\'' +
                 ", etag='" + etag + '\'' +
                 ", nextPageToken='" + nextPageToken + '\'' +
+                ", prevPageToken='" + prevPageToken + '\'' +
                 ", pageInfo=" + pageInfo +
                 ", videoItems=" + videoItems +
                 '}';

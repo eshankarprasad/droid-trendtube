@@ -240,8 +240,6 @@ public class TrendTubeActivity extends AppCompatActivity
                 mViewPager.setCurrentItem(0);
                 onFilterVideos();
                 setTitle(menuItem.getTitle());
-                pagerAdapter.setItems(getResources().getStringArray(R.array.tab_items_normal));
-                mTabLayout.setupWithViewPager(mViewPager);
                 break;
             case R.id.nav_item_top_viewed_videsos:
                 TTApplication.navIndex = 1;
@@ -249,8 +247,6 @@ public class TrendTubeActivity extends AppCompatActivity
                 mViewPager.setCurrentItem(0);
                 onFilterVideos();
                 setTitle(menuItem.getTitle());
-                pagerAdapter.setItems(getResources().getStringArray(R.array.tab_items_normal));
-                mTabLayout.setupWithViewPager(mViewPager);
                 break;
             case R.id.nav_sub_menu_like:
                 like();

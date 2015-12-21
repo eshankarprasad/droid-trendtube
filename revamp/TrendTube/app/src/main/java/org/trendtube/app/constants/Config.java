@@ -13,8 +13,8 @@ public class Config extends ServerConfig {
 
     public static String getYouTubeMostPopularVideosUrl(String token) {
 
-        MyLog.e(TAG, "Region Id: " + TTApplication.regionId);
-        MyLog.e(TAG, "Category Id: " + TTApplication.categotyId);
+        //MyLog.e(TAG, "Region Id: " + TTApplication.regionId);
+        //MyLog.e(TAG, "Category Id: " + TTApplication.categotyId);
         if ("".equals(token)) {
             return REST_HOST_YOUTUBE + "/getMostPopularVideos?server_key=" + SERVER_KEY + "&part=snippet,statistics,contentDetails&regionCode=" + TTApplication.regionId + "&catId=" + TTApplication.categotyId +"&resultPerPage=" + RESULT_PER_PAGE;
         } else {
@@ -24,8 +24,8 @@ public class Config extends ServerConfig {
 
     public static String getYouTubeMostViewedVideosUrl(String token) {
 
-        MyLog.e(TAG, "Region Id: " + TTApplication.regionId);
-        MyLog.e(TAG, "Category Id: " + TTApplication.categotyId);
+        //MyLog.e(TAG, "Region Id: " + TTApplication.regionId);
+        //MyLog.e(TAG, "Category Id: " + TTApplication.categotyId);
         if ("".equals(token)) {
             return REST_HOST_YOUTUBE + "/getMostViewedVideosBySearchAPI?server_key=" + SERVER_KEY + "&part=snippet&regionCode=" + TTApplication.regionId + "&catId=" + TTApplication.categotyId + "&resultPerPage=" + RESULT_PER_PAGE;
         } else {

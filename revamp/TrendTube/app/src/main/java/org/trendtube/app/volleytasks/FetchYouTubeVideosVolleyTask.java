@@ -9,6 +9,7 @@ import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.constants.Config;
 import org.trendtube.app.interfaces.FetchVideosListener;
 import org.trendtube.app.model.YouTubeVideoModel;
+import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.volley.NullResponseError;
 import org.trendtube.app.volley.TTGsonRequest;
 import org.trendtube.app.volley.TTRequest;
@@ -36,6 +37,7 @@ public class FetchYouTubeVideosVolleyTask implements TTResponseListener<YouTubeV
             } else {
                 url = Config.getYouTubeMostViewedVideosUrl(nextPageToken);
             }
+            MyLog.e(url);
             TTGsonRequest<YouTubeVideoModel> nNacresGsonRequest = new TTGsonRequest<YouTubeVideoModel>(activity, url, null, this, YouTubeVideoModel.class);
             nNacresGsonRequest.setTaskId(this);
             TTVolleyManager.addToQueue(nNacresGsonRequest, true);
