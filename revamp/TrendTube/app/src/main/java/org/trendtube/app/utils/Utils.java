@@ -189,7 +189,7 @@ public class Utils {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //Glide.with(activity).load(url).placeholder(placeHolder).into(imageView);
+                Glide.with(activity).load(url).placeholder(placeHolder).into(imageView);
             }
         });
     }

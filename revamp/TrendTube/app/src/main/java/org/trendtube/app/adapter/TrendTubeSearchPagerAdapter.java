@@ -15,15 +15,10 @@ import org.trendtube.app.utils.MyLog;
  */
 public class TrendTubeSearchPagerAdapter extends FragmentStatePagerAdapter {
 
-    private Activity activity;
     private String[] items;
-    private YouTubeTrendingVideosFragment youTubeTrendingVideosFragment;
-    private DailyMotionTrendingVideosFragment dailyMotionTrendingVideosFragment;
-    private VimeoVideosSearchFragment vimeoVideosSearchFragment;
 
-    public TrendTubeSearchPagerAdapter(Activity activity, String[] items, FragmentManager fm) {
+    public TrendTubeSearchPagerAdapter(String[] items, FragmentManager fm) {
         super(fm);
-        this.activity = activity;
         this.items = items;
     }
 
@@ -34,25 +29,11 @@ public class TrendTubeSearchPagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                youTubeTrendingVideosFragment = YouTubeTrendingVideosFragment.newInstance(position);
-                return youTubeTrendingVideosFragment;
+                return YouTubeTrendingVideosFragment.newInstance(position);
             case 1:
-                dailyMotionTrendingVideosFragment = DailyMotionTrendingVideosFragment.newInstance(position);
-                return dailyMotionTrendingVideosFragment;
+                return DailyMotionTrendingVideosFragment.newInstance(position);
             default:
-                vimeoVideosSearchFragment = VimeoVideosSearchFragment.newInstance(position);
-                return vimeoVideosSearchFragment;
-        }
-    }
-
-    public Fragment getCurrentFragment(int position) {
-        switch (position) {
-            case 0:
-                return youTubeTrendingVideosFragment;
-            case 1:
-                return dailyMotionTrendingVideosFragment;
-            default:
-                return vimeoVideosSearchFragment;
+                return VimeoVideosSearchFragment.newInstance(position);
         }
     }
 
