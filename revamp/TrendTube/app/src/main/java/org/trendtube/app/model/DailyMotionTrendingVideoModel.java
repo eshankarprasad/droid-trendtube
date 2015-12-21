@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by shankar on 16/12/15.
  */
-public class DailyMotionVideoModel extends ResponseMetadata {
+public class DailyMotionTrendingVideoModel extends ResponseMetadata {
 
     @SerializedName("page")
     private int page;
@@ -78,7 +78,7 @@ public class DailyMotionVideoModel extends ResponseMetadata {
 
     @Override
     public String toString() {
-        return "DailyMotionVideoModel{" +
+        return "DailyMotionTrendingVideoModel{" +
                 "page=" + page +
                 ", limit=" + limit +
                 ", explicit=" + explicit +

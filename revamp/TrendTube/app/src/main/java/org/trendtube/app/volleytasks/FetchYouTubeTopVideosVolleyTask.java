@@ -19,24 +19,19 @@ import org.trendtube.app.volley.TTVolleyManager;
 /**
  * Created by shankarprasad on 24-07-2015.
  */
-public class FetchYouTubeVideosVolleyTask implements TTResponseListener<YouTubeVideoModel> {
+public class FetchYouTubeTopVideosVolleyTask implements TTResponseListener<YouTubeVideoModel> {
 
     private FetchVideosListener listener;
     private Activity activity;
 
-    public FetchYouTubeVideosVolleyTask(Activity activity, FetchVideosListener fetchVideosListener) {
+    public FetchYouTubeTopVideosVolleyTask(Activity activity, FetchVideosListener fetchVideosListener) {
         this.activity = activity;
         this.listener = fetchVideosListener;
     }
 
     public void execute(String nextPageToken) {
         try {
-            String url = null;
-            if (TTApplication.navIndex == 0) {
-                url = Config.getYouTubeMostPopularVideosUrl(nextPageToken);
-            } else {
-                url = Config.getYouTubeMostViewedVideosUrl(nextPageToken);
-            }
+            String url = Config.getYouTubeMostViewedVideosUrl(nextPageToken);
             MyLog.e(url);
             TTGsonRequest<YouTubeVideoModel> nNacresGsonRequest = new TTGsonRequest<YouTubeVideoModel>(activity, url, null, this, YouTubeVideoModel.class);
             nNacresGsonRequest.setTaskId(this);

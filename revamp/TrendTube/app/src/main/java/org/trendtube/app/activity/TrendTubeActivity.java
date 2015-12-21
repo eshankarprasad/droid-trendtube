@@ -2,8 +2,6 @@ package org.trendtube.app.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -29,16 +27,15 @@ import com.android.volley.VolleyError;
 
 import org.trendtube.app.R;
 import org.trendtube.app.adapter.BasicRecyclerAdapter;
-import org.trendtube.app.adapter.TrendTubePagerAdapter;
+import org.trendtube.app.adapter.TopVideosPagerAdapter;
+import org.trendtube.app.adapter.TrendingVideosPagerAdapter;
 import org.trendtube.app.constants.Constants;
-import org.trendtube.app.fragment.YouTubeVideosFragment;
 import org.trendtube.app.interfaces.BasicItemSelectedListener;
 import org.trendtube.app.model.BasicItem;
 import org.trendtube.app.model.CategoryModel;
 import org.trendtube.app.model.RegionModel;
 import org.trendtube.app.ui.TTProgressDialog;
 import org.trendtube.app.utils.MyLog;
-import org.trendtube.app.utils.ServiceManager;
 import org.trendtube.app.utils.Utils;
 import org.trendtube.app.volleytasks.FetchCategoriesVolleyTask;
 import org.trendtube.app.volleytasks.FetchRegionVolleyTask;
@@ -53,40 +50,15 @@ public class TrendTubeActivity extends AppCompatActivity
         FetchRegionVolleyTask.FetchRegionListener {
 
     private static final String TAG = TrendTubeActivity.class.getSimpleName();
-    private final BroadcastReceiver networkReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if (intent.getAction().equals(Constants.INTENT_FILTER_CONNECTIVITY_CHANGE)
-                    || intent.getAction().equals(Constants.INTENT_FILTER_WI_FI_STATE_CHANGE)) {
-                if (checkInternet(context)) {
-                    Toast.makeText(context, "Network Available Do operations", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "Network unavailable Do operations", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-
-        private boolean checkInternet(Context context) {
-            ServiceManager serviceManager = new ServiceManager(context);
-            if (serviceManager.isNetworkAvailable()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    };
     private DrawerLayout mDrawerLayout;
     private ViewPager mViewPager;
     private TTProgressDialog ttProgressDialog;
     private BasicItem selectedCategory, selectedRegion;
     private TextView txtRegion;
-    private TrendTubePagerAdapter pagerAdapter;
-    private List<String> testList;
+    private TrendingVideosPagerAdapter trendingVideoPagerAdapter;
+    private TopVideosPagerAdapter topVideosPagerAdapter;
     private TabLayout mTabLayout;
     private NavigationView mNavigationView;
-    private Filter mSearchFilter;
 
     public static Intent newIntent(Activity activity) {
         return new Intent(activity, TrendTubeActivity.class);
@@ -96,20 +68,6 @@ public class TrendTubeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trend_tube);
-
-        testList = new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
-            testList.add("abcdefg" + i);
-        }
-
-        /*ListView listView = (ListView) findViewById(R.id.listview_search_filter);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1,
-                testList);
-        listView.setAdapter(adapter);
-        listView.setTextFilterEnabled(true);
-        mSearchFilter = adapter.getFilter();*/
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -143,9 +101,11 @@ public class TrendTubeActivity extends AppCompatActivity
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_category);
         fab.setOnClickListener(this);
 
-        pagerAdapter = new TrendTubePagerAdapter(TrendTubeActivity.this, getResources().getStringArray(R.array.tab_items_normal), getSupportFragmentManager());
+        trendingVideoPagerAdapter = new TrendingVideosPagerAdapter(getResources().getStringArray(R.array.tab_items_normal), getSupportFragmentManager());
+        topVideosPagerAdapter = new TopVideosPagerAdapter(getResources().getStringArray(R.array.tab_items_normal), getSupportFragmentManager());
+
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        mViewPager.setAdapter(pagerAdapter);
+        mViewPager.setAdapter(trendingVideoPagerAdapter);
 
         mTabLayout = (TabLayout) findViewById(R.id.tablayout);
         mTabLayout.setupWithViewPager(mViewPager);
@@ -237,15 +197,19 @@ public class TrendTubeActivity extends AppCompatActivity
             case R.id.nav_item_trending_videos:
                 TTApplication.navIndex = 0;
                 TTApplication.query = "";
-                mViewPager.setCurrentItem(0);
-                onFilterVideos();
+
+                mViewPager.setAdapter(null);
+                mViewPager.setAdapter(trendingVideoPagerAdapter);
+
                 setTitle(menuItem.getTitle());
                 break;
             case R.id.nav_item_top_viewed_videsos:
                 TTApplication.navIndex = 1;
                 TTApplication.query = "";
-                mViewPager.setCurrentItem(0);
-                onFilterVideos();
+
+                mViewPager.setAdapter(null);
+                mViewPager.setAdapter(topVideosPagerAdapter);
+
                 setTitle(menuItem.getTitle());
                 break;
             case R.id.nav_sub_menu_like:
@@ -409,7 +373,7 @@ public class TrendTubeActivity extends AppCompatActivity
     }
 
     private void onFilterVideos() {
-        ((YouTubeVideosFragment) pagerAdapter.getCurrentFragment(0)).refreshVideos();
+        //((YouTubeTrendingVideosFragment) trendingVideoPagerAdapter.getCurrentFragment(0)).refreshVideos();
     }
 
 
@@ -451,26 +415,28 @@ public class TrendTubeActivity extends AppCompatActivity
         }
     }
 
-    /*@Override
-    public void onSuccessYouTubeSearch(YouTubeVideoModel response) {
-        dismissProgressDialog();
-        ((YouTubeVideosFragment)pagerAdapter.getCurrentFragment(0)).setSearchVideoModel(response);
-        MyLog.e(response.toString());
-    }
+    /*private final BroadcastReceiver networkReceiver = new BroadcastReceiver() {
 
-    @Override
-    public void onErrorYouTubeSearch(VolleyError error) {
-        dismissProgressDialog();
-    }
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
-    @Override
-    public void onSuccessDailyMotionSearch(DailyMotionVideoModel response) {
-        dismissProgressDialog();
-        MyLog.e(response.toString());
-    }
+            if (intent.getAction().equals(Constants.INTENT_FILTER_CONNECTIVITY_CHANGE)
+                    || intent.getAction().equals(Constants.INTENT_FILTER_WI_FI_STATE_CHANGE)) {
+                if (checkInternet(context)) {
+                    Toast.makeText(context, "Network Available Do operations", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Network unavailable Do operations", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
 
-    @Override
-    public void onErrorDailyMotionSearch(VolleyError error) {
-        dismissProgressDialog();
-    }*/
+        private boolean checkInternet(Context context) {
+            ServiceManager serviceManager = new ServiceManager(context);
+            if (serviceManager.isNetworkAvailable()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    };*/
 }

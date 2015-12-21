@@ -20,20 +20,21 @@ import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.adapter.DailyMotionRecyclerAdapter_Test;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.interfaces.NetworkChangeListener;
-import org.trendtube.app.model.DailyMotionVideoModel;
+import org.trendtube.app.model.DailyMotionTrendingVideoModel;
 import org.trendtube.app.receiver.NetworkChangeReceiver;
 import org.trendtube.app.ui.TTProgressWheel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.FetchDailyMotionVideosVolleyTask;
+import org.trendtube.app.volleytasks.FetchDailyMotionTopVideosVolleyTask;
+import org.trendtube.app.volleytasks.FetchDailyMotionTrendingVideosVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
-public class DailyMotionVideosFragment extends Fragment implements DailyMotionRecyclerAdapter_Test.TopVideoItemSelectListener,
-        FetchDailyMotionVideosVolleyTask.FetchDailyMotionVideoListener, NetworkChangeListener {
+public class DailyMotionTopVideosFragment extends Fragment implements DailyMotionRecyclerAdapter_Test.TopVideoItemSelectListener,
+        FetchDailyMotionTopVideosVolleyTask.FetchDailyMotionTopVideoListener, NetworkChangeListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private int navIndex = -1;
@@ -45,12 +46,12 @@ public class DailyMotionVideosFragment extends Fragment implements DailyMotionRe
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
 
-    public DailyMotionVideosFragment() {
+    public DailyMotionTopVideosFragment() {
 
     }
 
-    public static DailyMotionVideosFragment newInstance(int tabPosition) {
-        DailyMotionVideosFragment fragment = new DailyMotionVideosFragment();
+    public static DailyMotionTopVideosFragment newInstance(int tabPosition) {
+        DailyMotionTopVideosFragment fragment = new DailyMotionTopVideosFragment();
         Bundle args = new Bundle();
         args.putInt(TAB_POSITION, tabPosition);
         fragment.setArguments(args);
@@ -109,7 +110,7 @@ public class DailyMotionVideosFragment extends Fragment implements DailyMotionRe
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
 
-        FetchDailyMotionVideosVolleyTask task = new FetchDailyMotionVideosVolleyTask(getActivity(), this);
+        FetchDailyMotionTopVideosVolleyTask task = new FetchDailyMotionTopVideosVolleyTask(getActivity(), this);
         task.execute(nextPageToken);
     }
 
@@ -146,28 +147,7 @@ public class DailyMotionVideosFragment extends Fragment implements DailyMotionRe
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
     }
 
-    /*@Override
-    public void callRegionUpdate(BasicItem selectedRegion) {
-        MyLog.e("callRegionUpdate");
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
-    }
-
-    @Override
-    public void callCategoryUpdate(BasicItem selectedCategory) {
-        MyLog.e("callCategoryUpdate");
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
-    }*/
-
-    @Override
-    public void onFetchedDailyMotionVideos(DailyMotionVideoModel response) {
-        loadVideos(response);
-    }
-
-    private void loadVideos(DailyMotionVideoModel response) {
+    private void loadVideos(DailyMotionTrendingVideoModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
         if (adapter == null) {
@@ -190,11 +170,6 @@ public class DailyMotionVideosFragment extends Fragment implements DailyMotionRe
         unregisterReceiver();
     }
 
-    @Override
-    public void onFetchedErrorDailyMotionVideos(VolleyError error) {
-        loadError(error);
-    }
-
     private void loadError(VolleyError error) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
@@ -211,5 +186,15 @@ public class DailyMotionVideosFragment extends Fragment implements DailyMotionRe
     @Override
     public void onNetworkDisconnected() {
         //Toast.makeText(getActivity(), "Network Unavailable Do operations", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFetchedDailyMotionTopVideos(DailyMotionTrendingVideoModel response) {
+        loadVideos(response);
+    }
+
+    @Override
+    public void onFetchedErrorDailyMotionTopVideos(VolleyError error) {
+        loadError(error);
     }
 }

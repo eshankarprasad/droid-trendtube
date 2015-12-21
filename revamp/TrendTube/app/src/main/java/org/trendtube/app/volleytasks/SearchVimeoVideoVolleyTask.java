@@ -6,7 +6,6 @@ import com.android.volley.ParseError;
 import com.android.volley.VolleyError;
 
 import org.trendtube.app.constants.Config;
-import org.trendtube.app.model.DailyMotionVideoModel;
 import org.trendtube.app.model.VimeoVideoModel;
 import org.trendtube.app.volley.NullResponseError;
 import org.trendtube.app.volley.TTGsonRequest;

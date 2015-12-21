@@ -27,13 +27,14 @@ import org.trendtube.app.ui.TTProgressWheel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.FetchYouTubeVideosVolleyTask;
+import org.trendtube.app.volleytasks.FetchYouTubeTopVideosVolleyTask;
+import org.trendtube.app.volleytasks.FetchYouTubeTrendingVideosVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
-public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAdapter.OnTrendTubeItemSelectListener,
+public class YouTubeTopVideosFragment extends Fragment implements YouTubeRecyclerAdapter.OnTrendTubeItemSelectListener,
         FetchVideosListener, NetworkChangeListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
@@ -42,16 +43,15 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
     private int tabPosition;
     private String nextPageToken;
     private TTProgressWheel progressWheel, footerProgressWheel;
-    private EndlessScrollVideosListener endlessScrollVideosListener;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
 
-    public YouTubeVideosFragment() {
+    public YouTubeTopVideosFragment() {
 
     }
 
-    public static YouTubeVideosFragment newInstance(int tabPosition) {
-        YouTubeVideosFragment fragment = new YouTubeVideosFragment();
+    public static YouTubeTopVideosFragment newInstance(int tabPosition) {
+        YouTubeTopVideosFragment fragment = new YouTubeTopVideosFragment();
         Bundle args = new Bundle();
         args.putInt(TAB_POSITION, tabPosition);
         fragment.setArguments(args);
@@ -77,7 +77,7 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
         footerProgressWheel = (TTProgressWheel) rootView.findViewById(R.id.footer_progress_bar);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        endlessScrollVideosListener = new EndlessScrollVideosListener(linearLayoutManager) {
+        recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int currentPage) {
                 MyLog.e("Current Page: (YouTube) " + currentPage);
@@ -87,8 +87,7 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
                     loadVideoContent();
                 }
             }
-        };
-        recyclerView.addOnScrollListener(endlessScrollVideosListener);
+        });
     }
 
     @Override
@@ -136,7 +135,7 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
         } else {
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
-        FetchYouTubeVideosVolleyTask task = new FetchYouTubeVideosVolleyTask(getActivity(), this);
+        FetchYouTubeTopVideosVolleyTask task = new FetchYouTubeTopVideosVolleyTask(getActivity(), this);
         task.execute(nextPageToken);
     }
 
@@ -178,13 +177,6 @@ public class YouTubeVideosFragment extends Fragment implements YouTubeRecyclerAd
         footerProgressWheel.setVisibility(View.GONE);
         Utils.handleError(getActivity(), error);
         registerReceiver();
-    }
-
-    public void refreshVideos() {
-        MyLog.e("refreshVideos");
-        recyclerView.removeOnScrollListener(endlessScrollVideosListener);
-        initView();
-        loadVideoContent();
     }
 
     @Override

@@ -28,14 +28,13 @@ import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
 import org.trendtube.app.volleytasks.FetchYouTubeTrendingVideosVolleyTask;
-import org.trendtube.app.volleytasks.SearchYouTubeVideoVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
-public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecyclerAdapter.OnTrendTubeItemSelectListener,
-        FetchVideosListener, NetworkChangeListener, SearchYouTubeVideoVolleyTask.SearchYouTubeVideoListener {
+public class YouTubeTrendingVideosFragment extends Fragment implements YouTubeRecyclerAdapter.OnTrendTubeItemSelectListener,
+        FetchVideosListener, NetworkChangeListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private RecyclerView recyclerView;
@@ -46,12 +45,12 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
 
-    public YouTubeVideosSearchFragment() {
+    public YouTubeTrendingVideosFragment() {
 
     }
 
-    public static YouTubeVideosSearchFragment newInstance(int tabPosition) {
-        YouTubeVideosSearchFragment fragment = new YouTubeVideosSearchFragment();
+    public static YouTubeTrendingVideosFragment newInstance(int tabPosition) {
+        YouTubeTrendingVideosFragment fragment = new YouTubeTrendingVideosFragment();
         Bundle args = new Bundle();
         args.putInt(TAB_POSITION, tabPosition);
         fragment.setArguments(args);
@@ -61,9 +60,16 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        MyLog.e("onCreateView");
         Bundle args = getArguments();
         tabPosition = args.getInt(TAB_POSITION);
-        rootView = inflater.inflate(R.layout.fragment_youtube_video_list, null);
+        rootView = inflater.inflate(R.layout.fragment_youtube_video_list, container, false);
+        initView();
+        loadVideoContent();
+        return rootView;
+    }
+
+    private void initView() {
         nextPageToken = "";
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
         progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
@@ -81,8 +87,6 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
                 }
             }
         });
-        loadVideoContent();
-        return rootView;
     }
 
     @Override
@@ -130,19 +134,14 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
         } else {
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
-        if ("".equals(TTApplication.query)) {
-            FetchYouTubeTrendingVideosVolleyTask task = new FetchYouTubeTrendingVideosVolleyTask(getActivity(), this);
-            task.execute(nextPageToken);
-        } else {
-            SearchYouTubeVideoVolleyTask searchYouTubeVideoVolleyTask = new SearchYouTubeVideoVolleyTask(getActivity(), this);
-            searchYouTubeVideoVolleyTask.execute(nextPageToken, TTApplication.query);
-        }
+        FetchYouTubeTrendingVideosVolleyTask task = new FetchYouTubeTrendingVideosVolleyTask(getActivity(), this);
+        task.execute(nextPageToken);
     }
 
     @Override
     public void onTrendTubeItemSelected(Object videoId) {
 
-        String video = (String)videoId;
+        String video = (String) videoId;
         Toast.makeText(getActivity(), video, Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(getActivity(), SecondActivity.class);
@@ -165,6 +164,7 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
             adapter.notifyDataSetChanged();
         }
         nextPageToken = response.getNextPageToken();
+        MyLog.e("nextPageToken: " + nextPageToken);
         unregisterReceiver();
     }
 
@@ -178,13 +178,6 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
         registerReceiver();
     }
 
-    public void refreshVideos() {
-        MyLog.e("refreshVideos");
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
-    }
-
     @Override
     public void onNetworkConnected() {
         //Toast.makeText(getActivity(), "Network Available Do operations", Toast.LENGTH_SHORT).show();
@@ -194,39 +187,5 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
     @Override
     public void onNetworkDisconnected() {
         //Toast.makeText(getActivity(), "Network Unavailable Do operations", Toast.LENGTH_SHORT).show();
-    }
-
-    public void startSearchVideos() {
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
-    }
-
-    @Override
-    public void onSuccessYouTubeSearch(YouTubeVideoModel response) {
-        progressWheel.setVisibility(View.GONE);
-        footerProgressWheel.setVisibility(View.GONE);
-        if (adapter == null) {
-            adapter = new YouTubeRecyclerAdapter(getActivity(), response.getVideoItems(), this);
-            recyclerView.setAdapter(adapter);
-        } else if ("".equals(nextPageToken)) {
-            adapter.setItems(response.getVideoItems());
-            adapter.notifyDataSetChanged();
-        } else {
-            adapter.addItems(response.getVideoItems());
-            adapter.notifyDataSetChanged();
-        }
-        nextPageToken = response.getNextPageToken();
-        unregisterReceiver();
-    }
-
-    @Override
-    public void onErrorYouTubeSearch(VolleyError error) {
-        progressWheel.setVisibility(View.GONE);
-        footerProgressWheel.setVisibility(View.GONE);
-        progressWheel.setVisibility(View.GONE);
-        footerProgressWheel.setVisibility(View.GONE);
-        Utils.handleError(getActivity(), error);
-        registerReceiver();
     }
 }

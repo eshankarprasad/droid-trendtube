@@ -77,7 +77,7 @@ public class VimeoVideoModel extends ResponseMetadata {
 
     @Override
     public String toString() {
-        return "DailyMotionVideoModel{" +
+        return "DailyMotionTrendingVideoModel{" +
                 "page=" + page +
                 ", limit=" + limit +
                 ", explicit=" + explicit +

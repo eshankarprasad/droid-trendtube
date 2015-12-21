@@ -5,9 +5,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import org.trendtube.app.fragment.DailyMotionVideosFragment;
+import org.trendtube.app.fragment.DailyMotionTrendingVideosFragment;
 import org.trendtube.app.fragment.VimeoVideosSearchFragment;
-import org.trendtube.app.fragment.YouTubeVideosFragment;
+import org.trendtube.app.fragment.YouTubeTrendingVideosFragment;
 import org.trendtube.app.utils.MyLog;
 
 /**
@@ -17,8 +17,8 @@ public class TrendTubeSearchPagerAdapter extends FragmentStatePagerAdapter {
 
     private Activity activity;
     private String[] items;
-    private YouTubeVideosFragment youTubeVideosFragment;
-    private DailyMotionVideosFragment dailyMotionVideosFragment;
+    private YouTubeTrendingVideosFragment youTubeTrendingVideosFragment;
+    private DailyMotionTrendingVideosFragment dailyMotionTrendingVideosFragment;
     private VimeoVideosSearchFragment vimeoVideosSearchFragment;
 
     public TrendTubeSearchPagerAdapter(Activity activity, String[] items, FragmentManager fm) {
@@ -34,11 +34,11 @@ public class TrendTubeSearchPagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                youTubeVideosFragment = YouTubeVideosFragment.newInstance(position);
-                return youTubeVideosFragment;
+                youTubeTrendingVideosFragment = YouTubeTrendingVideosFragment.newInstance(position);
+                return youTubeTrendingVideosFragment;
             case 1:
-                dailyMotionVideosFragment = DailyMotionVideosFragment.newInstance(position);
-                return dailyMotionVideosFragment;
+                dailyMotionTrendingVideosFragment = DailyMotionTrendingVideosFragment.newInstance(position);
+                return dailyMotionTrendingVideosFragment;
             default:
                 vimeoVideosSearchFragment = VimeoVideosSearchFragment.newInstance(position);
                 return vimeoVideosSearchFragment;
@@ -48,9 +48,9 @@ public class TrendTubeSearchPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getCurrentFragment(int position) {
         switch (position) {
             case 0:
-                return youTubeVideosFragment;
+                return youTubeTrendingVideosFragment;
             case 1:
-                return dailyMotionVideosFragment;
+                return dailyMotionTrendingVideosFragment;
             default:
                 return vimeoVideosSearchFragment;
         }

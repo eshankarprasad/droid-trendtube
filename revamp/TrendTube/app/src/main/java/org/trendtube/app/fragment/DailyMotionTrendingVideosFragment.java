@@ -27,14 +27,13 @@ import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
 import org.trendtube.app.volleytasks.FetchDailyMotionTrendingVideosVolleyTask;
-import org.trendtube.app.volleytasks.SearchDailyMotionVideoVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
-public class DailyMotionVideosSearchFragment extends Fragment implements DailyMotionRecyclerAdapter_Test.TopVideoItemSelectListener,
-        FetchDailyMotionTrendingVideosVolleyTask.FetchDailyMotionTrendingVideoListener, NetworkChangeListener, SearchDailyMotionVideoVolleyTask.SearchDailyMotionVideoListener {
+public class DailyMotionTrendingVideosFragment extends Fragment implements DailyMotionRecyclerAdapter_Test.TopVideoItemSelectListener,
+        FetchDailyMotionTrendingVideosVolleyTask.FetchDailyMotionTrendingVideoListener, NetworkChangeListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private int navIndex = -1;
@@ -45,14 +44,13 @@ public class DailyMotionVideosSearchFragment extends Fragment implements DailyMo
     private int tabPosition;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
-    private String searchQuery = "";
 
-    public DailyMotionVideosSearchFragment() {
+    public DailyMotionTrendingVideosFragment() {
 
     }
 
-    public static DailyMotionVideosSearchFragment newInstance(int tabPosition) {
-        DailyMotionVideosSearchFragment fragment = new DailyMotionVideosSearchFragment();
+    public static DailyMotionTrendingVideosFragment newInstance(int tabPosition) {
+        DailyMotionTrendingVideosFragment fragment = new DailyMotionTrendingVideosFragment();
         Bundle args = new Bundle();
         args.putInt(TAB_POSITION, tabPosition);
         fragment.setArguments(args);
@@ -74,8 +72,7 @@ public class DailyMotionVideosSearchFragment extends Fragment implements DailyMo
         if (isVisibleToUser) {
             getActivity().findViewById(R.id.fab_category).setVisibility(View.GONE);
             TTApplication.fragmentIndex = 1;
-            if (navIndex != TTApplication.navIndex || !searchQuery.equals(TTApplication.query)) {
-                searchQuery = TTApplication.query;
+            if (navIndex != TTApplication.navIndex) {
                 initViews();
             }
         }
@@ -112,13 +109,8 @@ public class DailyMotionVideosSearchFragment extends Fragment implements DailyMo
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
 
-        if ("".equals(searchQuery)) {
-            FetchDailyMotionTrendingVideosVolleyTask task = new FetchDailyMotionTrendingVideosVolleyTask(getActivity(), this);
-            task.execute(nextPageToken);
-        } else {
-            SearchDailyMotionVideoVolleyTask task = new SearchDailyMotionVideoVolleyTask(getActivity(), this);
-            task.execute(nextPageToken, searchQuery);
-        }
+        FetchDailyMotionTrendingVideosVolleyTask task = new FetchDailyMotionTrendingVideosVolleyTask(getActivity(), this);
+        task.execute(nextPageToken);
     }
 
 
@@ -154,27 +146,6 @@ public class DailyMotionVideosSearchFragment extends Fragment implements DailyMo
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
     }
 
-    /*@Override
-    public void callRegionUpdate(BasicItem selectedRegion) {
-        MyLog.e("callRegionUpdate");
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
-    }
-
-    @Override
-    public void callCategoryUpdate(BasicItem selectedCategory) {
-        MyLog.e("callCategoryUpdate");
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
-    }*/
-
-    @Override
-    public void onFetchedDailyMotionTrendingVideos(DailyMotionTrendingVideoModel response) {
-        loadVideos(response);
-    }
-
     private void loadVideos(DailyMotionTrendingVideoModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
@@ -198,11 +169,6 @@ public class DailyMotionVideosSearchFragment extends Fragment implements DailyMo
         unregisterReceiver();
     }
 
-    @Override
-    public void onFetchedErrorDailyMotionTrendingVideos(VolleyError error) {
-        loadError(error);
-    }
-
     private void loadError(VolleyError error) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
@@ -222,12 +188,12 @@ public class DailyMotionVideosSearchFragment extends Fragment implements DailyMo
     }
 
     @Override
-    public void onSuccessDailyMotionSearch(DailyMotionTrendingVideoModel response) {
+    public void onFetchedDailyMotionTrendingVideos(DailyMotionTrendingVideoModel response) {
         loadVideos(response);
     }
 
     @Override
-    public void onErrorDailyMotionSearch(VolleyError error) {
+    public void onFetchedErrorDailyMotionTrendingVideos(VolleyError error) {
         loadError(error);
     }
 }

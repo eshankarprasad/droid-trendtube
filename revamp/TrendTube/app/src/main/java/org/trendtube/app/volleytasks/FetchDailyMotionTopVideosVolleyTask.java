@@ -16,19 +16,19 @@ import org.trendtube.app.volley.TTVolleyManager;
 /**
  * Created by shankarprasad on 24-07-2015.
  */
-public class SearchDailyMotionVideoVolleyTask implements TTResponseListener<DailyMotionTrendingVideoModel> {
+public class FetchDailyMotionTopVideosVolleyTask implements TTResponseListener<DailyMotionTrendingVideoModel> {
 
-    private SearchDailyMotionVideoListener listener;
+    private FetchDailyMotionTopVideoListener listener;
     private Activity activity;
 
-    public SearchDailyMotionVideoVolleyTask(Activity activity, SearchDailyMotionVideoListener searchVideoListener) {
+    public FetchDailyMotionTopVideosVolleyTask(Activity activity, FetchDailyMotionTopVideoListener fetchDailyMotionTopVideoListener) {
         this.activity = activity;
-        this.listener = searchVideoListener;
+        this.listener = fetchDailyMotionTopVideoListener;
     }
 
-    public void execute(String token, String query) {
+    public void execute(String token) {
         try {
-            String url = Config.getSearchDailyMotionVideosUrl(token, query);
+            String url = Config.getDMMostViewedVideosUrl(token);
             TTGsonRequest<DailyMotionTrendingVideoModel> nNacresGsonRequest = new TTGsonRequest<DailyMotionTrendingVideoModel>(activity, url, null, this, DailyMotionTrendingVideoModel.class);
             nNacresGsonRequest.setTaskId(this);
             TTVolleyManager.addToQueue(nNacresGsonRequest, true);
@@ -36,13 +36,14 @@ public class SearchDailyMotionVideoVolleyTask implements TTResponseListener<Dail
             e.printStackTrace();
             onErrorResponse(null, new ParseError());
         }
+
     }
 
     @Override
     public void onResponse(TTRequest<DailyMotionTrendingVideoModel> request, DailyMotionTrendingVideoModel response) {
         if (null != response) {
             if (this.listener != null) {
-                this.listener.onSuccessDailyMotionSearch(response);
+                this.listener.onFetchedDailyMotionTopVideos(response);
             }
         } else {
             onErrorResponse(request, new NullResponseError());
@@ -53,12 +54,12 @@ public class SearchDailyMotionVideoVolleyTask implements TTResponseListener<Dail
     @Override
     public void onErrorResponse(TTRequest<DailyMotionTrendingVideoModel> request, VolleyError error) {
         if (this.listener != null) {
-            this.listener.onErrorDailyMotionSearch(error);
+            this.listener.onFetchedErrorDailyMotionTopVideos(error);
         }
     }
 
-    public interface SearchDailyMotionVideoListener {
-        public void onSuccessDailyMotionSearch(DailyMotionTrendingVideoModel response);
-        public void onErrorDailyMotionSearch(VolleyError error);
+    public interface FetchDailyMotionTopVideoListener {
+        public void onFetchedDailyMotionTopVideos(DailyMotionTrendingVideoModel response);
+        public void onFetchedErrorDailyMotionTopVideos(VolleyError error);
     }
 }
