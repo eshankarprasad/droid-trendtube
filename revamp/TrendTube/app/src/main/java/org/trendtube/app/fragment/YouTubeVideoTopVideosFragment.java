@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -17,10 +18,12 @@ import com.android.volley.VolleyError;
 import org.trendtube.app.R;
 import org.trendtube.app.activity.SecondActivity;
 import org.trendtube.app.activity.TTApplication;
+import org.trendtube.app.activity.TrendTubeActivity;
 import org.trendtube.app.adapter.YouTubeRecyclerAdapter;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.interfaces.FetchVideosListener;
 import org.trendtube.app.interfaces.NetworkChangeListener;
+import org.trendtube.app.model.YouTubeVideoItem;
 import org.trendtube.app.model.YouTubeVideoModel;
 import org.trendtube.app.receiver.NetworkChangeReceiver;
 import org.trendtube.app.ui.TTProgressWheel;
@@ -28,30 +31,33 @@ import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
 import org.trendtube.app.volleytasks.FetchYouTubeTopVideosVolleyTask;
-import org.trendtube.app.volleytasks.FetchYouTubeTrendingVideosVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
-public class YouTubeTopVideosFragment extends Fragment implements YouTubeRecyclerAdapter.OnTrendTubeItemSelectListener,
-        FetchVideosListener, NetworkChangeListener {
+public class YouTubeVideoTopVideosFragment extends Fragment
+        implements YouTubeRecyclerAdapter.YouTubeVideoItemSelectedListener,
+        FetchVideosListener, NetworkChangeListener, View.OnClickListener {
+
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private RecyclerView recyclerView;
     private YouTubeRecyclerAdapter adapter;
     private int tabPosition;
     private String nextPageToken;
-    private TTProgressWheel progressWheel, footerProgressWheel;
+    private TTProgressWheel progressWheel;
+    private View footerProgressWheel;
+    private TextView txtRemainingVideos;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
 
-    public YouTubeTopVideosFragment() {
+    public YouTubeVideoTopVideosFragment() {
 
     }
 
-    public static YouTubeTopVideosFragment newInstance(int tabPosition) {
-        YouTubeTopVideosFragment fragment = new YouTubeTopVideosFragment();
+    public static YouTubeVideoTopVideosFragment newInstance(int tabPosition) {
+        YouTubeVideoTopVideosFragment fragment = new YouTubeVideoTopVideosFragment();
         Bundle args = new Bundle();
         args.putInt(TAB_POSITION, tabPosition);
         fragment.setArguments(args);
@@ -74,7 +80,12 @@ public class YouTubeTopVideosFragment extends Fragment implements YouTubeRecycle
         nextPageToken = "";
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
         progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
-        footerProgressWheel = (TTProgressWheel) rootView.findViewById(R.id.footer_progress_bar);
+        footerProgressWheel = rootView.findViewById(R.id.layout_footer_progress);
+        txtRemainingVideos = (TextView) rootView.findViewById(R.id.txt_remaining_videos);
+
+        View categoryButton = rootView.findViewById(R.id.fab_category);
+        categoryButton.setOnClickListener(this);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
@@ -95,7 +106,7 @@ public class YouTubeTopVideosFragment extends Fragment implements YouTubeRecycle
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             TTApplication.fragmentIndex = 0;
-            getActivity().findViewById(R.id.fab_category).setVisibility(View.VISIBLE);
+            //getActivity().findViewById(R.id.fab_category).setVisibility(View.VISIBLE);
             if (adapter != null && adapter.getItemCount() == 0) {
                 registerReceiver();
             }
@@ -140,28 +151,30 @@ public class YouTubeTopVideosFragment extends Fragment implements YouTubeRecycle
     }
 
     @Override
-    public void onTrendTubeItemSelected(Object videoId) {
+    public void onYouTubeVideoSelected(YouTubeVideoItem videoId) {
 
-        String video = (String) videoId;
+        String video = videoId.getSnippet().getTitle();
         Toast.makeText(getActivity(), video, Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(getActivity(), SecondActivity.class);
-        intent.putExtra(Constants.BUNDLE_VIDEO_ID, video);
+        intent.putExtra(Constants.BUNDLE_VIDEO, video);
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
+        Utils.animateActivity(getActivity(), "next");
     }
 
     @Override
     public void onVideoFetched(YouTubeVideoModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
+        txtRemainingVideos.setText(getString(R.string.label_remaining_videos, response.getPageInfo().getTotalResults()));
         if (adapter == null) {
-            adapter = new YouTubeRecyclerAdapter(getActivity(), response.getVideoItems(), this);
+            adapter = new YouTubeRecyclerAdapter(getActivity(), response.getYouTubeVideoItems(), this);
             recyclerView.setAdapter(adapter);
         } else if ("".equals(nextPageToken)) {
-            adapter.setItems(response.getVideoItems());
+            adapter.setItems(response.getYouTubeVideoItems());
             adapter.notifyDataSetChanged();
         } else {
-            adapter.addItems(response.getVideoItems());
+            adapter.addItems(response.getYouTubeVideoItems());
             adapter.notifyDataSetChanged();
         }
         nextPageToken = response.getNextPageToken();
@@ -188,5 +201,14 @@ public class YouTubeTopVideosFragment extends Fragment implements YouTubeRecycle
     @Override
     public void onNetworkDisconnected() {
         //Toast.makeText(getActivity(), "Network Unavailable Do operations", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.fab_category:
+                ((TrendTubeActivity) getActivity()).categoryButtonClicked();
+                break;
+        }
     }
 }

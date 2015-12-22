@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.trendtube.app.R;
-import org.trendtube.app.model.VideoItem;
+import org.trendtube.app.model.DailyMotionVideoItem;
 import org.trendtube.app.utils.Utils;
 
 import java.util.List;
@@ -19,43 +19,48 @@ import java.util.List;
  */
 public class DailyMotionRecyclerAdapter extends RecyclerView.Adapter<DailyMotionRecyclerAdapter.ViewHolder> {
 
-    private List<VideoItem> mItems;
+    private List<DailyMotionVideoItem> mDailyMotionVideoItems;
     private Activity activity;
-    private TopVideoItemSelectListener listener;
+    private DailyMotionVideoItemSelectedListener listener;
 
-    public DailyMotionRecyclerAdapter(Activity activity, List<VideoItem> items, TopVideoItemSelectListener listener) {
+    public DailyMotionRecyclerAdapter(Activity activity, List<DailyMotionVideoItem> dailyMotionVideoItems, DailyMotionVideoItemSelectedListener listener) {
         this.activity = activity;
-        mItems = items;
+        mDailyMotionVideoItems = dailyMotionVideoItems;
         this.listener = listener;
     }
 
-    public void addItems(List<VideoItem> items) {
-        mItems.addAll(items);
+    public void addItems(List<DailyMotionVideoItem> dailyMotionVideoItems) {
+        mDailyMotionVideoItems.addAll(dailyMotionVideoItems);
+    }
+
+    public void setItems(List<DailyMotionVideoItem> dailyMotionVideoItems) {
+        mDailyMotionVideoItems.clear();
+        mDailyMotionVideoItems.addAll(dailyMotionVideoItems);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_dailymotion_video, viewGroup, false);
-        v.setTag(mItems.get(i).getSnippet().getTitle());
         return new ViewHolder(v, listener);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        VideoItem item = mItems.get(i);
-        Utils.displayImage(activity, item.getSnippet().getThumbnails().getHighImage().getUrl(), R.drawable.image, viewHolder.imgThumbnail);
-        viewHolder.txtTitle.setText(item.getSnippet().getTitle());
-        viewHolder.txtChannelTitle.setText(item.getSnippet().getChannelTitle());
-        viewHolder.txtAgeAndViews.setText(Utils.calculateAge(item.getSnippet().getPublishedAt()) + " . " + Utils.calculateViewCount(item.getStatistics().getViewCount()) + " views");
+        DailyMotionVideoItem dailyMotionVideoItem = mDailyMotionVideoItems.get(i);
+        Utils.displayImage(activity, dailyMotionVideoItem.getThumbnailLargeUrl(), R.drawable.image, viewHolder.imgThumbnail);
+        viewHolder.txtTitle.setText(dailyMotionVideoItem.getTitle());
+        viewHolder.txtChannelTitle.setText(dailyMotionVideoItem.getChannel());
+        viewHolder.txtAgeAndViews.setText(Utils.calculateAge(dailyMotionVideoItem.getCreatedTime()) + " . " + Utils.calculateViewCount(dailyMotionVideoItem.getViewsTotal() + "") + " views");
+        viewHolder.setVideoItem(dailyMotionVideoItem);
     }
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return mDailyMotionVideoItems.size();
     }
 
-    public interface TopVideoItemSelectListener {
-        public void onTopVideoItemSelected(Object videoId);
+    public interface DailyMotionVideoItemSelectedListener {
+        public void onDailyMotionVideoItemSelected(DailyMotionVideoItem videoItem);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -64,9 +69,14 @@ public class DailyMotionRecyclerAdapter extends RecyclerView.Adapter<DailyMotion
         private final TextView txtTitle;
         private final TextView txtChannelTitle;
         private final TextView txtAgeAndViews;
-        private final TopVideoItemSelectListener listener;
+        private DailyMotionVideoItem videoItem;
+        private final DailyMotionVideoItemSelectedListener listener;
 
-        ViewHolder(View v, TopVideoItemSelectListener listener) {
+        public void setVideoItem(DailyMotionVideoItem videoItem) {
+            this.videoItem = videoItem;
+        }
+
+        ViewHolder(View v, DailyMotionVideoItemSelectedListener listener) {
             super(v);
             imgThumbnail = (ImageView) v.findViewById(R.id.img_thumbnail);
             txtTitle = (TextView) v.findViewById(R.id.txt_title);
@@ -78,7 +88,7 @@ public class DailyMotionRecyclerAdapter extends RecyclerView.Adapter<DailyMotion
 
         @Override
         public void onClick(View v) {
-            listener.onTopVideoItemSelected(v.getTag());
+            listener.onDailyMotionVideoItemSelected(videoItem);
         }
     }
 

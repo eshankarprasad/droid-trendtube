@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -19,22 +20,21 @@ import org.trendtube.app.activity.SecondActivity;
 import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.adapter.YouTubeRecyclerAdapter;
 import org.trendtube.app.constants.Constants;
-import org.trendtube.app.interfaces.FetchVideosListener;
 import org.trendtube.app.interfaces.NetworkChangeListener;
+import org.trendtube.app.model.YouTubeVideoItem;
 import org.trendtube.app.model.YouTubeVideoModel;
 import org.trendtube.app.receiver.NetworkChangeReceiver;
 import org.trendtube.app.ui.TTProgressWheel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.FetchYouTubeTrendingVideosVolleyTask;
 import org.trendtube.app.volleytasks.SearchYouTubeVideoVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
-public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecyclerAdapter.OnTrendTubeItemSelectListener,
+public class YouTubeVideoVideosSearchFragment extends Fragment implements YouTubeRecyclerAdapter.YouTubeVideoItemSelectedListener,
         NetworkChangeListener, SearchYouTubeVideoVolleyTask.SearchYouTubeVideoListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
@@ -42,16 +42,18 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
     private YouTubeRecyclerAdapter adapter;
     private int tabPosition;
     private String nextPageToken;
-    private TTProgressWheel progressWheel, footerProgressWheel;
+    private TTProgressWheel progressWheel;
+    private View footerProgressWheel;
+    private TextView txtRemainingVideos;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
 
-    public YouTubeVideosSearchFragment() {
+    public YouTubeVideoVideosSearchFragment() {
 
     }
 
-    public static YouTubeVideosSearchFragment newInstance(int tabPosition) {
-        YouTubeVideosSearchFragment fragment = new YouTubeVideosSearchFragment();
+    public static YouTubeVideoVideosSearchFragment newInstance(int tabPosition) {
+        YouTubeVideoVideosSearchFragment fragment = new YouTubeVideoVideosSearchFragment();
         Bundle args = new Bundle();
         args.putInt(TAB_POSITION, tabPosition);
         fragment.setArguments(args);
@@ -63,11 +65,12 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle args = getArguments();
         tabPosition = args.getInt(TAB_POSITION);
-        rootView = inflater.inflate(R.layout.fragment_youtube_video_list, null);
+        rootView = inflater.inflate(R.layout.fragment_youtube_search_video_list, null);
         nextPageToken = "";
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
         progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
-        footerProgressWheel = (TTProgressWheel) rootView.findViewById(R.id.footer_progress_bar);
+        footerProgressWheel = rootView.findViewById(R.id.layout_footer_progress);
+        txtRemainingVideos = (TextView) rootView.findViewById(R.id.txt_remaining_videos);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
@@ -134,14 +137,14 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
     }
 
     @Override
-    public void onTrendTubeItemSelected(Object videoId) {
+    public void onYouTubeVideoSelected(YouTubeVideoItem video) {
 
-        String video = (String)videoId;
-        Toast.makeText(getActivity(), video, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), video.getSnippet().getTitle(), Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(getActivity(), SecondActivity.class);
-        intent.putExtra(Constants.BUNDLE_VIDEO_ID, video);
+        intent.putExtra(Constants.BUNDLE_VIDEO, video);
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
+        Utils.animateActivity(getActivity(), "next");
     }
 
 
@@ -160,14 +163,15 @@ public class YouTubeVideosSearchFragment extends Fragment implements YouTubeRecy
     public void onSuccessYouTubeSearch(YouTubeVideoModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
+        txtRemainingVideos.setText(getString(R.string.label_remaining_videos, response.getPageInfo().getTotalResults()));
         if (adapter == null) {
-            adapter = new YouTubeRecyclerAdapter(getActivity(), response.getVideoItems(), this);
+            adapter = new YouTubeRecyclerAdapter(getActivity(), response.getYouTubeVideoItems(), this);
             recyclerView.setAdapter(adapter);
         } else if ("".equals(nextPageToken)) {
-            adapter.setItems(response.getVideoItems());
+            adapter.setItems(response.getYouTubeVideoItems());
             adapter.notifyDataSetChanged();
         } else {
-            adapter.addItems(response.getVideoItems());
+            adapter.addItems(response.getYouTubeVideoItems());
             adapter.notifyDataSetChanged();
         }
         nextPageToken = response.getNextPageToken();

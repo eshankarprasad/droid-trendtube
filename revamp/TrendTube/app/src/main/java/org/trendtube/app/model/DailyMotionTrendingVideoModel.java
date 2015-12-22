@@ -2,7 +2,6 @@ package org.trendtube.app.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -26,7 +25,7 @@ public class DailyMotionTrendingVideoModel extends ResponseMetadata {
     private boolean hasMore;
 
     @SerializedName("list")
-    private List<Item> list;
+    private List<DailyMotionVideoItem> list;
 
     public int getPage() {
         return page;
@@ -68,11 +67,11 @@ public class DailyMotionTrendingVideoModel extends ResponseMetadata {
         this.hasMore = hasMore;
     }
 
-    public List<Item> getList() {
+    public List<DailyMotionVideoItem> getList() {
         return list;
     }
 
-    public void setList(List<Item> list) {
+    public void setList(List<DailyMotionVideoItem> list) {
         this.list = list;
     }
 

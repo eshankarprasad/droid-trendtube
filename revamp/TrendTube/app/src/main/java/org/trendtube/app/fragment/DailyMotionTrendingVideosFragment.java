@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -17,10 +18,11 @@ import com.android.volley.VolleyError;
 import org.trendtube.app.R;
 import org.trendtube.app.activity.SecondActivity;
 import org.trendtube.app.activity.TTApplication;
-import org.trendtube.app.adapter.DailyMotionRecyclerAdapter_Test;
+import org.trendtube.app.adapter.DailyMotionRecyclerAdapter;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.interfaces.NetworkChangeListener;
 import org.trendtube.app.model.DailyMotionTrendingVideoModel;
+import org.trendtube.app.model.DailyMotionVideoItem;
 import org.trendtube.app.receiver.NetworkChangeReceiver;
 import org.trendtube.app.ui.TTProgressWheel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
@@ -32,15 +34,17 @@ import org.trendtube.app.volleytasks.FetchDailyMotionTrendingVideosVolleyTask;
  * Created by shankar on 9/12/15.
  */
 
-public class DailyMotionTrendingVideosFragment extends Fragment implements DailyMotionRecyclerAdapter_Test.TopVideoItemSelectListener,
+public class DailyMotionTrendingVideosFragment extends Fragment implements DailyMotionRecyclerAdapter.DailyMotionVideoItemSelectedListener,
         FetchDailyMotionTrendingVideosVolleyTask.FetchDailyMotionTrendingVideoListener, NetworkChangeListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private int navIndex = -1;
     private RecyclerView recyclerView;
-    private DailyMotionRecyclerAdapter_Test adapter;
+    private DailyMotionRecyclerAdapter adapter;
     private String nextPageToken;
-    private TTProgressWheel progressWheel, footerProgressWheel;
+    private TTProgressWheel progressWheel;
+    private View footerProgressWheel;
+    private TextView txtRemainingVideos;
     private int tabPosition;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
@@ -70,7 +74,7 @@ public class DailyMotionTrendingVideosFragment extends Fragment implements Daily
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            getActivity().findViewById(R.id.fab_category).setVisibility(View.GONE);
+            //getActivity().findViewById(R.id.fab_category).setVisibility(View.GONE);
             TTApplication.fragmentIndex = 1;
             if (navIndex != TTApplication.navIndex) {
                 initViews();
@@ -83,7 +87,8 @@ public class DailyMotionTrendingVideosFragment extends Fragment implements Daily
         if (recyclerView == null) {
             recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
             progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
-            footerProgressWheel = (TTProgressWheel) rootView.findViewById(R.id.footer_progress_bar);
+            footerProgressWheel = rootView.findViewById(R.id.layout_footer_progress);
+            txtRemainingVideos = (TextView) rootView.findViewById(R.id.txt_remaining_videos);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
@@ -136,21 +141,22 @@ public class DailyMotionTrendingVideosFragment extends Fragment implements Daily
     }
 
     @Override
-    public void onTopVideoItemSelected(Object videoId) {
+    public void onDailyMotionVideoItemSelected(DailyMotionVideoItem video) {
 
-        String video = (String) videoId;
-        Toast.makeText(getActivity(), video, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), video.getTitle(), Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(getActivity(), SecondActivity.class);
-        intent.putExtra(Constants.BUNDLE_VIDEO_ID, video);
+        intent.putExtra(Constants.BUNDLE_VIDEO, video);
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
+        Utils.animateActivity(getActivity(), "next");
     }
 
     private void loadVideos(DailyMotionTrendingVideoModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
+        txtRemainingVideos.setText(getString(R.string.label_remaining_videos, response.getTotal()));
         if (adapter == null) {
-            adapter = new DailyMotionRecyclerAdapter_Test(getActivity(), response.getList(), this);
+            adapter = new DailyMotionRecyclerAdapter(getActivity(), response.getList(), this);
             recyclerView.setAdapter(adapter);
         } else if ("".equals(nextPageToken)) {
             adapter.setItems(response.getList());

@@ -28,6 +28,7 @@ import com.android.volley.VolleyError;
 import org.trendtube.app.R;
 import org.trendtube.app.adapter.BasicRecyclerAdapter;
 import org.trendtube.app.adapter.TopVideosPagerAdapter;
+import org.trendtube.app.adapter.TrendTubeSearchPagerAdapter;
 import org.trendtube.app.adapter.TrendingVideosPagerAdapter;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.interfaces.BasicItemSelectedListener;
@@ -45,9 +46,8 @@ import java.util.List;
 import java.util.Set;
 
 public class TrendTubeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener,
-        FetchCategoriesVolleyTask.FetchCategoriesListener, BasicItemSelectedListener,
-        FetchRegionVolleyTask.FetchRegionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, BasicItemSelectedListener,
+        FetchRegionVolleyTask.FetchRegionListener, FetchCategoriesVolleyTask.FetchCategoriesListener {
 
     private static final String TAG = TrendTubeActivity.class.getSimpleName();
     private DrawerLayout mDrawerLayout;
@@ -55,8 +55,10 @@ public class TrendTubeActivity extends AppCompatActivity
     private TTProgressDialog ttProgressDialog;
     private BasicItem selectedCategory, selectedRegion;
     private TextView txtRegion;
+    //private FloatingActionButton fabCategory;
     private TrendingVideosPagerAdapter trendingVideoPagerAdapter;
     private TopVideosPagerAdapter topVideosPagerAdapter;
+    private TrendTubeSearchPagerAdapter searchPagerAdapter;
     private TabLayout mTabLayout;
     private NavigationView mNavigationView;
 
@@ -98,11 +100,13 @@ public class TrendTubeActivity extends AppCompatActivity
         mNavigationView.setCheckedItem(TTApplication.navIndex);
         setTitle(R.string.nav_item_trending_videos);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_category);
-        fab.setOnClickListener(this);
+        /*fabCategory = (FloatingActionButton) findViewById(R.id.fab_category);
+        fabCategory.setOnClickListener(this);
+        fabCategory.setVisibility(View.GONE);*/
 
         trendingVideoPagerAdapter = new TrendingVideosPagerAdapter(getResources().getStringArray(R.array.tab_items_normal), getSupportFragmentManager());
         topVideosPagerAdapter = new TopVideosPagerAdapter(getResources().getStringArray(R.array.tab_items_normal), getSupportFragmentManager());
+        searchPagerAdapter = new TrendTubeSearchPagerAdapter(getResources().getStringArray(R.array.tab_items_search),getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(trendingVideoPagerAdapter);
@@ -168,13 +172,19 @@ public class TrendTubeActivity extends AppCompatActivity
                 TTApplication.navIndex = 0;
                 TTApplication.query = "";
                 mViewPager.setAdapter(trendingVideoPagerAdapter);
+                mTabLayout.setupWithViewPager(mViewPager);
                 setTitle(menuItem.getTitle());
+                //fabCategory.setVisibility(View.VISIBLE);
+                txtRegion.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_item_top_viewed_videsos:
                 TTApplication.navIndex = 1;
                 TTApplication.query = "";
                 mViewPager.setAdapter(topVideosPagerAdapter);
+                mTabLayout.setupWithViewPager(mViewPager);
                 setTitle(menuItem.getTitle());
+                //fabCategory.setVisibility(View.VISIBLE);
+                txtRegion.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_sub_menu_like:
                 like();
@@ -190,9 +200,6 @@ public class TrendTubeActivity extends AppCompatActivity
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.fab_category:
-                categoryButtonClicked();
-                break;
 
             case R.id.btn_region:
                 regionButtonClicked();
@@ -223,29 +230,6 @@ public class TrendTubeActivity extends AppCompatActivity
         }
     }
 
-    private void categoryButtonClicked() {
-
-        MyLog.e(TAG, "Fragment Index: " + TTApplication.fragmentIndex);
-        if (TTApplication.fragmentIndex != 0) {
-
-            Utils.showSnacK(findViewById(R.id.coordinator), "Category is not available for DailyMotion videos", "Ok", Snackbar.LENGTH_LONG, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Do nothing
-                }
-            });
-            return;
-        }
-
-        if (TTApplication.categories != null && TTApplication.categories.size() > 0) {
-            showCategoryListDialog();
-        } else {
-            showProgressDialog();
-            FetchCategoriesVolleyTask task = new FetchCategoriesVolleyTask(this, this);
-            task.execute();
-        }
-    }
-
     private void showProgressDialog() {
         if (ttProgressDialog == null) {
             ttProgressDialog = new TTProgressDialog(this);
@@ -264,43 +248,10 @@ public class TrendTubeActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onCategoriesFetched(CategoryModel response) {
-        dismissProgressDialog();
-        MyLog.e(response.toString());
-        saveCategory(response);
-        showCategoryListDialog();
-    }
-
-    private void saveCategory(CategoryModel categoryMap) {
-
-        Set<String> ids = categoryMap.getCategoryMap().keySet();
-        List<BasicItem> categories = new ArrayList<>();
-        for (String id : ids) {
-            BasicItem item = new BasicItem(id, categoryMap.getCategoryMap().get(id).getName());
-            categories.add(item);
-        }
-
-        TTApplication.categories = categories;
-    }
-
-    private void showCategoryListDialog() {
-        showListViewDialog(this, getString(R.string.title_categories),
-                TTApplication.categories, selectedCategory,
-                Constants.SpinnerType.CATEGORY.getSpinnerType());
-    }
-
     private void showRegionListDialog() {
         showListViewDialog(this, getString(R.string.title_regions),
                 TTApplication.regions, selectedRegion,
                 Constants.SpinnerType.REGION.getSpinnerType());
-    }
-
-    @Override
-    public void onCategoriesFetchedError(VolleyError error) {
-        dismissProgressDialog();
-        Utils.handleError(this, error);
-        error.printStackTrace();
     }
 
     final public void showListViewDialog(final BasicItemSelectedListener listener, String title, List<BasicItem> items, BasicItem selectedItem, final int type) {
@@ -314,30 +265,6 @@ public class TrendTubeActivity extends AppCompatActivity
         if (!this.isFinishing() && !dialog.isShowing()) {
             dialog.show();
         }
-    }
-
-    @Override
-    public void onListViewItemSelected(BasicItem item, int type) {
-
-        if (type == Constants.SpinnerType.CATEGORY.getSpinnerType()) {
-            this.selectedCategory = item;
-            TTApplication.categotyId = selectedCategory.getId();
-            Utils.setPreference(this, Constants.KEY_CATEGORY_ID, selectedCategory.getId());
-            Utils.setPreference(this, Constants.KEY_CATEGORY_NAME, selectedCategory.getName());
-            onFilterVideos();
-        } else if (type == Constants.SpinnerType.REGION.getSpinnerType()) {
-            this.selectedRegion = item;
-            TTApplication.regionId = selectedRegion.getId();
-            Utils.setPreference(this, Constants.KEY_REGION_ID, selectedRegion.getId());
-            Utils.setPreference(this, Constants.KEY_REGION_NAME, selectedRegion.getName());
-            txtRegion.setText(selectedRegion.getName());
-            onFilterVideos();
-        }
-        mDrawerLayout.closeDrawers();
-    }
-
-    private void onFilterVideos() {
-        //((YouTubeTrendingVideosFragment) trendingVideoPagerAdapter.getCurrentFragment(0)).refreshVideos();
     }
 
 
@@ -374,10 +301,92 @@ public class TrendTubeActivity extends AppCompatActivity
             //int fragmentIndex = data.getExtras().getInt(Constants.BUNDLE_FRAGMENT_INDEX);
             MyLog.e("Query Received: " + query);
             TTApplication.query = query;
-            finish();
-            startActivity(TrendTubeSearchResultActivity.newIntent(this));
-            Utils.animateActivity(this, "zero");
+            //finish();
+            //startActivity(TrendTubeSearchResultActivity.newIntent(this));
+            //Utils.animateActivity(this, "zero");
+            mViewPager.setAdapter(null);
+            mViewPager.setAdapter(searchPagerAdapter);
+            mTabLayout.setupWithViewPager(mViewPager);
+            setTitle(R.string.hint_search);
+            //fabCategory.setVisibility(View.GONE);
+            txtRegion.setVisibility(View.GONE);
+            mNavigationView.getMenu().getItem(0).setChecked(false);
+            mNavigationView.getMenu().getItem(1).setChecked(false);
         }
+    }
+
+    @Override
+    public void onListViewItemSelected(BasicItem item, int type) {
+
+        if (type == Constants.SpinnerType.REGION.getSpinnerType()) {
+            mDrawerLayout.closeDrawers();
+            this.selectedRegion = item;
+            TTApplication.regionId = selectedRegion.getId();
+            Utils.setPreference(this, Constants.KEY_REGION_ID, selectedRegion.getId());
+            Utils.setPreference(this, Constants.KEY_REGION_NAME, selectedRegion.getName());
+            if (TTApplication.navIndex == 0) {
+                mViewPager.setAdapter(trendingVideoPagerAdapter);
+            } else {
+                mViewPager.setAdapter(topVideosPagerAdapter);
+            }
+            txtRegion.setText(selectedRegion.getName());
+        } else if (type == Constants.SpinnerType.CATEGORY.getSpinnerType()) {
+            mDrawerLayout.closeDrawers();
+            this.selectedCategory = item;
+            TTApplication.categotyId = selectedCategory.getId();
+            Utils.setPreference(this, Constants.KEY_CATEGORY_ID, selectedCategory.getId());
+            Utils.setPreference(this, Constants.KEY_CATEGORY_NAME, selectedCategory.getName());
+            if (TTApplication.navIndex == 0) {
+                mViewPager.setAdapter(trendingVideoPagerAdapter);
+            } else {
+                mViewPager.setAdapter(topVideosPagerAdapter);
+            }
+        }
+    }
+
+    public void categoryButtonClicked() {
+
+        MyLog.e("Fragment Index: " + TTApplication.fragmentIndex);
+
+        if (TTApplication.categories != null && TTApplication.categories.size() > 0) {
+            showCategoryListDialog();
+        } else {
+            showProgressDialog();
+            FetchCategoriesVolleyTask task = new FetchCategoriesVolleyTask(this, this);
+            task.execute();
+        }
+    }
+
+    private void showCategoryListDialog() {
+        showListViewDialog(this, getString(R.string.title_categories),
+                TTApplication.categories, selectedCategory,
+                Constants.SpinnerType.CATEGORY.getSpinnerType());
+    }
+
+    @Override
+    public void onCategoriesFetched(CategoryModel response) {
+        dismissProgressDialog();
+        MyLog.e(response.toString());
+        saveCategory(response);
+        showCategoryListDialog();
+    }
+
+    @Override
+    public void onCategoriesFetchedError(VolleyError error) {
+        dismissProgressDialog();
+        Utils.handleError(this, error);
+        error.printStackTrace();
+    }
+
+    private void saveCategory(CategoryModel categoryMap) {
+
+        Set<String> ids = categoryMap.getCategoryMap().keySet();
+        List<BasicItem> categories = new ArrayList<>();
+        for (String id : ids) {
+            BasicItem item = new BasicItem(id, categoryMap.getCategoryMap().get(id).getName());
+            categories.add(item);
+        }
+        TTApplication.categories = categories;
     }
 
     /*private final BroadcastReceiver networkReceiver = new BroadcastReceiver() {

@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import org.trendtube.app.fragment.DailyMotionTrendingVideosFragment;
-import org.trendtube.app.fragment.YouTubeTrendingVideosFragment;
+import org.trendtube.app.fragment.YouTubeVideoTrendingVideosFragment;
 import org.trendtube.app.utils.MyLog;
 
 /**
@@ -27,7 +27,7 @@ public class TrendingVideosPagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                return YouTubeTrendingVideosFragment.newInstance(position);
+                return YouTubeVideoTrendingVideosFragment.newInstance(position);
             default:
                 return DailyMotionTrendingVideosFragment.newInstance(position);
         }

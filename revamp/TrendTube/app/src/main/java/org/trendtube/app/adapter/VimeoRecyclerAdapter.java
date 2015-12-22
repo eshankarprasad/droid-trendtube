@@ -21,9 +21,9 @@ public class VimeoRecyclerAdapter extends RecyclerView.Adapter<VimeoRecyclerAdap
 
     private List<VimeoVideoItem> mItems;
     private Activity activity;
-    private VimeoItemSelectListener listener;
+    private VimeoVideoItemSelectedListener listener;
 
-    public VimeoRecyclerAdapter(Activity activity, List<VimeoVideoItem> items, VimeoItemSelectListener listener) {
+    public VimeoRecyclerAdapter(Activity activity, List<VimeoVideoItem> items, VimeoVideoItemSelectedListener listener) {
         this.activity = activity;
         mItems = items;
         this.listener = listener;
@@ -41,7 +41,6 @@ public class VimeoRecyclerAdapter extends RecyclerView.Adapter<VimeoRecyclerAdap
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_vimeo_video, viewGroup, false);
-        v.setTag(mItems.get(i).getTitle());
         return new ViewHolder(v, listener);
     }
 
@@ -52,6 +51,7 @@ public class VimeoRecyclerAdapter extends RecyclerView.Adapter<VimeoRecyclerAdap
         viewHolder.txtTitle.setText(item.getTitle());
         //viewHolder.txtChannelTitle.setText(item.getChannel());
         viewHolder.txtAgeAndViews.setText(Utils.calculateAge(item.getCreatedTime()) + " . " + Utils.calculateViewCount(item.getViewsCount() + "") + " views");
+        viewHolder.setVideoItem(item);
     }
 
     @Override
@@ -59,8 +59,8 @@ public class VimeoRecyclerAdapter extends RecyclerView.Adapter<VimeoRecyclerAdap
         return mItems.size();
     }
 
-    public interface VimeoItemSelectListener {
-        public void onVimeoItemSelected(Object videoId);
+    public interface VimeoVideoItemSelectedListener {
+        public void onVimeoVideoItemSelected(VimeoVideoItem videoItem);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -69,9 +69,14 @@ public class VimeoRecyclerAdapter extends RecyclerView.Adapter<VimeoRecyclerAdap
         private final TextView txtTitle;
         //private final TextView txtChannelTitle;
         private final TextView txtAgeAndViews;
-        private final VimeoItemSelectListener listener;
+        private final VimeoVideoItemSelectedListener listener;
+        private VimeoVideoItem videoItem;
 
-        ViewHolder(View v, VimeoItemSelectListener listener) {
+        public void setVideoItem(VimeoVideoItem videoItem) {
+            this.videoItem = videoItem;
+        }
+
+        ViewHolder(View v, VimeoVideoItemSelectedListener listener) {
             super(v);
             imgThumbnail = (ImageView) v.findViewById(R.id.img_thumbnail);
             txtTitle = (TextView) v.findViewById(R.id.txt_title);
@@ -83,7 +88,7 @@ public class VimeoRecyclerAdapter extends RecyclerView.Adapter<VimeoRecyclerAdap
 
         @Override
         public void onClick(View v) {
-            listener.onVimeoItemSelected(v.getTag());
+            listener.onVimeoVideoItemSelected(videoItem);
         }
     }
 

@@ -34,6 +34,8 @@
 
     <string name="title_activity_search">Search</string>
 
+    <string name="label_remaining_videos">%1$s videos available</string>
+
     <string name="second_activity_text">My Second Demo Text</string>
     <string name="title_activity_second">SecondActivity</string>
 </resources>

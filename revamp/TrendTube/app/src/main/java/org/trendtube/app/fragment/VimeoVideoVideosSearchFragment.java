@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -20,6 +21,7 @@ import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.adapter.VimeoRecyclerAdapter;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.interfaces.NetworkChangeListener;
+import org.trendtube.app.model.VimeoVideoItem;
 import org.trendtube.app.model.VimeoVideoModel;
 import org.trendtube.app.receiver.NetworkChangeReceiver;
 import org.trendtube.app.ui.TTProgressWheel;
@@ -32,25 +34,27 @@ import org.trendtube.app.volleytasks.SearchVimeoVideoVolleyTask;
  * Created by shankar on 9/12/15.
  */
 
-public class VimeoVideosSearchFragment extends Fragment implements VimeoRecyclerAdapter.VimeoItemSelectListener,
+public class VimeoVideoVideosSearchFragment extends Fragment implements VimeoRecyclerAdapter.VimeoVideoItemSelectedListener,
         SearchVimeoVideoVolleyTask.SearchVimeoVideoListener, NetworkChangeListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private RecyclerView recyclerView;
     private VimeoRecyclerAdapter adapter;
     private String nextPageToken;
-    private TTProgressWheel progressWheel, footerProgressWheel;
+    private TTProgressWheel progressWheel;
+    private View footerProgressWheel;
+    private TextView txtRemainingVideos;
     private int tabPosition;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
     private String searchQuery = "";
 
-    public VimeoVideosSearchFragment() {
+    public VimeoVideoVideosSearchFragment() {
 
     }
 
-    public static VimeoVideosSearchFragment newInstance(int tabPosition) {
-        VimeoVideosSearchFragment fragment = new VimeoVideosSearchFragment();
+    public static VimeoVideoVideosSearchFragment newInstance(int tabPosition) {
+        VimeoVideoVideosSearchFragment fragment = new VimeoVideoVideosSearchFragment();
         Bundle args = new Bundle();
         args.putInt(TAB_POSITION, tabPosition);
         fragment.setArguments(args);
@@ -82,7 +86,8 @@ public class VimeoVideosSearchFragment extends Fragment implements VimeoRecycler
         if (recyclerView == null) {
             recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
             progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
-            footerProgressWheel = (TTProgressWheel) rootView.findViewById(R.id.footer_progress_bar);
+            footerProgressWheel = rootView.findViewById(R.id.layout_footer_progress);
+            txtRemainingVideos = (TextView) rootView.findViewById(R.id.txt_remaining_videos);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
@@ -133,14 +138,14 @@ public class VimeoVideosSearchFragment extends Fragment implements VimeoRecycler
     }
 
     @Override
-    public void onVimeoItemSelected(Object videoId) {
+    public void onVimeoVideoItemSelected(VimeoVideoItem video) {
 
-        String video = (String) videoId;
-        Toast.makeText(getActivity(), video, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), video.getTitle(), Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(getActivity(), SecondActivity.class);
-        intent.putExtra(Constants.BUNDLE_VIDEO_ID, video);
+        intent.putExtra(Constants.BUNDLE_VIDEO, video);
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
+        Utils.animateActivity(getActivity(), "next");
     }
 
     /*@Override
@@ -180,6 +185,8 @@ public class VimeoVideosSearchFragment extends Fragment implements VimeoRecycler
     public void onSuccessVimeoSearch(VimeoVideoModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
+        txtRemainingVideos.setText(getString(R.string.label_remaining_videos, response.getTotal()));
+
         if (adapter == null) {
             adapter = new VimeoRecyclerAdapter(getActivity(), response.getList(), this);
             recyclerView.setAdapter(adapter);

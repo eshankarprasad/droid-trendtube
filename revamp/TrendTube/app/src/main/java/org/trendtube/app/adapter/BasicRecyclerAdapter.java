@@ -77,7 +77,7 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
         @Override
         public void onClick(View v) {
             if (seletctedItem.getId().equals(mItems.get(position).getId())) {
-
+                dialog.dismiss();
             } else {
                 listener.onListViewItemSelected(mItems.get(position), type);
                 dialog.dismiss();

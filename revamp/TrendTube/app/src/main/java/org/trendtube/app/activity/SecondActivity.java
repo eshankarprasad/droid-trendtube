@@ -4,14 +4,20 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import org.trendtube.app.R;
 import org.trendtube.app.constants.Constants;
+import org.trendtube.app.model.DailyMotionVideoItem;
+import org.trendtube.app.model.VimeoVideoItem;
+import org.trendtube.app.model.YouTubeVideoItem;
+import org.trendtube.app.utils.Utils;
 
 
 public class SecondActivity extends AppCompatActivity {
+
+    private String videoId;
+    private String videoTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +30,25 @@ public class SecondActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
+
+            Object object = bundle.getSerializable(Constants.BUNDLE_VIDEO);
+
+            if (object instanceof YouTubeVideoItem) {
+                YouTubeVideoItem item = (YouTubeVideoItem) object;
+                videoId = "";
+                videoTitle = item.getSnippet().getTitle();
+            } else if (object instanceof DailyMotionVideoItem) {
+                DailyMotionVideoItem item = (DailyMotionVideoItem) object;
+                videoId = item.getId();
+                videoTitle = item.getTitle();
+            } else if (object instanceof VimeoVideoItem) {
+                VimeoVideoItem item = (VimeoVideoItem) object;
+                videoId = item.getId();
+                videoTitle = item.getTitle();
+            }
+
             CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-            collapsingToolbar.setTitle(bundle.getString(Constants.BUNDLE_VIDEO_ID));
+            collapsingToolbar.setTitle(videoTitle);
         }
     }
 
@@ -35,15 +58,21 @@ public class SecondActivity extends AppCompatActivity {
         return true;
     }*/
 
-    /*@Override
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == android.R.id.home) {
+            finish();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
-    }*/
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        Utils.animateActivity(this, "back");
+    }
 }

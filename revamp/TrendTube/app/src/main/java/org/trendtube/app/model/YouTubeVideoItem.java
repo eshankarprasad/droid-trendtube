@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by shankar on 10/12/15.
  */
-public class VideoItem extends ResponseMetadata {
+public class YouTubeVideoItem extends ResponseMetadata {
 
     @SerializedName("kind")
     private String kind;
@@ -237,7 +237,7 @@ public class VideoItem extends ResponseMetadata {
 
     @Override
     public String toString() {
-        return "VideoItem{" +
+        return "YouTubeVideoItem{" +
                 "kind='" + kind + '\'' +
                 ", etag='" + etag + '\'' +
                 ", snippet=" + snippet +

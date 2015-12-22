@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.trendtube.app.R;
-import org.trendtube.app.model.VideoItem;
+import org.trendtube.app.model.YouTubeVideoItem;
 import org.trendtube.app.utils.Utils;
 
 import java.util.List;
@@ -19,21 +19,21 @@ import java.util.List;
  */
 public class YouTubeRecyclerAdapter extends RecyclerView.Adapter<YouTubeRecyclerAdapter.ViewHolder> {
 
-    private List<VideoItem> mItems;
+    private List<YouTubeVideoItem> mItems;
     private Activity activity;
-    private OnTrendTubeItemSelectListener listener;
+    private YouTubeVideoItemSelectedListener listener;
 
-    public YouTubeRecyclerAdapter(Activity activity, List<VideoItem> items, OnTrendTubeItemSelectListener listener) {
+    public YouTubeRecyclerAdapter(Activity activity, List<YouTubeVideoItem> items, YouTubeVideoItemSelectedListener listener) {
         this.activity = activity;
         mItems = items;
         this.listener = listener;
     }
 
-    public void addItems(List<VideoItem> items) {
+    public void addItems(List<YouTubeVideoItem> items) {
         mItems.addAll(items);
     }
 
-    public void setItems(List<VideoItem> items) {
+    public void setItems(List<YouTubeVideoItem> items) {
         mItems.clear();
         mItems.addAll(items);
     }
@@ -41,17 +41,17 @@ public class YouTubeRecyclerAdapter extends RecyclerView.Adapter<YouTubeRecycler
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_youtube_video, viewGroup, false);
-        v.setTag(mItems.get(i).getSnippet().getTitle());
         return new ViewHolder(v, listener);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        VideoItem item = mItems.get(i);
+        YouTubeVideoItem item = mItems.get(i);
         Utils.displayImage(activity, item.getSnippet().getThumbnails().getHighImage().getUrl(), R.drawable.image, viewHolder.imgThumbnail);
         viewHolder.txtTitle.setText(item.getSnippet().getTitle());
         viewHolder.txtChannelTitle.setText(item.getSnippet().getChannelTitle());
         viewHolder.txtAgeAndViews.setText(Utils.calculateAge(item.getSnippet().getPublishedAt()) + " . " + Utils.calculateViewCount(item.getStatistics().getViewCount()) + " views");
+        viewHolder.setVideoItem(item);
     }
 
     @Override
@@ -59,8 +59,8 @@ public class YouTubeRecyclerAdapter extends RecyclerView.Adapter<YouTubeRecycler
         return mItems.size();
     }
 
-    public interface OnTrendTubeItemSelectListener {
-        public void onTrendTubeItemSelected(Object videoId);
+    public interface YouTubeVideoItemSelectedListener {
+        public void onYouTubeVideoSelected(YouTubeVideoItem videoItem);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -69,9 +69,15 @@ public class YouTubeRecyclerAdapter extends RecyclerView.Adapter<YouTubeRecycler
         private final TextView txtTitle;
         private final TextView txtChannelTitle;
         private final TextView txtAgeAndViews;
-        private final OnTrendTubeItemSelectListener listener;
+        private YouTubeVideoItem videoItem;
 
-        ViewHolder(View v, OnTrendTubeItemSelectListener listener) {
+        public void setVideoItem(YouTubeVideoItem videoItem) {
+            this.videoItem = videoItem;
+        }
+
+        private final YouTubeVideoItemSelectedListener listener;
+
+        ViewHolder(View v, YouTubeVideoItemSelectedListener listener) {
             super(v);
             imgThumbnail = (ImageView) v.findViewById(R.id.img_thumbnail);
             txtTitle = (TextView) v.findViewById(R.id.txt_title);
@@ -83,7 +89,7 @@ public class YouTubeRecyclerAdapter extends RecyclerView.Adapter<YouTubeRecycler
 
         @Override
         public void onClick(View v) {
-            listener.onTrendTubeItemSelected(v.getTag());
+            listener.onYouTubeVideoSelected(videoItem);
         }
     }
 

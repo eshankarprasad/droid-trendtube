@@ -29,7 +29,7 @@ public class YouTubeVideoModel extends ResponseMetadata {
     private PageInfo pageInfo;
 
     @SerializedName("items")
-    private List<VideoItem> videoItems;
+    private List<YouTubeVideoItem> youTubeVideoItems;
 
     public String getId() {
         return id;
@@ -79,12 +79,12 @@ public class YouTubeVideoModel extends ResponseMetadata {
         this.pageInfo = pageInfo;
     }
 
-    public List<VideoItem> getVideoItems() {
-        return videoItems;
+    public List<YouTubeVideoItem> getYouTubeVideoItems() {
+        return youTubeVideoItems;
     }
 
-    public void setVideoItems(List<VideoItem> videoItems) {
-        this.videoItems = videoItems;
+    public void setYouTubeVideoItems(List<YouTubeVideoItem> youTubeVideoItems) {
+        this.youTubeVideoItems = youTubeVideoItems;
     }
 
     @Override
@@ -96,7 +96,7 @@ public class YouTubeVideoModel extends ResponseMetadata {
                 ", nextPageToken='" + nextPageToken + '\'' +
                 ", prevPageToken='" + prevPageToken + '\'' +
                 ", pageInfo=" + pageInfo +
-                ", videoItems=" + videoItems +
+                ", youTubeVideoItems=" + youTubeVideoItems +
                 '}';
     }
 

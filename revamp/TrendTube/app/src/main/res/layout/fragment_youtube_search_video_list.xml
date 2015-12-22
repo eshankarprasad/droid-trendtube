@@ -28,7 +28,6 @@
             android:layout_height="wrap_content"
             android:textColor="@color/footer_text_color"
             android:textSize="@dimen/trending_tuple_subtitle_size"
-            android:text="Remaining Videos"
             android:layout_centerInParent="true"/>
     </RelativeLayout>
 
@@ -38,18 +37,6 @@
         android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:clickable="true"
-        android:src="@drawable/ic_filter"
-        android:theme="@style/TrendTubeFloatingButtonTheme"
-        app:popupTheme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
     <org.trendtube.app.ui.TTProgressWheel
         xmlns:wheel="http://schemas.android.com/apk/res-auto"

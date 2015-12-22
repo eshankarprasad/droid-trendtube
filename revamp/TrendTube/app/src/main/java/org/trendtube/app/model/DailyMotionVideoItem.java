@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by shankarprasad on 20-12-2015.
  */
-public class Item implements Serializable {
+public class DailyMotionVideoItem implements Serializable {
 
     @SerializedName("thumbnail_large_url")
     private String thumbnailLargeUrl;
@@ -133,7 +133,7 @@ public class Item implements Serializable {
 
     @Override
     public String toString() {
-        return "Item{" +
+        return "DailyMotionVideoItem{" +
                 "thumbnailLargeUrl='" + thumbnailLargeUrl + '\'' +
                 ", id='" + id + '\'' +
                 ", title='" + title + '\'' +
