@@ -47,7 +47,7 @@ public class YouTubeRecyclerAdapter extends RecyclerView.Adapter<YouTubeRecycler
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         YouTubeVideoItem item = mItems.get(i);
-        Utils.displayImage(activity, item.getSnippet().getThumbnails().getHighImage().getUrl(), R.drawable.image, viewHolder.imgThumbnail);
+        Utils.displayImage(activity, item.getSnippet().getThumbnails().getMediumImage().getUrl(), R.drawable.image, viewHolder.imgThumbnail);
         viewHolder.txtTitle.setText(item.getSnippet().getTitle());
         viewHolder.txtChannelTitle.setText(item.getSnippet().getChannelTitle());
         viewHolder.txtAgeAndViews.setText(Utils.calculateAge(item.getSnippet().getPublishedAt()) + " . " + Utils.calculateViewCount(item.getStatistics().getViewCount()) + " views");

@@ -26,6 +26,7 @@ public class Constants {
 
     public static final String BUNDLE_QUERY = "bundle_query";
     public static final String BUNDLE_FRAGMENT_INDEX = "bundle_fragment_index";
+    public static final String DEVELOPER_KEY = "AIzaSyAJGgPwppILAzpK3RP03k81sZSulBSpY8k";
 
     public static enum SpinnerType {
 

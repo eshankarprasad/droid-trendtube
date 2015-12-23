@@ -156,8 +156,8 @@ public class TTGsonRequest<T extends ResponseMetadata> extends TTRequest<T> {
             json = json.substring(startIndex+2, lastIndex).replaceAll("0\\],\\[", "").replaceAll("0,\\[10\\]\\],\\[", "").replaceAll(",0,\\[10\\]", "");
             json = "{\"suggestions\":[" + json + "]}";
 		}
-		//System.err.println("Final Url: " + getUrl());
-		//System.err.println("Final JSON: " + json);
+		System.err.println("Final Url: " + getUrl());
+		System.err.println("Final JSON: " + json);
 		return json;
 	}
 	@Override

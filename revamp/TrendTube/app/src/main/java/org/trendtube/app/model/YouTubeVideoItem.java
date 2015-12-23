@@ -16,6 +16,9 @@ public class YouTubeVideoItem extends ResponseMetadata {
     @SerializedName("etag")
     private String etag;
 
+    @SerializedName("id")
+    private String id;
+
     @SerializedName("snippet")
     private Snippet snippet;
 
@@ -37,8 +40,28 @@ public class YouTubeVideoItem extends ResponseMetadata {
         return snippet;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void setSnippet(Snippet snippet) {
         this.snippet = snippet;
+    }
+
+    @Override
+    public String toString() {
+        return "YouTubeVideoItem{" +
+                "kind='" + kind + '\'' +
+                ", etag='" + etag + '\'' +
+                ", id='" + id + '\'' +
+                ", snippet=" + snippet +
+                ", contentDetails=" + contentDetails +
+                ", statistics=" + statistics +
+                '}';
     }
 
     public String getEtag() {
@@ -235,13 +258,4 @@ public class YouTubeVideoItem extends ResponseMetadata {
         }
     }
 
-    @Override
-    public String toString() {
-        return "YouTubeVideoItem{" +
-                "kind='" + kind + '\'' +
-                ", etag='" + etag + '\'' +
-                ", snippet=" + snippet +
-                ", statistics=" + statistics +
-                '}';
-    }
 }

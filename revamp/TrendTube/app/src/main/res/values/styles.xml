@@ -26,7 +26,8 @@
         <item name="colorAccent">@color/red_normal</item>
     </style>
 
-    <style name="TTProgressDialog" parent="android:Theme.Translucent.NoTitleBar">
-    </style>
+    <style name="TTProgressDialog" parent="android:Theme.Translucent.NoTitleBar"/>
+
+    <style name="BlackNoTitleBarTheme" parent="android:Theme.Black.NoTitleBar"/>
 
 </resources>

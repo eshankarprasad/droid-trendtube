@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 
 import org.trendtube.app.R;
+import org.trendtube.app.activity.FullscreenDemoActivity;
 import org.trendtube.app.activity.SecondActivity;
 import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.activity.TrendTubeActivity;
@@ -174,7 +175,12 @@ public class YouTubeVideoTrendingVideosFragment extends Fragment
 
         Toast.makeText(getActivity(), video.getSnippet().getTitle(), Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent(getActivity(), SecondActivity.class);
+        /*Intent intent = new Intent(getActivity(), SecondActivity.class);
+        intent.putExtra(Constants.BUNDLE_VIDEO, video);
+        startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
+        Utils.animateActivity(getActivity(), "next");*/
+
+        Intent intent = new Intent(getActivity(), FullscreenDemoActivity.class);
         intent.putExtra(Constants.BUNDLE_VIDEO, video);
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
         Utils.animateActivity(getActivity(), "next");
@@ -196,7 +202,7 @@ public class YouTubeVideoTrendingVideosFragment extends Fragment
             adapter.notifyDataSetChanged();
         }
         nextPageToken = response.getNextPageToken();
-        MyLog.e("nextPageToken: " + nextPageToken);
+        //MyLog.e("nextPageToken: " + nextPageToken);
         unregisterReceiver();
     }
 

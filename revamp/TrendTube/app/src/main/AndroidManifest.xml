@@ -37,6 +37,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.TrendTubeActivity" />
         </activity>
+
+        <activity
+            android:label="@string/title_activity_second"
+            android:name=".activity.FullscreenDemoActivity"
+            android:screenOrientation="sensor"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/BlackNoTitleBarTheme">
+            <!--<meta-data android:name="@string/minVersion" android:value="8"/>
+            <meta-data android:name="@string/isLaunchableActivity" android:value="true"/>-->
+        </activity>
     </application>
 
 </manifest>

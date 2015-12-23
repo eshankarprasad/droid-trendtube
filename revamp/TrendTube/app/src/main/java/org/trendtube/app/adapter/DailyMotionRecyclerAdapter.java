@@ -40,7 +40,7 @@ public class DailyMotionRecyclerAdapter extends RecyclerView.Adapter<DailyMotion
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_dailymotion_video, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_youtube_video, viewGroup, false);
         return new ViewHolder(v, listener);
     }
 

@@ -1,10 +1,16 @@
 package org.trendtube.app.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import com.google.android.youtube.player.YouTubeBaseActivity;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
 
 import org.trendtube.app.R;
 import org.trendtube.app.constants.Constants;
@@ -12,7 +18,6 @@ import org.trendtube.app.model.DailyMotionVideoItem;
 import org.trendtube.app.model.VimeoVideoItem;
 import org.trendtube.app.model.YouTubeVideoItem;
 import org.trendtube.app.utils.Utils;
-
 
 public class SecondActivity extends AppCompatActivity {
 
@@ -24,9 +29,9 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -35,7 +40,7 @@ public class SecondActivity extends AppCompatActivity {
 
             if (object instanceof YouTubeVideoItem) {
                 YouTubeVideoItem item = (YouTubeVideoItem) object;
-                videoId = "";
+                videoId = item.getId();
                 videoTitle = item.getSnippet().getTitle();
             } else if (object instanceof DailyMotionVideoItem) {
                 DailyMotionVideoItem item = (DailyMotionVideoItem) object;
@@ -47,8 +52,12 @@ public class SecondActivity extends AppCompatActivity {
                 videoTitle = item.getTitle();
             }
 
-            CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-            collapsingToolbar.setTitle(videoTitle);
+            Intent intent = null;
+            intent = YouTubeStandalonePlayer.createVideoIntent(this, Constants.DEVELOPER_KEY, videoId, 0, true, true);
+            startActivityForResult(intent, 1);
+
+            /*CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+            collapsingToolbar.setTitle(videoTitle);*/
         }
     }
 

@@ -178,7 +178,7 @@ public class YouTubeVideoTopVideosFragment extends Fragment
             adapter.notifyDataSetChanged();
         }
         nextPageToken = response.getNextPageToken();
-        MyLog.e("nextPageToken: " + nextPageToken);
+        //MyLog.e("nextPageToken: " + nextPageToken);
         unregisterReceiver();
     }
 
