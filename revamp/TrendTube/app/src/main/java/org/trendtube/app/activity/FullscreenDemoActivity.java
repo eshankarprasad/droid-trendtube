@@ -29,17 +29,14 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.bartoszlipinski.recyclerviewheader.RecyclerViewHeader;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 
 import org.trendtube.app.R;
 import org.trendtube.app.adapter.VideoDetailRecyclerAdapter;
-import org.trendtube.app.adapter.YouTubeRecyclerAdapter;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.model.DailyMotionVideoItem;
 import org.trendtube.app.model.VideoDetailHeaderModel;
@@ -52,7 +49,6 @@ import org.trendtube.app.utils.Utils;
 import org.trendtube.app.volleytasks.SearchYouTubeVideoVolleyTask;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -304,7 +300,8 @@ public class FullscreenDemoActivity extends YouTubeFailureRecoveryActivity imple
         /*if (adapter == null) {
             adapter = new VideoDetailRecyclerAdapter(this, headerModel, response.getYouTubeVideoItems(), this);
             recyclerView.setAdapter(adapter);
-        } else */if ("".equals(nextPageToken)) {
+        } else */
+        if ("".equals(nextPageToken)) {
             adapter.setItems(response.getYouTubeVideoItems());
             adapter.notifyDataSetChanged();
         } else {
