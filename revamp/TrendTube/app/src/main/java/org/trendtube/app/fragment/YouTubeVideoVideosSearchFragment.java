@@ -42,9 +42,7 @@ public class YouTubeVideoVideosSearchFragment extends Fragment implements YouTub
     private YouTubeRecyclerAdapter adapter;
     private int tabPosition;
     private String nextPageToken;
-    private TTProgressWheel progressWheel;
-    private View footerProgressWheel;
-    private TextView txtRemainingVideos;
+    private View progressWheel, footerProgressWheel;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
 
@@ -68,9 +66,8 @@ public class YouTubeVideoVideosSearchFragment extends Fragment implements YouTub
         rootView = inflater.inflate(R.layout.fragment_youtube_search_video_list, null);
         nextPageToken = "";
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
-        progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
-        footerProgressWheel = rootView.findViewById(R.id.layout_footer_progress);
-        txtRemainingVideos = (TextView) rootView.findViewById(R.id.txt_remaining_videos);
+        progressWheel = rootView.findViewById(R.id.progress_bar);
+        footerProgressWheel = rootView.findViewById(R.id.footer_progress_bar);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
@@ -163,7 +160,6 @@ public class YouTubeVideoVideosSearchFragment extends Fragment implements YouTub
     public void onSuccessYouTubeSearch(YouTubeVideoModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
-        txtRemainingVideos.setText(getString(R.string.label_remaining_videos, response.getPageInfo().getTotalResults()));
         if (adapter == null) {
             adapter = new YouTubeRecyclerAdapter(getActivity(), response.getYouTubeVideoItems(), this);
             recyclerView.setAdapter(adapter);

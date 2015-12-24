@@ -31,7 +31,7 @@ public class FetchRegionVolleyTask implements TTResponseListener<RegionModel> {
             String url = Config.getRegionUrl();
             TTGsonRequest<RegionModel> nNacresGsonRequest = new TTGsonRequest<RegionModel>(activity, url, null, this, RegionModel.class);
             nNacresGsonRequest.setTaskId(this);
-            TTVolleyManager.addToQueue(nNacresGsonRequest, true);
+            TTVolleyManager.addToQueue(nNacresGsonRequest, false);
         } catch (Exception e) {
             e.printStackTrace();
             onErrorResponse(null, new ParseError());

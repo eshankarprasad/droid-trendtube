@@ -32,7 +32,7 @@ public class SearchVimeoVideoVolleyTask implements TTResponseListener<VimeoVideo
             TTGsonRequest<VimeoVideoModel> nNacresGsonRequest
                     = new TTGsonRequest<VimeoVideoModel>(activity, url, null, this, VimeoVideoModel.class);
             nNacresGsonRequest.setTaskId(this);
-            TTVolleyManager.addToQueue(nNacresGsonRequest, true);
+            TTVolleyManager.addToQueue(nNacresGsonRequest, false);
         } catch (Exception e) {
             e.printStackTrace();
             onErrorResponse(null, new ParseError());

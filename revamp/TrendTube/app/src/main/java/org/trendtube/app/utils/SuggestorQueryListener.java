@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
 import org.trendtube.app.activity.SearchActivity;
 import org.trendtube.app.constants.Config;
+import org.trendtube.app.constants.Constants;
 import org.trendtube.app.interfaces.FetchSuggestionsListener;
 import org.trendtube.app.model.SuggestionModel;
 import org.trendtube.app.volley.TTGsonRequest;
@@ -16,6 +18,7 @@ import org.trendtube.app.volley.TTRequest;
 import org.trendtube.app.volley.TTResponseListener;
 import org.trendtube.app.volley.TTVolleyManager;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -58,7 +61,13 @@ public class SuggestorQueryListener implements SearchView.OnQueryTextListener, T
             public void run() {
 
                 if (newText.trim().length() >= suggestor_text_length_limit) {
-                    String url = Config.getSuggestionUrl(newText);
+                    String url = null;
+                    try {
+                        url = Config.getSuggestionUrl(newText);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                        Utils.showErrorToast(activity, Constants.ERROR_UNSUPPORTED_CHARACTER, Toast.LENGTH_SHORT);
+                    }
                     TTGsonRequest<SuggestionModel> nNacresGsonRequest =
                             new TTGsonRequest<SuggestionModel>(activity, url, null,
                                     SuggestorQueryListener.this, SuggestionModel.class);

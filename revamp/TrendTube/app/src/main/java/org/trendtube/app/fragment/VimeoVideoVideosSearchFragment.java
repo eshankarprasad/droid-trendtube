@@ -41,9 +41,7 @@ public class VimeoVideoVideosSearchFragment extends Fragment implements VimeoRec
     private RecyclerView recyclerView;
     private VimeoRecyclerAdapter adapter;
     private String nextPageToken;
-    private TTProgressWheel progressWheel;
-    private View footerProgressWheel;
-    private TextView txtRemainingVideos;
+    private View progressWheel, footerProgressWheel;
     private int tabPosition;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
@@ -85,9 +83,8 @@ public class VimeoVideoVideosSearchFragment extends Fragment implements VimeoRec
         nextPageToken = "";
         if (recyclerView == null) {
             recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
-            progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
-            footerProgressWheel = rootView.findViewById(R.id.layout_footer_progress);
-            txtRemainingVideos = (TextView) rootView.findViewById(R.id.txt_remaining_videos);
+            progressWheel = rootView.findViewById(R.id.progress_bar);
+            footerProgressWheel = rootView.findViewById(R.id.footer_progress_bar);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
@@ -185,7 +182,7 @@ public class VimeoVideoVideosSearchFragment extends Fragment implements VimeoRec
     public void onSuccessVimeoSearch(VimeoVideoModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
-        txtRemainingVideos.setText(getString(R.string.label_remaining_videos, response.getTotal()));
+        //txtRemainingVideos.setText(getString(R.string.label_remaining_videos, response.getTotal()));
 
         if (adapter == null) {
             adapter = new VimeoRecyclerAdapter(getActivity(), response.getList(), this);

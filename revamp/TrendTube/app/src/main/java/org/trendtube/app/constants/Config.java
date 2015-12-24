@@ -4,6 +4,8 @@ import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * Created by shankar on 9/12/15.
  */
@@ -59,11 +61,11 @@ public class Config extends ServerConfig {
         return REST_HOST_YOUTUBE + "/getYouTubeCategoriesFromDB?server_key=" +SERVER_KEY;
     }
 
-    public static String getSuggestionUrl(CharSequence query) {
+    public static String getSuggestionUrl(CharSequence query) throws UnsupportedEncodingException {
         return "http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=en&q=" + Utils.encodeBankSpaces(query.toString());
     }
 
-    public static String getSearchYouTubeVideosUrl(String token, String query) {
+    public static String getSearchYouTubeVideosUrl(String token, String query) throws UnsupportedEncodingException {
         //http://www.trendtube.org/YouTubeApi/searchVideosByQuery?server_key=jhsdasr7645234jfsklj0938209sr923&resultPerPage=1&pageToken=1
         if ("".equals(token)) {
             return REST_HOST_YOUTUBE + "/searchVideosByQuery?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&q=" + Utils.encodeBankSpaces(query);
@@ -72,7 +74,7 @@ public class Config extends ServerConfig {
         }
     }
 
-    public static String getSearchDailyMotionVideosUrl(String token, String query) {
+    public static String getSearchDailyMotionVideosUrl(String token, String query) throws UnsupportedEncodingException {
 
         if ("".equals(token)) {
             return REST_HOST_DAILYMOTION + "/searchVideosByQuery?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&q=" + Utils.encodeBankSpaces(query);
@@ -81,7 +83,7 @@ public class Config extends ServerConfig {
         }
     }
 
-    public static String getSearchVimeoVideosUrl(String token, String query) {
+    public static String getSearchVimeoVideosUrl(String token, String query) throws UnsupportedEncodingException {
 
         if ("".equals(token)) {
             return REST_HOST_VIMEO + "/searchVideosByQuery?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&q=" + Utils.encodeBankSpaces(query);

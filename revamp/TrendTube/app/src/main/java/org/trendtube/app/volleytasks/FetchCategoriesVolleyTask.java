@@ -31,7 +31,7 @@ public class FetchCategoriesVolleyTask implements TTResponseListener<CategoryMod
             String url = Config.getCategoriesUrl();
             TTGsonRequest<CategoryModel> nNacresGsonRequest = new TTGsonRequest<CategoryModel>(activity, url, null, this, CategoryModel.class);
             nNacresGsonRequest.setTaskId(this);
-            TTVolleyManager.addToQueue(nNacresGsonRequest, true);
+            TTVolleyManager.addToQueue(nNacresGsonRequest, false);
         } catch (Exception e) {
             e.printStackTrace();
             onErrorResponse(null, new ParseError());

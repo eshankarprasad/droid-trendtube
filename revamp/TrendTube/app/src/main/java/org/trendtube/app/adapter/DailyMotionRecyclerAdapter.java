@@ -47,7 +47,8 @@ public class DailyMotionRecyclerAdapter extends RecyclerView.Adapter<DailyMotion
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         DailyMotionVideoItem dailyMotionVideoItem = mDailyMotionVideoItems.get(i);
-        Utils.displayImage(activity, dailyMotionVideoItem.getThumbnailLargeUrl(), R.drawable.image, viewHolder.imgThumbnail);
+        //Utils.displayImage(activity, dailyMotionVideoItem.getThumbnailLargeUrl(), R.drawable.image, viewHolder.imgThumbnail);
+        Utils.displayImage(activity, dailyMotionVideoItem.getThumbnailLargeUrl(), viewHolder.imgThumbnail);
         viewHolder.txtTitle.setText(dailyMotionVideoItem.getTitle());
         viewHolder.txtChannelTitle.setText(dailyMotionVideoItem.getChannel());
         viewHolder.txtAgeAndViews.setText(Utils.calculateAge(dailyMotionVideoItem.getCreatedTime()) + " . " + Utils.calculateViewCount(dailyMotionVideoItem.getViewsTotal() + "") + " views");

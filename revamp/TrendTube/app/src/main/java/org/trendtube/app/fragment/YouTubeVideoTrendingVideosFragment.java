@@ -47,10 +47,9 @@ public class YouTubeVideoTrendingVideosFragment extends Fragment
     private YouTubeRecyclerAdapter adapter;
     private int tabPosition;
     private String nextPageToken;
-    private TTProgressWheel progressWheel;
-    private View footerProgressWheel;
-    private TextView txtRemainingVideos;
+    private View progressWheel, footerProgressWheel;
     private TTProgressDialog ttProgressDialog;
+    private FetchYouTubeTrendingVideosVolleyTask task;
     private NetworkChangeReceiver receiver;
     private IntentFilter intentFilter;
 
@@ -80,9 +79,8 @@ public class YouTubeVideoTrendingVideosFragment extends Fragment
     private void initView() {
         nextPageToken = "";
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
-        progressWheel = (TTProgressWheel) rootView.findViewById(R.id.progress_bar);
-        footerProgressWheel = rootView.findViewById(R.id.layout_footer_progress);
-        txtRemainingVideos = (TextView) rootView.findViewById(R.id.txt_remaining_videos);
+        progressWheel = rootView.findViewById(R.id.progress_bar);
+        footerProgressWheel = rootView.findViewById(R.id.footer_progress_bar);
 
         View categoryButton = rootView.findViewById(R.id.fab_category);
         categoryButton.setOnClickListener(this);
@@ -165,8 +163,12 @@ public class YouTubeVideoTrendingVideosFragment extends Fragment
         } else {
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
-        recyclerView.scrollToPosition(0);
-        FetchYouTubeTrendingVideosVolleyTask task = new FetchYouTubeTrendingVideosVolleyTask(getActivity(), this);
+
+        if (task != null) {
+            task.cancelTask();
+        }
+
+        task = new FetchYouTubeTrendingVideosVolleyTask(getActivity(), this);
         task.execute(nextPageToken);
     }
 
@@ -180,17 +182,19 @@ public class YouTubeVideoTrendingVideosFragment extends Fragment
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
         Utils.animateActivity(getActivity(), "next");*/
 
-        Intent intent = new Intent(getActivity(), FullscreenDemoActivity.class);
+        Intent intent = FullscreenDemoActivity.newIntent(getActivity());
         intent.putExtra(Constants.BUNDLE_VIDEO, video);
+        intent.putExtra(Constants.BUNDLE_VIDEO_FLAG, Constants.FLAG_YOUTUBE_SEARCH_VIDEO);
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
         Utils.animateActivity(getActivity(), "next");
     }
 
     @Override
     public void onVideoFetched(YouTubeVideoModel response) {
+
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
-        txtRemainingVideos.setText(getString(R.string.label_remaining_videos, response.getPageInfo().getTotalResults()));
+
         if (adapter == null) {
             adapter = new YouTubeRecyclerAdapter(getActivity(), response.getYouTubeVideoItems(), this);
             recyclerView.setAdapter(adapter);

@@ -17,8 +17,7 @@
             android:id="@+id/img_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="@dimen/topviewed_video_tuple_height"
-            android:scaleType="centerCrop"
-            android:src="@drawable/image" />
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/txt_title"

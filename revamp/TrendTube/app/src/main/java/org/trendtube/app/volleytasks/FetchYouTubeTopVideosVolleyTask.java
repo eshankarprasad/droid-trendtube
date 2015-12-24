@@ -35,7 +35,7 @@ public class FetchYouTubeTopVideosVolleyTask implements TTResponseListener<YouTu
             MyLog.e(url);
             TTGsonRequest<YouTubeVideoModel> nNacresGsonRequest = new TTGsonRequest<YouTubeVideoModel>(activity, url, null, this, YouTubeVideoModel.class);
             nNacresGsonRequest.setTaskId(this);
-            TTVolleyManager.addToQueue(nNacresGsonRequest, true);
+            TTVolleyManager.addToQueue(nNacresGsonRequest, false);
         } catch (Exception e) {
             e.printStackTrace();
             onErrorResponse(null, new ParseError());

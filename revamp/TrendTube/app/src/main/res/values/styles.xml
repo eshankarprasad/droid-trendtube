@@ -17,7 +17,7 @@
 
     <style name="TrendTubeTabTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/gray_charcoal_light</item>
+        <item name="android:textColorSecondary">@color/black</item>
         <item name="android:background">@color/red_light</item>
         <item name="colorAccent">@color/white</item>
     </style>
@@ -28,6 +28,7 @@
 
     <style name="TTProgressDialog" parent="android:Theme.Translucent.NoTitleBar"/>
 
-    <style name="BlackNoTitleBarTheme" parent="android:Theme.Black.NoTitleBar"/>
+    <!--<style name="BlackNoTitleBarTheme" parent="android:Theme.Black.NoTitleBar"/>-->
+    <style name="BlackNoTitleBarTheme" parent="Theme.AppCompat.Light.NoActionBar"/>
 
 </resources>

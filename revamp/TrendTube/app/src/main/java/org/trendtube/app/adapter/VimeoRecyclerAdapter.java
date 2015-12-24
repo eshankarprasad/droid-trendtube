@@ -47,7 +47,8 @@ public class VimeoRecyclerAdapter extends RecyclerView.Adapter<VimeoRecyclerAdap
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         VimeoVideoItem item = mItems.get(i);
-        Utils.displayImage(activity, item.getThumbnail(), R.drawable.image, viewHolder.imgThumbnail);
+        //Utils.displayImage(activity, item.getThumbnail(), R.drawable.image, viewHolder.imgThumbnail);
+        Utils.displayImage(activity, item.getThumbnail(), viewHolder.imgThumbnail);
         viewHolder.txtTitle.setText(item.getTitle());
         //viewHolder.txtChannelTitle.setText(item.getChannel());
         viewHolder.txtAgeAndViews.setText(Utils.calculateAge(item.getCreatedTime()) + " . " + Utils.calculateViewCount(item.getViewsCount() + "") + " views");

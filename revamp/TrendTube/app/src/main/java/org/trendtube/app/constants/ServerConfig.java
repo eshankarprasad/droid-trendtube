@@ -16,5 +16,5 @@ public class ServerConfig {
     public static final String REST_HOST_DAILYMOTION = HOST + "/" + DIR_DAILYMOTION;
     public static final String REST_HOST_VIMEO = HOST + "/" + DIR_VIMEO;
 
-    public static final int RESULT_PER_PAGE = 8;
+    public static final int RESULT_PER_PAGE = 12;
 }

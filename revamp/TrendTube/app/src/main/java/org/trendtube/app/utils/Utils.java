@@ -31,8 +31,12 @@ import org.joda.time.Months;
 import org.joda.time.Years;
 import org.trendtube.app.R;
 import org.trendtube.app.constants.Constants;
+import org.trendtube.app.volley.NullResponseError;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -193,6 +197,15 @@ public class Utils {
             }
         });
     }
+    public static void displayImage(final Activity activity, final String url, final ImageView imageView) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Glide.with(activity).load(url).skipMemoryCache(false).into(imageView);
+            }
+        });
+    }
+
 
     public static Dialog getBasicDialog(Context context, String dialogTitle) {
 
@@ -271,11 +284,10 @@ public class Utils {
         }
         if (isNetworkError(error)) {
             showErrorToast(context, Constants.CONNECTION_ERROR, Toast.LENGTH_SHORT);
-
         } else if (error instanceof ServerError) {
-
             showErrorToast(context, Constants.SERVER_ERROR, Toast.LENGTH_SHORT);
-
+        } else if (error instanceof NullResponseError) {
+            showErrorToast(context, Constants.VIDEOS_NOT_FOUND_ERROR, Toast.LENGTH_SHORT);
         } else {
             showErrorToast(context, Constants.APPLICATION_ERROR, Toast.LENGTH_SHORT);
         }
@@ -334,8 +346,9 @@ public class Utils {
         }
     }
 
-    public static String encodeBankSpaces(String text) {
-        return text.replaceAll(" ", "%20");
+    public static String encodeBankSpaces(String text) throws UnsupportedEncodingException {
+        //return text.replaceAll(" ", "%20");
+        return  URLEncoder.encode(text, "utf-8");
     }
 
     public static void animateActivity(Activity activity, String action) {
@@ -356,6 +369,34 @@ public class Utils {
         } else if (action.equalsIgnoreCase("zero")) {
             activity.overridePendingTransition(R.anim.zero_duration,
                     R.anim.zero_duration);
+        }
+    }
+
+    public static String getCommaSeperatedNumber(String s) {
+        String convertedStr = s;
+        if (s.contains(".")) {
+            if(chkConvert(s.toString()))
+                convertedStr = customFormat("##,###,###",Double.parseDouble(s.toString().replace(",","")));
+        } else {
+            convertedStr = customFormat("##,###,###", Double.parseDouble(s.toString().replace(",","")));
+        }
+        return convertedStr;
+    }
+
+    private static String customFormat(String pattern, double value) {
+
+        DecimalFormat myFormatter = new DecimalFormat(pattern);
+        String output = myFormatter.format(value);
+        return output;
+    }
+
+    private static boolean chkConvert(String s) {
+
+        String tempArray[] = s.toString().split("\\.");
+        if (tempArray.length > 1) {
+            return Integer.parseInt(tempArray[1]) > 0;
+        } else {
+            return false;
         }
     }
 }

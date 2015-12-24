@@ -31,7 +31,7 @@ public class SearchDailyMotionVideoVolleyTask implements TTResponseListener<Dail
             String url = Config.getSearchDailyMotionVideosUrl(token, query);
             TTGsonRequest<DailyMotionTrendingVideoModel> nNacresGsonRequest = new TTGsonRequest<DailyMotionTrendingVideoModel>(activity, url, null, this, DailyMotionTrendingVideoModel.class);
             nNacresGsonRequest.setTaskId(this);
-            TTVolleyManager.addToQueue(nNacresGsonRequest, true);
+            TTVolleyManager.addToQueue(nNacresGsonRequest, false);
         } catch (Exception e) {
             e.printStackTrace();
             onErrorResponse(null, new ParseError());

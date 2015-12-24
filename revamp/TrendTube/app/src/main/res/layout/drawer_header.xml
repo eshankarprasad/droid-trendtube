@@ -18,7 +18,7 @@
         android:textColor="#ffffff"
         android:text="@string/drawer_header_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:drawableLeft="@drawable/ic_arrow_drop_down"
+        android:drawableLeft="@drawable/ic_arrow_drop_down_white"
         android:gravity="center_vertical"
         android:clickable="true"
         android:background="?android:attr/selectableItemBackground"/>
