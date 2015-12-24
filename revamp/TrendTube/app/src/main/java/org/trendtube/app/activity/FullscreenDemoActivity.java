@@ -134,6 +134,7 @@ public class FullscreenDemoActivity extends YouTubeFailureRecoveryActivity imple
         recyclerView.setLayoutManager(linearLayoutManager);
 
         adapter = new VideoDetailRecyclerAdapter(this, headerModel, new ArrayList<YouTubeVideoItem>(), this);
+        recyclerView.setAdapter(adapter);
         //initHeader();
         recyclerView.addOnScrollListener(new EndlessScrollVideosListener(linearLayoutManager) {
             @Override

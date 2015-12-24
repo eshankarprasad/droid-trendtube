@@ -78,7 +78,8 @@ public class VideoDetailRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        // Since header will be present atleast incase of 0 item; so return +1;
+        return mItems.size() + 1;
     }
 
     @Override

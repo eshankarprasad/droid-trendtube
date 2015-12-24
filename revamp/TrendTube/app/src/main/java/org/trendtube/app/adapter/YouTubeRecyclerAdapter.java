@@ -57,7 +57,7 @@ public class YouTubeRecyclerAdapter extends RecyclerView.Adapter<YouTubeRecycler
 
     @Override
     public int getItemCount() {
-        return mItems.size() + 1;
+        return mItems.size();
     }
 
 
