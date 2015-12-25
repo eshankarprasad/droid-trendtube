@@ -32,7 +32,7 @@ public class DailyMotionVideoItem implements Serializable {
     private boolean published;
 
     @SerializedName("duration")
-    private int duration;
+    private long duration;
 
     @SerializedName("tags")
     private List<String> tags;
@@ -99,11 +99,11 @@ public class DailyMotionVideoItem implements Serializable {
         this.published = published;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 

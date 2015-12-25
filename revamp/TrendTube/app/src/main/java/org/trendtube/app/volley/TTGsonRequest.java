@@ -157,7 +157,7 @@ public class TTGsonRequest<T extends ResponseMetadata> extends TTRequest<T> {
             json = "{\"suggestions\":[" + json + "]}";
 		}
 		System.err.println("Final Url: " + getUrl());
-		System.err.println("Final JSON: " + json);
+		//System.err.println("Final JSON: " + json);
 		return json;
 	}
 	@Override

@@ -8,8 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.joda.time.Period;
+import org.joda.time.Seconds;
+import org.joda.time.format.ISOPeriodFormat;
+import org.joda.time.format.PeriodFormatter;
 import org.trendtube.app.R;
 import org.trendtube.app.model.YouTubeVideoItem;
+import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
 
 import java.util.List;
@@ -52,7 +57,9 @@ public class YouTubeRecyclerAdapter extends RecyclerView.Adapter<YouTubeRecycler
         viewHolder.txtTitle.setText(item.getSnippet().getTitle());
         viewHolder.txtChannelTitle.setText(item.getSnippet().getChannelTitle());
         viewHolder.txtAgeAndViews.setText(Utils.calculateAge(item.getSnippet().getPublishedAt()) + " . " + Utils.calculateViewCount(item.getStatistics().getViewCount()) + " views");
+        viewHolder.txtDuration.setText(Utils.calculateDuration(item.getContentDetails().getDuration()));
         viewHolder.setVideoItem(item);
+        //MyLog.e(Utils.calculateDuration(item.getContentDetails().getDuration()));
     }
 
     @Override
@@ -71,6 +78,7 @@ public class YouTubeRecyclerAdapter extends RecyclerView.Adapter<YouTubeRecycler
         private final TextView txtTitle;
         private final TextView txtChannelTitle;
         private final TextView txtAgeAndViews;
+        private final TextView txtDuration;
         private YouTubeVideoItem videoItem;
 
         public void setVideoItem(YouTubeVideoItem videoItem) {
@@ -85,6 +93,7 @@ public class YouTubeRecyclerAdapter extends RecyclerView.Adapter<YouTubeRecycler
             txtTitle = (TextView) v.findViewById(R.id.txt_title);
             txtChannelTitle = (TextView) v.findViewById(R.id.txt_channel_title);
             txtAgeAndViews = (TextView) v.findViewById(R.id.txt_age_and_views);
+            txtDuration = (TextView) v.findViewById(R.id.txt_duration);
             v.setOnClickListener(this);
             this.listener = listener;
         }

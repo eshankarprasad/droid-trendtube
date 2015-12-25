@@ -1,6 +1,7 @@
 package org.trendtube.app.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -30,6 +31,8 @@ import org.trendtube.app.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class SearchActivity extends AppCompatActivity implements FetchSuggestionsListener {
@@ -237,5 +240,9 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
             setResult(RESULT_OK, intent);
         }
         finish();
+    }
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 }

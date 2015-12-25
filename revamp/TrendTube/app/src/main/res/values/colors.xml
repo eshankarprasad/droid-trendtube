@@ -31,5 +31,6 @@
     <color name="gray_charcoal_dark">#434a54</color>
 
     <color name="progress_bar_color">@color/blue_charcoal_dark</color>
-    <color name="footer_text_color">@color/red_dark</color>
+    <color name="tuple_title_color">@color/gray_charcoal_dark</color>
+    <color name="tuple_subtitle_color">@color/gray_charcoal_light</color>
 </resources>

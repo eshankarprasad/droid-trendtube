@@ -17,6 +17,7 @@
 package org.trendtube.app.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -26,7 +27,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
@@ -50,6 +50,8 @@ import org.trendtube.app.volleytasks.SearchYouTubeVideoVolleyTask;
 
 import java.util.ArrayList;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
@@ -59,8 +61,8 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  * This is the preferred way of handling fullscreen because the default fullscreen implementation
  * will cause re-buffering of the video.
  */
-public class FullscreenDemoActivity extends YouTubeFailureRecoveryActivity implements
-        View.OnClickListener, CompoundButton.OnCheckedChangeListener, YouTubePlayer.OnFullscreenListener,
+public class PlayerActivity extends YouTubeFailureRecoveryActivity implements
+        View.OnClickListener, YouTubePlayer.OnFullscreenListener, YouTubePlayer.PlayerStateChangeListener,
         SearchYouTubeVideoVolleyTask.SearchYouTubeVideoListener, VideoDetailRecyclerAdapter.SimilarVideoItemSelectedListener {
 
     private static final int PORTRAIT_ORIENTATION = Build.VERSION.SDK_INT < 9
@@ -71,7 +73,7 @@ public class FullscreenDemoActivity extends YouTubeFailureRecoveryActivity imple
     private YouTubePlayer player;
     private View otherViews;
     private boolean fullscreen;
-    private String videoId, videoTitle, views;
+    private String videoId, videoTitle, views, publishDate, description;
     private int videoSearchFlag = 0;
 
     private RecyclerView recyclerView;
@@ -83,33 +85,38 @@ public class FullscreenDemoActivity extends YouTubeFailureRecoveryActivity imple
     private VideoDetailHeaderModel headerModel;
 
     public static Intent newIntent(Activity activity) {
-        return new Intent(activity, FullscreenDemoActivity.class);
+        return new Intent(activity, PlayerActivity.class);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.fullscreen_demo);
+        setContentView(R.layout.player_activity);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-
             Object object = bundle.getSerializable(Constants.BUNDLE_VIDEO);
             if (object instanceof YouTubeVideoItem) {
                 YouTubeVideoItem item = (YouTubeVideoItem) object;
                 videoId = item.getId();
                 videoTitle = item.getSnippet().getTitle();
                 views = item.getStatistics().getViewCount();
+                publishDate = Utils.formatDate(item.getSnippet().getPublishedAt());
+                description = item.getSnippet().getDescription();
             } else if (object instanceof DailyMotionVideoItem) {
                 DailyMotionVideoItem item = (DailyMotionVideoItem) object;
                 videoId = item.getId();
                 videoTitle = item.getTitle();
                 views = String.valueOf(item.getViewsTotal());
+                publishDate = Utils.formatDate(item.getCreatedTime());
+                description = item.getDescription();
             } else if (object instanceof VimeoVideoItem) {
                 VimeoVideoItem item = (VimeoVideoItem) object;
                 videoId = item.getId();
                 videoTitle = item.getTitle();
                 views = String.valueOf(item.getViewsCount());
+                publishDate = Utils.formatDate(item.getCreatedTime());
+                description = item.getDescription();
             }
 
             initHeaderModel();
@@ -150,34 +157,28 @@ public class FullscreenDemoActivity extends YouTubeFailureRecoveryActivity imple
         headerModel = new VideoDetailHeaderModel();
         headerModel.setTitle(videoTitle);
         headerModel.setViews(getString(R.string.views, Utils.getCommaSeperatedNumber(views)));
-        headerModel.setPublishDate("Published on 13 Jan, 2001");
+        //headerModel.setDescription("Published on 13 Jan, 2001");
+        headerModel.setDescription("Published on " + publishDate + " . " + description);
     }
 
-    /*private void initHeader() {
-
-        recyclerHeader = RecyclerViewHeader.fromXml(this, R.layout.header_video_detail);
-        recyclerHeader.attachTo(recyclerView);
-        TextView txtTitle = (TextView) recyclerHeader.findViewById(R.id.txt_title);
-        txtTitle.setText(videoTitle);
-
-        TextView txtViews = (TextView) recyclerHeader.findViewById(R.id.txt_views);
-        txtViews.setText(getString(R.string.views, Utils.getCommaSeperatedNumber(views)));
-
-        layoutHiddenSummary = recyclerHeader.findViewById(R.id.layout_hidden_summary);
-    }*/
-
     @Override
-    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player,
-                                        boolean wasRestored) {
+    public void onInitializationSuccess(YouTubePlayer.Provider provider, final YouTubePlayer player, boolean wasRestored) {
         this.player = player;
         //setControlsEnabled();
         // Specify that we want to handle fullscreen behavior ourselves.
         player.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
         player.setOnFullscreenListener(this);
+        player.setPlayerStateChangeListener(this);
         if (!wasRestored) {
             player.cueVideo(videoId);
-            player.play();
         }
+
+        /*new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                player.play();
+            }
+        }, 5000);*/
     }
 
     @Override
@@ -203,7 +204,7 @@ public class FullscreenDemoActivity extends YouTubeFailureRecoveryActivity imple
         }
     }
 
-    @Override
+    /*@Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         int controlFlags = player.getFullscreenControlFlags();
         if (isChecked) {
@@ -214,7 +215,7 @@ public class FullscreenDemoActivity extends YouTubeFailureRecoveryActivity imple
             controlFlags &= ~YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE;
         }
         player.setFullscreenControlFlags(controlFlags);
-    }
+    }*/
 
     private void doLayout() {
         LinearLayout.LayoutParams playerParams = (LinearLayout.LayoutParams) playerView.getLayoutParams();
@@ -270,7 +271,7 @@ public class FullscreenDemoActivity extends YouTubeFailureRecoveryActivity imple
     @Override
     public void finish() {
         super.finish();
-        Utils.animateActivity(this, "back");
+        Utils.animateActivity(this, "down");
     }
 
     @Override
@@ -323,17 +324,50 @@ public class FullscreenDemoActivity extends YouTubeFailureRecoveryActivity imple
 
     @Override
     public void onSimilarVideoItemSelected(YouTubeVideoItem videoItem) {
-        Toast.makeText(this, videoItem.getSnippet().getTitle(), Toast.LENGTH_SHORT).show();
-
-        Intent intent = new Intent(this, FullscreenDemoActivity.class);
+        Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra(Constants.BUNDLE_VIDEO, videoItem);
-        finish();
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
-        Utils.animateActivity(this, "next");
+        Utils.animateActivity(this, "up");
     }
 
     @Override
     public void onHeadetItemSelected() {
         MyLog.e("onHeadetItemSelected");
+    }
+
+    @Override
+    public void onLoading() {
+        MyLog.e("onLoading");
+        player.play();
+    }
+
+    @Override
+    public void onLoaded(String s) {
+        MyLog.e("onLoaded");
+        player.play();
+    }
+
+    @Override
+    public void onAdStarted() {
+        MyLog.e("onAdStarted");
+    }
+
+    @Override
+    public void onVideoStarted() {
+        MyLog.e("onVideoStarted");
+    }
+
+    @Override
+    public void onVideoEnded() {
+        MyLog.e("onVideoEnded");
+    }
+
+    @Override
+    public void onError(YouTubePlayer.ErrorReason errorReason) {
+        MyLog.e("errorReason: " + errorReason.name());
+    }
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 }

@@ -2,10 +2,13 @@ package org.trendtube.app.activity;
 
 import android.app.Application;
 
+import org.trendtube.app.R;
 import org.trendtube.app.model.BasicItem;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
  * Created by shankar on 11/12/15.
@@ -29,6 +32,11 @@ public class TTApplication extends Application {
         navIndex = 0;
         fragmentIndex = 0;
         query = "";
+
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("myfonts/OpenSans-Regular.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build());
     }
 
     @Override

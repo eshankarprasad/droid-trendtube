@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
@@ -20,9 +21,11 @@
             android:layout_width="@dimen/trending_video_width"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:background="@drawable/border_gray" />
+            android:background="@color/gray_concrete_light"
+            android:contentDescription="@string/app_name"/>
 
         <LinearLayout
+            android:id="@+id/layout_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@id/img_thumbnail"
@@ -34,10 +37,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
                 android:maxLines="2"
-                android:minLines="2"
                 android:text="My Text"
-                android:textColor="@color/gray_charcoal_dark"
-                android:textSize="@dimen/trending_tuple_title_size" />
+                android:textColor="@color/tuple_title_color"
+                android:textSize="@dimen/trending_tuple_title_size"
+                fontPath="myfonts/OpenSans-Semibold.ttf"
+                tools:ignore="MissingPrefix" />
 
             <TextView
                 android:id="@+id/txt_channel_title"
@@ -46,7 +50,7 @@
                 android:layout_marginLeft="12dp"
                 android:singleLine="true"
                 android:text="My Text"
-                android:textColor="@color/gray_concrete_dark"
+                android:textColor="@color/tuple_subtitle_color"
                 android:textSize="@dimen/trending_tuple_subtitle_size" />
 
             <TextView
@@ -56,9 +60,23 @@
                 android:layout_marginLeft="12dp"
                 android:singleLine="true"
                 android:text="My Text"
-                android:textColor="@color/gray_concrete_dark"
+                android:textColor="@color/tuple_subtitle_color"
                 android:textSize="@dimen/trending_tuple_subtitle_size" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/txt_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:background="@drawable/duration_textview_round_rect_border"
+            android:textColor="@color/white"
+            android:layout_toLeftOf="@id/layout_text"
+            android:layout_alignParentBottom="true"
+            android:textSize="@dimen/text_duration_size"
+            android:layout_margin="8dp"
+            android:text="00:00"/>
     </RelativeLayout>
 
     <View

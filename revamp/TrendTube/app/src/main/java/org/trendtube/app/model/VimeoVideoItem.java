@@ -20,7 +20,7 @@ public class VimeoVideoItem implements Serializable {
     private String description;
 
     @SerializedName("duration")
-    private int duration;
+    private long duration;
 
     @SerializedName("created_time")
     private String createdTime;
@@ -77,11 +77,11 @@ public class VimeoVideoItem implements Serializable {
         this.viewsCount = viewsCount;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 

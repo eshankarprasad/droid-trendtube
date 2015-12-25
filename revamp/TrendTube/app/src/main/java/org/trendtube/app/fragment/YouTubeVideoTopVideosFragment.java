@@ -1,7 +1,6 @@
 package org.trendtube.app.fragment;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,23 +9,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.Button;
 
 import com.android.volley.VolleyError;
 
 import org.trendtube.app.R;
-import org.trendtube.app.activity.SecondActivity;
+import org.trendtube.app.activity.PlayerActivity;
 import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.activity.TrendTubeActivity;
 import org.trendtube.app.adapter.YouTubeRecyclerAdapter;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.interfaces.FetchVideosListener;
-import org.trendtube.app.interfaces.NetworkChangeListener;
 import org.trendtube.app.model.YouTubeVideoItem;
 import org.trendtube.app.model.YouTubeVideoModel;
-import org.trendtube.app.receiver.NetworkChangeReceiver;
-import org.trendtube.app.ui.TTProgressWheel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
@@ -38,7 +33,7 @@ import org.trendtube.app.volleytasks.FetchYouTubeTopVideosVolleyTask;
 
 public class YouTubeVideoTopVideosFragment extends Fragment
         implements YouTubeRecyclerAdapter.YouTubeVideoItemSelectedListener,
-        FetchVideosListener, NetworkChangeListener, View.OnClickListener {
+        FetchVideosListener, View.OnClickListener {
 
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
@@ -47,8 +42,6 @@ public class YouTubeVideoTopVideosFragment extends Fragment
     private int tabPosition;
     private String nextPageToken;
     private View progressWheel, footerProgressWheel;
-    private NetworkChangeReceiver receiver;
-    private IntentFilter intentFilter;
 
     public YouTubeVideoTopVideosFragment() {
 
@@ -103,38 +96,7 @@ public class YouTubeVideoTopVideosFragment extends Fragment
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             TTApplication.fragmentIndex = 0;
-            //getActivity().findViewById(R.id.fab_category).setVisibility(View.VISIBLE);
-            if (adapter != null && adapter.getItemCount() == 0) {
-                registerReceiver();
-            }
         }
-    }
-
-    private void registerReceiver() {
-        /*if (receiver == null) {
-            receiver = new NetworkChangeReceiver(this);
-            intentFilter = new IntentFilter();
-            intentFilter.addAction(Constants.INTENT_FILTER_CONNECTIVITY_CHANGE);
-            intentFilter.addAction(Constants.INTENT_FILTER_WI_FI_STATE_CHANGE);
-        }
-        getActivity().registerReceiver(receiver, intentFilter);*/
-    }
-
-    private void unregisterReceiver() {
-        /*MyLog.e("unregisterReceiver");
-        if (receiver != null) {
-            try {
-                getActivity().unregisterReceiver(receiver);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }*/
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unregisterReceiver();
     }
 
     private void loadVideoContent() {
@@ -148,13 +110,10 @@ public class YouTubeVideoTopVideosFragment extends Fragment
     }
 
     @Override
-    public void onYouTubeVideoSelected(YouTubeVideoItem videoId) {
-
-        String video = videoId.getSnippet().getTitle();
-        Toast.makeText(getActivity(), video, Toast.LENGTH_SHORT).show();
-
-        Intent intent = new Intent(getActivity(), SecondActivity.class);
+    public void onYouTubeVideoSelected(YouTubeVideoItem video) {
+        Intent intent = PlayerActivity.newIntent(getActivity());
         intent.putExtra(Constants.BUNDLE_VIDEO, video);
+        intent.putExtra(Constants.BUNDLE_VIDEO_FLAG, Constants.FLAG_YOUTUBE_SEARCH_VIDEO);
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
         Utils.animateActivity(getActivity(), "next");
     }
@@ -174,29 +133,19 @@ public class YouTubeVideoTopVideosFragment extends Fragment
             adapter.notifyDataSetChanged();
         }
         nextPageToken = response.getNextPageToken();
-        //MyLog.e("nextPageToken: " + nextPageToken);
-        unregisterReceiver();
     }
 
     @Override
     public void onVideoFetchedError(VolleyError error) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
-        progressWheel.setVisibility(View.GONE);
-        footerProgressWheel.setVisibility(View.GONE);
-        Utils.handleError(getActivity(), error);
-        registerReceiver();
-    }
-
-    @Override
-    public void onNetworkConnected() {
-        //Toast.makeText(getActivity(), "Network Available Do operations", Toast.LENGTH_SHORT).show();
-        loadVideoContent();
-    }
-
-    @Override
-    public void onNetworkDisconnected() {
-        //Toast.makeText(getActivity(), "Network Unavailable Do operations", Toast.LENGTH_SHORT).show();
+        if (Utils.isNetworkError(error) && "".equals(nextPageToken)) {
+            Button btnRetry = (Button) rootView.findViewById(R.id.btn_retry);
+            btnRetry.setOnClickListener(this);
+            btnRetry.setVisibility(View.VISIBLE);
+        } else {
+            Utils.handleError(getActivity(), error);
+        }
     }
 
     @Override
@@ -204,6 +153,10 @@ public class YouTubeVideoTopVideosFragment extends Fragment
         switch (v.getId()) {
             case R.id.fab_category:
                 ((TrendTubeActivity) getActivity()).categoryButtonClicked();
+                break;
+            case R.id.btn_retry:
+                loadVideoContent();
+                v.setVisibility(View.GONE);
                 break;
         }
     }

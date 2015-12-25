@@ -2,9 +2,9 @@ package org.trendtube.app.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -19,7 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Filter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,11 +44,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class TrendTubeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, BasicItemSelectedListener,
         FetchRegionVolleyTask.FetchRegionListener, FetchCategoriesVolleyTask.FetchCategoriesListener {
 
     private static final String TAG = TrendTubeActivity.class.getSimpleName();
+    private static final String BUNDLE_SELECTED_CATEGORY = "bundle_category";
+    private static final String BUNDLE_SELECTED_REGION = "bundle_region";
     private DrawerLayout mDrawerLayout;
     private ViewPager mViewPager;
     private TTProgressDialog ttProgressDialog;
@@ -64,6 +67,20 @@ public class TrendTubeActivity extends AppCompatActivity
 
     public static Intent newIntent(Activity activity) {
         return new Intent(activity, TrendTubeActivity.class);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        selectedRegion = (BasicItem) savedInstanceState.getSerializable(BUNDLE_SELECTED_REGION);
+        selectedCategory = (BasicItem) savedInstanceState.getSerializable(BUNDLE_SELECTED_CATEGORY);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(BUNDLE_SELECTED_REGION, selectedRegion);
+        outState.putSerializable(BUNDLE_SELECTED_CATEGORY, selectedCategory);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -100,10 +117,6 @@ public class TrendTubeActivity extends AppCompatActivity
         mNavigationView.setCheckedItem(TTApplication.navIndex);
         setTitle(R.string.nav_item_trending_videos);
 
-        /*fabCategory = (FloatingActionButton) findViewById(R.id.fab_category);
-        fabCategory.setOnClickListener(this);
-        fabCategory.setVisibility(View.GONE);*/
-
         trendingVideoPagerAdapter = new TrendingVideosPagerAdapter(getResources().getStringArray(R.array.tab_items_normal), getSupportFragmentManager());
         topVideosPagerAdapter = new TopVideosPagerAdapter(getResources().getStringArray(R.array.tab_items_normal), getSupportFragmentManager());
         searchPagerAdapter = new TrendTubeSearchPagerAdapter(getResources().getStringArray(R.array.tab_items_search),getSupportFragmentManager());
@@ -118,16 +131,6 @@ public class TrendTubeActivity extends AppCompatActivity
         txtRegion = (TextView) headerView.findViewById(R.id.btn_region);
         txtRegion.setText(selectedRegion.getName());
         txtRegion.setOnClickListener(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        /*try {
-            unregisterReceiver(receiver);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
     }
 
     @Override
@@ -209,15 +212,9 @@ public class TrendTubeActivity extends AppCompatActivity
 
     private void regionButtonClicked() {
 
-        MyLog.e(TAG, "Fragment Index: " + TTApplication.fragmentIndex);
         if (TTApplication.fragmentIndex != 0) {
             mDrawerLayout.closeDrawers();
-            Utils.showSnacK(findViewById(R.id.coordinator), "Region is not available for DailyMotion videos", "Ok", Snackbar.LENGTH_LONG, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Do nothing
-                }
-            });
+            Snackbar.make(findViewById(R.id.coordinator), "Region is not available for DailyMotion videos", Snackbar.LENGTH_SHORT).show();
             return;
         }
 
@@ -413,4 +410,9 @@ public class TrendTubeActivity extends AppCompatActivity
             }
         }
     };*/
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 }

@@ -27,15 +27,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.SecondActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_second"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.TrendTubeActivity" />
-        </activity>
-        <activity
             android:name=".activity.SearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_search"
@@ -48,7 +39,7 @@
         </activity>
 
         <activity
-            android:name=".activity.FullscreenDemoActivity"
+            android:name=".activity.PlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_second"
             android:screenOrientation="sensorPortrait"

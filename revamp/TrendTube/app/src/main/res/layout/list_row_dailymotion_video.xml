@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
@@ -26,8 +27,10 @@
             android:layout_marginTop="4dp"
             android:maxLines="2"
             android:text="My Text"
-            android:textColor="@color/gray_charcoal_dark"
-            android:textSize="@dimen/topviewed_tuple_title_size" />
+            android:textColor="@color/tuple_title_color"
+            android:textSize="@dimen/topviewed_tuple_title_size"
+            fontPath="myfonts/OpenSans-Semibold.ttf"
+            tools:ignore="MissingPrefix"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:text="My Text"
-                android:textColor="@color/gray_concrete_dark"
+                android:textColor="@color/tuple_subtitle_color"
                 android:textSize="@dimen/topviewed_tuple_subtitle_size" />
 
             <TextView
@@ -49,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:text="My Text"
-                android:textColor="@color/gray_concrete_dark"
+                android:textColor="@color/tuple_subtitle_color"
                 android:textSize="@dimen/topviewed_tuple_subtitle_size" />
         </LinearLayout>
     </LinearLayout>

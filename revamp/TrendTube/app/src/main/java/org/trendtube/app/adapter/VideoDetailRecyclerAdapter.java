@@ -2,6 +2,7 @@ package org.trendtube.app.adapter;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,7 @@ public class VideoDetailRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             VHHeader viewHeader = (VHHeader) holder;
             viewHeader.txtTitle.setText(headerModel.getTitle());
             viewHeader.txtViews.setText(headerModel.getViews());
-            viewHeader.txtPublishDate.setText(headerModel.getPublishDate());
+            viewHeader.txtDescription.setText(Html.fromHtml(headerModel.getDescription()));
 
         } else {
             YouTubeVideoItem item = (YouTubeVideoItem) mItems.get(i-1);
@@ -72,6 +73,7 @@ public class VideoDetailRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             viewItem.txtTitle.setText(item.getSnippet().getTitle());
             viewItem.txtChannelTitle.setText(item.getSnippet().getChannelTitle());
             viewItem.txtAgeAndViews.setText(Utils.calculateAge(item.getSnippet().getPublishedAt()) + " . " + Utils.calculateViewCount(item.getStatistics().getViewCount()) + " views");
+            viewItem.txtDuration.setText(Utils.calculateDuration(item.getContentDetails().getDuration()));
             viewItem.setVideoItem(item);
         }
     }
@@ -95,7 +97,7 @@ public class VideoDetailRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
         private final TextView txtTitle;
         private final TextView txtViews;
-        private final TextView txtPublishDate;
+        private final TextView txtDescription;
         private final View btnShowHiddenSummary;
         private final View viewHiddenSummary;
 
@@ -105,11 +107,12 @@ public class VideoDetailRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             super(v);
             txtTitle = (TextView) v.findViewById(R.id.txt_title);
             txtViews = (TextView) v.findViewById(R.id.txt_views);
-            txtPublishDate = (TextView) v.findViewById(R.id.txt_publish_date);
+            txtDescription = (TextView) v.findViewById(R.id.txt_description);
 
             btnShowHiddenSummary = v.findViewById(R.id.layout_visible_header);
             btnShowHiddenSummary.setOnClickListener(this);
             viewHiddenSummary = v.findViewById(R.id.layout_hidden_summary);
+            //txtDescription.setMovementMethod(LinkMovementMethod.getInstance());
             this.listener = listener;
         }
 
@@ -132,6 +135,7 @@ public class VideoDetailRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         private final TextView txtTitle;
         private final TextView txtChannelTitle;
         private final TextView txtAgeAndViews;
+        private final TextView txtDuration;
         private YouTubeVideoItem videoItem;
 
         public void setVideoItem(YouTubeVideoItem videoItem) {
@@ -146,13 +150,14 @@ public class VideoDetailRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             txtTitle = (TextView) v.findViewById(R.id.txt_title);
             txtChannelTitle = (TextView) v.findViewById(R.id.txt_channel_title);
             txtAgeAndViews = (TextView) v.findViewById(R.id.txt_age_and_views);
+            txtDuration = (TextView) v.findViewById(R.id.txt_duration);
             v.setOnClickListener(this);
             this.listener = listener;
         }
 
         @Override
         public void onClick(View v) {
-            listener.onHeadetItemSelected();
+            listener.onSimilarVideoItemSelected(videoItem);
         }
     }
 }

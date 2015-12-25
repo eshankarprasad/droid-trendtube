@@ -40,7 +40,7 @@ public class VimeoRecyclerAdapter extends RecyclerView.Adapter<VimeoRecyclerAdap
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_youtube_video, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row_vimeo_video, viewGroup, false);
         return new ViewHolder(v, listener);
     }
 
@@ -52,6 +52,7 @@ public class VimeoRecyclerAdapter extends RecyclerView.Adapter<VimeoRecyclerAdap
         viewHolder.txtTitle.setText(item.getTitle());
         //viewHolder.txtChannelTitle.setText(item.getChannel());
         viewHolder.txtAgeAndViews.setText(Utils.calculateAge(item.getCreatedTime()) + " . " + Utils.calculateViewCount(item.getViewsCount() + "") + " views");
+        viewHolder.txtDuration.setText(Utils.calculateDuration(item.getDuration()));
         viewHolder.setVideoItem(item);
     }
 
@@ -72,6 +73,7 @@ public class VimeoRecyclerAdapter extends RecyclerView.Adapter<VimeoRecyclerAdap
         private final TextView txtAgeAndViews;
         private final VimeoVideoItemSelectedListener listener;
         private VimeoVideoItem videoItem;
+        public final TextView txtDuration;
 
         public void setVideoItem(VimeoVideoItem videoItem) {
             this.videoItem = videoItem;
@@ -83,6 +85,7 @@ public class VimeoRecyclerAdapter extends RecyclerView.Adapter<VimeoRecyclerAdap
             txtTitle = (TextView) v.findViewById(R.id.txt_title);
             //txtChannelTitle = (TextView) v.findViewById(R.id.txt_channel_title);
             txtAgeAndViews = (TextView) v.findViewById(R.id.txt_age_and_views);
+            txtDuration = (TextView) v.findViewById(R.id.txt_duration);
             v.setOnClickListener(this);
             this.listener = listener;
         }

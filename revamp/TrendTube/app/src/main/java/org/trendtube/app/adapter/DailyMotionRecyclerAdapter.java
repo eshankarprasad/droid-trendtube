@@ -52,6 +52,7 @@ public class DailyMotionRecyclerAdapter extends RecyclerView.Adapter<DailyMotion
         viewHolder.txtTitle.setText(dailyMotionVideoItem.getTitle());
         viewHolder.txtChannelTitle.setText(dailyMotionVideoItem.getChannel());
         viewHolder.txtAgeAndViews.setText(Utils.calculateAge(dailyMotionVideoItem.getCreatedTime()) + " . " + Utils.calculateViewCount(dailyMotionVideoItem.getViewsTotal() + "") + " views");
+        viewHolder.txtDuration.setText(Utils.calculateDuration(dailyMotionVideoItem.getDuration()));
         viewHolder.setVideoItem(dailyMotionVideoItem);
     }
 
@@ -70,6 +71,7 @@ public class DailyMotionRecyclerAdapter extends RecyclerView.Adapter<DailyMotion
         private final TextView txtTitle;
         private final TextView txtChannelTitle;
         private final TextView txtAgeAndViews;
+        public final TextView txtDuration;
         private DailyMotionVideoItem videoItem;
         private final DailyMotionVideoItemSelectedListener listener;
 
@@ -83,6 +85,7 @@ public class DailyMotionRecyclerAdapter extends RecyclerView.Adapter<DailyMotion
             txtTitle = (TextView) v.findViewById(R.id.txt_title);
             txtChannelTitle = (TextView) v.findViewById(R.id.txt_channel_title);
             txtAgeAndViews = (TextView) v.findViewById(R.id.txt_age_and_views);
+            txtDuration = (TextView) v.findViewById(R.id.txt_duration);
             v.setOnClickListener(this);
             this.listener = listener;
         }

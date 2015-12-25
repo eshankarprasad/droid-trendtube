@@ -6,7 +6,7 @@ package org.trendtube.app.model;
 public class VideoDetailHeaderModel {
     private String title;
     private String views;
-    private String publishDate;
+    private String description;
 
     public String getTitle() {
         return title;
@@ -24,11 +24,11 @@ public class VideoDetailHeaderModel {
         this.views = views;
     }
 
-    public String getPublishDate() {
-        return publishDate;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPublishDate(String publishDate) {
-        this.publishDate = publishDate;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

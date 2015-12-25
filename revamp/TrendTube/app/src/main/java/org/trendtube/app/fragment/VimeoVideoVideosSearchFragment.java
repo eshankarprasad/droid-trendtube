@@ -1,7 +1,6 @@
 package org.trendtube.app.fragment;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,21 +9,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.Button;
 
 import com.android.volley.VolleyError;
 
 import org.trendtube.app.R;
-import org.trendtube.app.activity.SecondActivity;
+import org.trendtube.app.activity.PlayerActivity;
 import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.adapter.VimeoRecyclerAdapter;
 import org.trendtube.app.constants.Constants;
-import org.trendtube.app.interfaces.NetworkChangeListener;
 import org.trendtube.app.model.VimeoVideoItem;
 import org.trendtube.app.model.VimeoVideoModel;
-import org.trendtube.app.receiver.NetworkChangeReceiver;
-import org.trendtube.app.ui.TTProgressWheel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
@@ -35,7 +30,7 @@ import org.trendtube.app.volleytasks.SearchVimeoVideoVolleyTask;
  */
 
 public class VimeoVideoVideosSearchFragment extends Fragment implements VimeoRecyclerAdapter.VimeoVideoItemSelectedListener,
-        SearchVimeoVideoVolleyTask.SearchVimeoVideoListener, NetworkChangeListener {
+        SearchVimeoVideoVolleyTask.SearchVimeoVideoListener, View.OnClickListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private RecyclerView recyclerView;
@@ -43,8 +38,6 @@ public class VimeoVideoVideosSearchFragment extends Fragment implements VimeoRec
     private String nextPageToken;
     private View progressWheel, footerProgressWheel;
     private int tabPosition;
-    private NetworkChangeReceiver receiver;
-    private IntentFilter intentFilter;
     private String searchQuery = "";
 
     public VimeoVideoVideosSearchFragment() {
@@ -65,6 +58,10 @@ public class VimeoVideoVideosSearchFragment extends Fragment implements VimeoRec
         Bundle args = getArguments();
         tabPosition = args.getInt(TAB_POSITION);
         rootView = inflater.inflate(R.layout.fragment_vimeo_video_list, null);
+        if (!searchQuery.equals(TTApplication.query)) {
+            searchQuery = TTApplication.query;
+            initViews();
+        }
         return rootView;
     }
 
@@ -72,7 +69,7 @@ public class VimeoVideoVideosSearchFragment extends Fragment implements VimeoRec
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if (!searchQuery.equals(TTApplication.query)) {
+            if (!searchQuery.equals(TTApplication.query) && rootView != null) {
                 searchQuery = TTApplication.query;
                 initViews();
             }
@@ -113,69 +110,13 @@ public class VimeoVideoVideosSearchFragment extends Fragment implements VimeoRec
         task.execute(nextPageToken, searchQuery);
     }
 
-    private void registerReceiver() {
-        /*if (receiver == null) {
-            receiver = new NetworkChangeReceiver(this);
-            intentFilter = new IntentFilter();
-            intentFilter.addAction(Constants.INTENT_FILTER_CONNECTIVITY_CHANGE);
-            intentFilter.addAction(Constants.INTENT_FILTER_WI_FI_STATE_CHANGE);
-        }
-        getActivity().registerReceiver(receiver, intentFilter);*/
-    }
-
-    private void unregisterReceiver() {
-        /*MyLog.e("unregisterReceiver");
-        if (receiver != null) {
-            try {
-                getActivity().unregisterReceiver(receiver);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }*/
-    }
-
     @Override
     public void onVimeoVideoItemSelected(VimeoVideoItem video) {
-
-        Toast.makeText(getActivity(), video.getTitle(), Toast.LENGTH_SHORT).show();
-
-        Intent intent = new Intent(getActivity(), SecondActivity.class);
+        Intent intent = PlayerActivity.newIntent(getActivity());
         intent.putExtra(Constants.BUNDLE_VIDEO, video);
+        intent.putExtra(Constants.BUNDLE_VIDEO_FLAG, Constants.FLAG_YOUTUBE_SEARCH_VIDEO);
         startActivityForResult(intent, Constants.REQUEST_VIDEO_DETAIL);
         Utils.animateActivity(getActivity(), "next");
-    }
-
-    /*@Override
-    public void callRegionUpdate(BasicItem selectedRegion) {
-        MyLog.e("callRegionUpdate");
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
-    }
-
-    @Override
-    public void callCategoryUpdate(BasicItem selectedCategory) {
-        MyLog.e("callCategoryUpdate");
-        nextPageToken = "";
-        adapter = null;
-        loadVideoContent();
-    }*/
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unregisterReceiver();
-    }
-
-    @Override
-    public void onNetworkConnected() {
-        //Toast.makeText(getActivity(), "Network Available Do operations", Toast.LENGTH_SHORT).show();
-        loadVideoContent();
-    }
-
-    @Override
-    public void onNetworkDisconnected() {
-        //Toast.makeText(getActivity(), "Network Unavailable Do operations", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -195,14 +136,28 @@ public class VimeoVideoVideosSearchFragment extends Fragment implements VimeoRec
             adapter.notifyDataSetChanged();
         }
         nextPageToken = String.valueOf(response.getPage() + 1);
-        unregisterReceiver();
     }
 
     @Override
     public void onErrorVimeoSearch(VolleyError error) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
-        Utils.handleError(getActivity(), error);
-        registerReceiver();
+        if (Utils.isNetworkError(error) && "".equals(nextPageToken)) {
+            Button btnRetry = (Button) rootView.findViewById(R.id.btn_retry);
+            btnRetry.setOnClickListener(this);
+            btnRetry.setVisibility(View.VISIBLE);
+        } else {
+            Utils.handleError(getActivity(), error);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_retry:
+                loadVideoContent();
+                v.setVisibility(View.GONE);
+                break;
+        }
     }
 }

@@ -28,7 +28,11 @@ import org.joda.time.Hours;
 import org.joda.time.LocalDate;
 import org.joda.time.Minutes;
 import org.joda.time.Months;
+import org.joda.time.Period;
+import org.joda.time.Seconds;
 import org.joda.time.Years;
+import org.joda.time.format.ISOPeriodFormat;
+import org.joda.time.format.PeriodFormatter;
 import org.trendtube.app.R;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.volley.NullResponseError;
@@ -41,6 +45,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by shankar on 10/12/15.
@@ -98,6 +103,64 @@ public class Utils {
         return prefix + postfix;
     }
 
+    public static String formatDate(String publishedAt) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat output = new SimpleDateFormat("dd MMM, yyyy");
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        try {
+            date = sdf.parse(publishedAt);
+            //MyLog.e("Date: " + output.format(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //cal.setTime(date);
+        return output.format(date);
+    }
+
+    public static String formatDate(long timestamp) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat output = new SimpleDateFormat("dd MMM, yyyy");
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        try {
+            date = output.parse(String.valueOf(new Timestamp(timestamp)));
+            //MyLog.e("Date: " + output.format(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //cal.setTime(date);
+        return output.format(date);
+    }
+
+    public static String calculateDuration(long duration) {
+        if (TimeUnit.SECONDS.toHours(duration) > 0) {
+            return String.format("%01d:%02d:%02d",
+                    TimeUnit.SECONDS.toHours(duration),
+                    TimeUnit.SECONDS.toMinutes(duration) -
+                            TimeUnit.HOURS.toMinutes(TimeUnit.SECONDS.toHours(duration)), // The change is in this line
+                    TimeUnit.SECONDS.toSeconds(duration) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.SECONDS.toMinutes(duration)));
+        } else {
+            return String.format("%01d:%02d",
+                    TimeUnit.SECONDS.toMinutes(duration), // The change is in this line
+                    TimeUnit.SECONDS.toSeconds(duration) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.SECONDS.toMinutes(duration)));
+        }
+    }
+
+    public static String calculateDuration(String duration) {
+        PeriodFormatter formatter = ISOPeriodFormat.standard();
+        Period p = formatter.parsePeriod(duration);
+        if (p.getHours() > 0) {
+            return  p.getHours() + ":" + (p.getMinutes() > 9 ? p.getMinutes() : "0" + p.getMinutes()) + ":" + (p.getSeconds() > 9 ? p.getSeconds() : "0" + p.getSeconds());
+        } else {
+            return  p.getMinutes() + ":" + (p.getSeconds() > 9 ? p.getSeconds() : "0" + p.getSeconds());
+        }
+    }
+
     public static String calculateAge(long timestamp) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -110,9 +173,7 @@ public class Utils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
         cal.setTime(date);
-
         return calculateAge(cal);
     }
 

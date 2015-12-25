@@ -31,4 +31,6 @@
         wheel:matProg_barColor="@color/progress_bar_color"
         wheel:matProg_progressIndeterminate="true" />
 
+    <include layout="@layout/layout_retry_button"/>
+
 </RelativeLayout>
