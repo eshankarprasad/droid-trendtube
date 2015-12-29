@@ -1,0 +1,2 @@
+Alias: TrendTube
+Pass: trendtube@123
