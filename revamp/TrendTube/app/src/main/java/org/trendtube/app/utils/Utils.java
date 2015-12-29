@@ -4,13 +4,17 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Point;
+import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -52,52 +56,55 @@ import java.util.concurrent.TimeUnit;
  */
 public class Utils {
 
-    public static String calculateViewCount(String price) {
+    public static String calculateViewCount(long count) {
+        return calculateViewCount(String.valueOf(count));
+    }
+    public static String calculateViewCount(String count) {
 
         String postfix = "";
         String prefix = "";
-        if (price.length() == 1 || price.length() == 2 || price.length() == 3) {
+        if (count.length() == 1 || count.length() == 2 || count.length() == 3) {
             postfix = "";
-            prefix = price;
-        } else if (price.length() == 4) {
+            prefix = count;
+        } else if (count.length() == 4) {
             postfix = "K";
-            prefix = price.substring(0, 1);
-        } else if (price.length() == 5) {
+            prefix = count.substring(0, 1);
+        } else if (count.length() == 5) {
             postfix = "K";
-            prefix = price.substring(0, 2);
-        } else if (price.length() == 6) {
+            prefix = count.substring(0, 2);
+        } else if (count.length() == 6) {
             postfix = "L";
-            prefix = price.substring(0, 1);
-        } else if (price.length() == 7) {
+            prefix = count.substring(0, 1);
+        } else if (count.length() == 7) {
             postfix = "M";
-            prefix = price.substring(0, 1);
-        } else if (price.length() == 8) {
+            prefix = count.substring(0, 1);
+        } else if (count.length() == 8) {
             postfix = "M";
-            prefix = price.substring(0, 2);
-        } else if (price.length() == 9) {
+            prefix = count.substring(0, 2);
+        } else if (count.length() == 9) {
             postfix = "M";
-            prefix = price.substring(0, 3);
-        } else if (price.length() == 10) {
+            prefix = count.substring(0, 3);
+        } else if (count.length() == 10) {
             postfix = "B";
-            prefix = price.substring(0, 1);
-        } else if (price.length() == 11) {
+            prefix = count.substring(0, 1);
+        } else if (count.length() == 11) {
             postfix = "B";
-            prefix = price.substring(0, 2);
-        } else if (price.length() == 12) {
+            prefix = count.substring(0, 2);
+        } else if (count.length() == 12) {
             postfix = "B";
-            prefix = price.substring(0, 3);
-        } else if (price.length() == 13) {
+            prefix = count.substring(0, 3);
+        } else if (count.length() == 13) {
             postfix = "T";
-            prefix = price.substring(0, 1);
-        } else if (price.length() == 14) {
+            prefix = count.substring(0, 1);
+        } else if (count.length() == 14) {
             postfix = "T";
-            prefix = price.substring(0, 2);
-        } else if (price.length() == 15) {
+            prefix = count.substring(0, 2);
+        } else if (count.length() == 15) {
             postfix = "T";
-            prefix = price.substring(0, 3);
+            prefix = count.substring(0, 3);
         } else {
             postfix = "T+";
-            prefix = price.substring(0, 3);
+            prefix = count.substring(0, 3);
         }
 
         return prefix + postfix;
@@ -459,5 +466,21 @@ public class Utils {
         } else {
             return false;
         }
+    }
+
+    public static Point getScreenSize(Activity activity) {
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        //Display display = ((WindowManager)activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        Point size = new Point();
+        if (Build.VERSION.SDK_INT >= 13) {
+            display.getSize(size);
+        } else {
+            size.set(display.getWidth(), display.getHeight());
+        }
+        return size;
+    }
+
+    public static int getProportionalHeight(Activity activity) {
+        return (getScreenSize(activity).x * 9) / 16;
     }
 }

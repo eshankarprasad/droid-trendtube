@@ -1,7 +1,6 @@
 package org.trendtube.app.constants;
 
 import org.trendtube.app.activity.TTApplication;
-import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
 
 import java.io.UnsupportedEncodingException;
@@ -26,12 +25,10 @@ public class Config extends ServerConfig {
 
     public static String getYouTubeMostViewedVideosUrl(String token) {
 
-        //MyLog.e(TAG, "Region Id: " + TTApplication.regionId);
-        //MyLog.e(TAG, "Category Id: " + TTApplication.categotyId);
         if ("".equals(token)) {
-            return REST_HOST_YOUTUBE + "/getMostViewedVideosBySearchAPI?server_key=" + SERVER_KEY + "&part=snippet&regionCode=" + TTApplication.regionId + "&catId=" + TTApplication.categotyId + "&resultPerPage=" + RESULT_PER_PAGE;
+            return REST_HOST_YOUTUBE + "/getMostViewedVideosBySearchAPI?server_key=" + SERVER_KEY + "&part=snippet&regionCode=" + TTApplication.regionId + "&catId=" + TTApplication.categotyId + "&resultPerPage=" + RESULT_PER_PAGE + "&dateFilter=" + TTApplication.topViewedDateFilter;
         } else {
-            return REST_HOST_YOUTUBE + "/getMostViewedVideosBySearchAPI?server_key=" + SERVER_KEY + "&part=snippet&regionCode=" + TTApplication.regionId + "&catId=" + TTApplication.categotyId + "&resultPerPage=" + RESULT_PER_PAGE + "&pageToken=" + token;
+            return REST_HOST_YOUTUBE + "/getMostViewedVideosBySearchAPI?server_key=" + SERVER_KEY + "&part=snippet&regionCode=" + TTApplication.regionId + "&catId=" + TTApplication.categotyId + "&resultPerPage=" + RESULT_PER_PAGE + "&pageToken=" + token + "&dateFilter=" + TTApplication.topViewedDateFilter;
         }
     }
 
@@ -47,9 +44,9 @@ public class Config extends ServerConfig {
     public static String getDMMostViewedVideosUrl(String token) {
 
         if ("".equals(token)) {
-            return REST_HOST_DAILYMOTION + "/getMostViewedVideos?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE;
+            return REST_HOST_DAILYMOTION + "/getMostViewedVideos?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&dateFilter=" + TTApplication.topViewedDateFilter;
         } else {
-            return REST_HOST_DAILYMOTION + "/getMostViewedVideos?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&pageToken=" + token;
+            return REST_HOST_DAILYMOTION + "/getMostViewedVideos?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&pageToken=" + token + "&dateFilter=" + TTApplication.topViewedDateFilter;
         }
     }
 

@@ -18,6 +18,9 @@ public class TTApplication extends Application {
     public static List<BasicItem> regions;
     public static String regionId;
     public static String categotyId;
+
+    public static String topViewedDateFilter = "TODAY";
+
     public static int navIndex;
     public static int fragmentIndex;
     public static String query;

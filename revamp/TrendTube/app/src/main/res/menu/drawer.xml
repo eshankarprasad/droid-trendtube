@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/group_main"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_item_trending_videos"
             android:checked="true"
@@ -11,6 +13,41 @@
             android:id="@+id/nav_item_top_viewed_videsos"
             android:icon="@drawable/ic_nav_top_viewed_videos_white"
             android:title="@string/nav_item_top_viewed_videos" />
+    </group>
+
+    <group
+        android:id="@+id/menu_group_filter"
+        android:checkableBehavior="single"
+        android:visible="false">
+        <item
+            android:id="@+id/item_all_time"
+            android:icon="@drawable/ic_check_white"
+            android:title="All Time" />
+        <item
+            android:id="@+id/item_today"
+            android:checked="true"
+            android:icon="@drawable/ic_check_white"
+            android:title="Today" />
+        <item
+            android:id="@+id/item_this_week"
+            android:icon="@drawable/ic_check_white"
+            android:title="This Week" />
+        <item
+            android:id="@+id/item_this_month"
+            android:icon="@drawable/ic_check_white"
+            android:title="This Month" />
+        <item
+            android:id="@+id/item_last_three_month"
+            android:icon="@drawable/ic_check_white"
+            android:title="Last 3 Month" />
+        <item
+            android:id="@+id/item_lasst_six_month"
+            android:icon="@drawable/ic_check_white"
+            android:title="Last 6 Month" />
+        <item
+            android:id="@+id/item_this_year"
+            android:icon="@drawable/ic_check_white"
+            android:title="This Year" />
     </group>
 
     <item android:title="@string/nav_social_action">

@@ -17,7 +17,7 @@
             android:value="GlideModule" />
 
         <activity
-            android:name=".activity.TrendTubeActivity"
+            android:name=".activity.TTActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="sensorPortrait">
@@ -34,19 +34,28 @@
             android:theme="@style/SearchAppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.TrendTubeActivity" />
+                android:value=".activity.TTActivity" />
 
         </activity>
 
         <activity
-            android:name=".activity.PlayerActivity"
+            android:name=".activity.PlayerYTActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_second"
             android:screenOrientation="sensorPortrait"
-            android:theme="@style/BlackNoTitleBarTheme">
-            <!--<meta-data android:name="@string/minVersion" android:value="8"/>
-            <meta-data android:name="@string/isLaunchableActivity" android:value="true"/>-->
-        </activity>
+            android:theme="@style/BlackNoTitleBarTheme"/>
+
+        <activity
+            android:name=".activity.PlayerDMActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_second"
+            android:theme="@style/BlackNoTitleBarTheme"/>
+
+        <activity
+            android:name=".activity.PlayerVMOActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_second"
+            android:theme="@style/BlackNoTitleBarTheme"/>
     </application>
 
 </manifest>

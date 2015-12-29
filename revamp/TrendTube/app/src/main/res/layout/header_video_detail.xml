@@ -32,13 +32,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:drawablePadding="@dimen/activity_horizontal_margin"
-            android:drawableRight="@drawable/ic_arrow_drop_down_black"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:text="1,00,000 views"
             android:textColor="@color/tuple_subtitle_color"
             android:textSize="@dimen/header_subtitle_size" />
+
+        <TextView
+            android:id="@+id/txt_published_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/activity_horizontal_margin"
+            android:drawableRight="@drawable/ic_arrow_drop_down_black"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:text="Published on Apr 2, 2013"
+            android:lineSpacingExtra="4dp"
+            android:textColor="@color/tuple_subtitle_color"
+            android:textSize="@dimen/header_subtitle_size"
+            android:layout_marginBottom="4dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -59,6 +71,57 @@
             android:textColor="@color/tuple_subtitle_color"
             android:textSize="@dimen/header_subtitle_size"
             android:layout_marginBottom="4dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_statistics"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="4dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <TextView
+            android:id="@+id/txt_like_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:drawableLeft="@drawable/ic_thumb_up_black"/>
+
+        <TextView
+            android:id="@+id/txt_dislike_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:drawableLeft="@drawable/ic_thumb_down_black"/>
+
+        <TextView
+            android:id="@+id/txt_favorite_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:drawableLeft="@drawable/ic_favorite_black"/>
+
+        <TextView
+            android:id="@+id/txt_comment_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:drawableLeft="@drawable/ic_comment_black"/>
+
     </LinearLayout>
 
     <View

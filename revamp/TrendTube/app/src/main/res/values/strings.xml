@@ -43,6 +43,14 @@
 
     <string name="views">%1$s views</string>
 
+    <string name="nav_filter_alltime">All Time</string>
+    <string name="nav_filter_today">Today</string>
+    <string name="nav_filter_this_week">This Week</string>
+    <string name="nav_filter_this_month">This Month</string>
+    <string name="nav_filter_last_three_month">Last 3 Month</string>
+    <string name="nav_filter_last_six_month">Last 6 Month</string>
+    <string name="nav_filter_this_year">This Year</string>
+
     <string name="enter_fullscreen">Enter Fullscreen</string>
     <string name="landscape_fullscreen">Always fullscreen in landscape</string>
 </resources>

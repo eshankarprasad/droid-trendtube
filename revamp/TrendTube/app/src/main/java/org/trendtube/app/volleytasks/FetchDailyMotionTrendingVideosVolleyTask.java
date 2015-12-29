@@ -6,7 +6,7 @@ import com.android.volley.ParseError;
 import com.android.volley.VolleyError;
 
 import org.trendtube.app.constants.Config;
-import org.trendtube.app.model.DailyMotionTrendingVideoModel;
+import org.trendtube.app.model.DMModel;
 import org.trendtube.app.volley.NullResponseError;
 import org.trendtube.app.volley.TTGsonRequest;
 import org.trendtube.app.volley.TTRequest;
@@ -16,7 +16,7 @@ import org.trendtube.app.volley.TTVolleyManager;
 /**
  * Created by shankarprasad on 24-07-2015.
  */
-public class FetchDailyMotionTrendingVideosVolleyTask implements TTResponseListener<DailyMotionTrendingVideoModel> {
+public class FetchDailyMotionTrendingVideosVolleyTask implements TTResponseListener<DMModel> {
 
     private FetchDailyMotionTrendingVideoListener listener;
     private Activity activity;
@@ -29,7 +29,7 @@ public class FetchDailyMotionTrendingVideosVolleyTask implements TTResponseListe
     public void execute(String token) {
         try {
             String url = Config.getDMMostPopularVideosUrl(token);
-            TTGsonRequest<DailyMotionTrendingVideoModel> nNacresGsonRequest = new TTGsonRequest<DailyMotionTrendingVideoModel>(activity, url, null, this, DailyMotionTrendingVideoModel.class);
+            TTGsonRequest<DMModel> nNacresGsonRequest = new TTGsonRequest<DMModel>(activity, url, null, this, DMModel.class);
             nNacresGsonRequest.setTaskId(this);
             TTVolleyManager.addToQueue(nNacresGsonRequest, false);
         } catch (Exception e) {
@@ -40,7 +40,7 @@ public class FetchDailyMotionTrendingVideosVolleyTask implements TTResponseListe
     }
 
     @Override
-    public void onResponse(TTRequest<DailyMotionTrendingVideoModel> request, DailyMotionTrendingVideoModel response) {
+    public void onResponse(TTRequest<DMModel> request, DMModel response) {
         if (null != response) {
             if (this.listener != null) {
                 this.listener.onFetchedDailyMotionTrendingVideos(response);
@@ -52,14 +52,14 @@ public class FetchDailyMotionTrendingVideosVolleyTask implements TTResponseListe
     }
 
     @Override
-    public void onErrorResponse(TTRequest<DailyMotionTrendingVideoModel> request, VolleyError error) {
+    public void onErrorResponse(TTRequest<DMModel> request, VolleyError error) {
         if (this.listener != null) {
             this.listener.onFetchedErrorDailyMotionTrendingVideos(error);
         }
     }
 
     public interface FetchDailyMotionTrendingVideoListener {
-        public void onFetchedDailyMotionTrendingVideos(DailyMotionTrendingVideoModel response);
+        public void onFetchedDailyMotionTrendingVideos(DMModel response);
         public void onFetchedErrorDailyMotionTrendingVideos(VolleyError error);
     }
 }

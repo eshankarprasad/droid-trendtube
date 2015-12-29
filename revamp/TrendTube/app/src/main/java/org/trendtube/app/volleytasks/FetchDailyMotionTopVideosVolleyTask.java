@@ -6,7 +6,7 @@ import com.android.volley.ParseError;
 import com.android.volley.VolleyError;
 
 import org.trendtube.app.constants.Config;
-import org.trendtube.app.model.DailyMotionTrendingVideoModel;
+import org.trendtube.app.model.DMModel;
 import org.trendtube.app.volley.NullResponseError;
 import org.trendtube.app.volley.TTGsonRequest;
 import org.trendtube.app.volley.TTRequest;
@@ -16,7 +16,7 @@ import org.trendtube.app.volley.TTVolleyManager;
 /**
  * Created by shankarprasad on 24-07-2015.
  */
-public class FetchDailyMotionTopVideosVolleyTask implements TTResponseListener<DailyMotionTrendingVideoModel> {
+public class FetchDailyMotionTopVideosVolleyTask implements TTResponseListener<DMModel> {
 
     private FetchDailyMotionTopVideoListener listener;
     private Activity activity;
@@ -29,7 +29,7 @@ public class FetchDailyMotionTopVideosVolleyTask implements TTResponseListener<D
     public void execute(String token) {
         try {
             String url = Config.getDMMostViewedVideosUrl(token);
-            TTGsonRequest<DailyMotionTrendingVideoModel> nNacresGsonRequest = new TTGsonRequest<DailyMotionTrendingVideoModel>(activity, url, null, this, DailyMotionTrendingVideoModel.class);
+            TTGsonRequest<DMModel> nNacresGsonRequest = new TTGsonRequest<DMModel>(activity, url, null, this, DMModel.class);
             nNacresGsonRequest.setTaskId(this);
             TTVolleyManager.addToQueue(nNacresGsonRequest, false);
         } catch (Exception e) {
@@ -40,7 +40,7 @@ public class FetchDailyMotionTopVideosVolleyTask implements TTResponseListener<D
     }
 
     @Override
-    public void onResponse(TTRequest<DailyMotionTrendingVideoModel> request, DailyMotionTrendingVideoModel response) {
+    public void onResponse(TTRequest<DMModel> request, DMModel response) {
         if (null != response) {
             if (this.listener != null) {
                 this.listener.onFetchedDailyMotionTopVideos(response);
@@ -52,14 +52,14 @@ public class FetchDailyMotionTopVideosVolleyTask implements TTResponseListener<D
     }
 
     @Override
-    public void onErrorResponse(TTRequest<DailyMotionTrendingVideoModel> request, VolleyError error) {
+    public void onErrorResponse(TTRequest<DMModel> request, VolleyError error) {
         if (this.listener != null) {
             this.listener.onFetchedErrorDailyMotionTopVideos(error);
         }
     }
 
     public interface FetchDailyMotionTopVideoListener {
-        public void onFetchedDailyMotionTopVideos(DailyMotionTrendingVideoModel response);
+        public void onFetchedDailyMotionTopVideos(DMModel response);
         public void onFetchedErrorDailyMotionTopVideos(VolleyError error);
     }
 }

@@ -1,5 +1,12 @@
 package org.trendtube.app.constants;
 
+import android.util.SparseArray;
+
+import org.trendtube.app.R;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by shankar on 9/12/15.
  */
@@ -34,6 +41,27 @@ public class Constants {
     public static final int FLAG_YOUTUBE_SEARCH_VIDEO = 0;
     public static final int FLAG_DAILYMOTION_SEARCH_VIDEO = 1;
     public static final int FLAG_VIMEO_SEARCH_VIDEO = 2;
+
+    public static final String DATE_FILTER_ALLTIME = "ALL-TIME";
+    public static final String DATE_FILTER_TODAY = "TODAY";
+    public static final String DATE_FILTER_THIS_WEEK = "THIS-WEEK";
+    public static final String DATE_FILTER_THIS_MONTH = "THIS-MONTH";
+    public static final String DATE_FILTER_LAST_THREE_MONTH = "LAST-THREE-MONTHS";
+    public static final String DATE_FILTER_LAST_SIX_MONTH = "LAST-SIX-MONTHS";
+    public static final String DATE_FILTER_THIS_YEAR = "THIS-YEAR";
+
+    public static final SparseArray<String> filter = new SparseArray<String>() {
+        {
+            put(R.id.item_all_time, DATE_FILTER_ALLTIME);
+            put(R.id.item_today, DATE_FILTER_TODAY);
+            put(R.id.item_this_week, DATE_FILTER_THIS_WEEK);
+            put(R.id.item_this_month, DATE_FILTER_THIS_MONTH);
+            put(R.id.item_last_three_month, DATE_FILTER_LAST_THREE_MONTH);
+            put(R.id.item_lasst_six_month, DATE_FILTER_LAST_SIX_MONTH);
+            put(R.id.item_this_year, DATE_FILTER_THIS_YEAR);
+        }
+    };
+
 
     public static final String ERROR_UNSUPPORTED_CHARACTER = "Invalid character";
 

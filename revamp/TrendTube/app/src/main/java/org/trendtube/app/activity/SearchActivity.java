@@ -109,6 +109,7 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
         searchView.onActionViewExpanded();
         searchView.setOnQueryTextListener(new SuggestorQueryListener(this, this));
         searchView.setQueryHint(getString(R.string.hint_search));
+        searchView.setQuery(TTApplication.query, false);
         return true;
     }
 

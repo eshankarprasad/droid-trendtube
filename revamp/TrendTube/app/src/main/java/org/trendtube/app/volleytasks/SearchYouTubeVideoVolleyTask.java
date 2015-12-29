@@ -8,7 +8,7 @@ import com.android.volley.VolleyError;
 
 import org.trendtube.app.constants.Config;
 import org.trendtube.app.constants.Constants;
-import org.trendtube.app.model.YouTubeVideoModel;
+import org.trendtube.app.model.YTModel;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
 import org.trendtube.app.volley.NullResponseError;
@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * Created by shankarprasad on 24-07-2015.
  */
-public class SearchYouTubeVideoVolleyTask implements TTResponseListener<YouTubeVideoModel> {
+public class SearchYouTubeVideoVolleyTask implements TTResponseListener<YTModel> {
 
     private SearchYouTubeVideoListener listener;
     private Activity activity;
@@ -36,7 +36,7 @@ public class SearchYouTubeVideoVolleyTask implements TTResponseListener<YouTubeV
         try {
             String url = Config.getSearchYouTubeVideosUrl(token, query);
             MyLog.e("Generated Url: " + url);
-            TTGsonRequest<YouTubeVideoModel> nNacresGsonRequest = new TTGsonRequest<YouTubeVideoModel>(activity, url, null, this, YouTubeVideoModel.class);
+            TTGsonRequest<YTModel> nNacresGsonRequest = new TTGsonRequest<YTModel>(activity, url, null, this, YTModel.class);
             nNacresGsonRequest.setTaskId(this);
             TTVolleyManager.addToQueue(nNacresGsonRequest, false);
         } catch (UnsupportedEncodingException e) {
@@ -50,7 +50,7 @@ public class SearchYouTubeVideoVolleyTask implements TTResponseListener<YouTubeV
     }
 
     @Override
-    public void onResponse(TTRequest<YouTubeVideoModel> request, YouTubeVideoModel response) {
+    public void onResponse(TTRequest<YTModel> request, YTModel response) {
         if (null != response) {
             if (this.listener != null) {
                 this.listener.onSuccessYouTubeSearch(response);
@@ -61,14 +61,14 @@ public class SearchYouTubeVideoVolleyTask implements TTResponseListener<YouTubeV
     }
 
     @Override
-    public void onErrorResponse(TTRequest<YouTubeVideoModel> request, VolleyError error) {
+    public void onErrorResponse(TTRequest<YTModel> request, VolleyError error) {
         if (this.listener != null) {
             this.listener.onErrorYouTubeSearch(error);
         }
     }
 
     public interface SearchYouTubeVideoListener {
-        public void onSuccessYouTubeSearch(YouTubeVideoModel response);
+        public void onSuccessYouTubeSearch(YTModel response);
         public void onErrorYouTubeSearch(VolleyError error);
     }
 }

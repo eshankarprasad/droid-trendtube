@@ -5,10 +5,9 @@ import android.app.Activity;
 import com.android.volley.ParseError;
 import com.android.volley.VolleyError;
 
-import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.constants.Config;
 import org.trendtube.app.interfaces.FetchVideosListener;
-import org.trendtube.app.model.YouTubeVideoModel;
+import org.trendtube.app.model.YTModel;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.volley.NullResponseError;
 import org.trendtube.app.volley.TTGsonRequest;
@@ -19,7 +18,7 @@ import org.trendtube.app.volley.TTVolleyManager;
 /**
  * Created by shankarprasad on 24-07-2015.
  */
-public class FetchYouTubeTopVideosVolleyTask implements TTResponseListener<YouTubeVideoModel> {
+public class FetchYouTubeTopVideosVolleyTask implements TTResponseListener<YTModel> {
 
     private FetchVideosListener listener;
     private Activity activity;
@@ -33,7 +32,7 @@ public class FetchYouTubeTopVideosVolleyTask implements TTResponseListener<YouTu
         try {
             String url = Config.getYouTubeMostViewedVideosUrl(nextPageToken);
             MyLog.e(url);
-            TTGsonRequest<YouTubeVideoModel> nNacresGsonRequest = new TTGsonRequest<YouTubeVideoModel>(activity, url, null, this, YouTubeVideoModel.class);
+            TTGsonRequest<YTModel> nNacresGsonRequest = new TTGsonRequest<YTModel>(activity, url, null, this, YTModel.class);
             nNacresGsonRequest.setTaskId(this);
             TTVolleyManager.addToQueue(nNacresGsonRequest, false);
         } catch (Exception e) {
@@ -44,7 +43,7 @@ public class FetchYouTubeTopVideosVolleyTask implements TTResponseListener<YouTu
     }
 
     @Override
-    public void onResponse(TTRequest<YouTubeVideoModel> request, YouTubeVideoModel response) {
+    public void onResponse(TTRequest<YTModel> request, YTModel response) {
         if (null != response) {
             if (this.listener != null) {
                 this.listener.onVideoFetched(response);
@@ -56,7 +55,7 @@ public class FetchYouTubeTopVideosVolleyTask implements TTResponseListener<YouTu
     }
 
     @Override
-    public void onErrorResponse(TTRequest<YouTubeVideoModel> request, VolleyError error) {
+    public void onErrorResponse(TTRequest<YTModel> request, VolleyError error) {
         if (this.listener != null) {
             this.listener.onVideoFetchedError(error);
         }
