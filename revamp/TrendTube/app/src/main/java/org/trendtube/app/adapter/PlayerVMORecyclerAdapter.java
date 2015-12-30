@@ -65,33 +65,6 @@ public class PlayerVMORecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             viewHeader.txtViews.setText(headerModel.getViews());
             viewHeader.txtPublishDate.setText(headerModel.getPublishDate());
             viewHeader.txtDescription.setText(Html.fromHtml(headerModel.getDescription()));
-            if (headerModel.getLikeCount() == null) {
-                viewHeader.txtLikeCount.setVisibility(View.GONE);
-            } else {
-                viewHeader.txtLikeCount.setVisibility(View.VISIBLE);
-                viewHeader.txtLikeCount.setText(Utils.calculateViewCount(headerModel.getLikeCount()));
-            }
-
-            if (headerModel.getDislikeCount() == null) {
-                viewHeader.txtDislikeCount.setVisibility(View.GONE);
-            } else {
-                viewHeader.txtDislikeCount.setVisibility(View.VISIBLE);
-                viewHeader.txtDislikeCount.setText(Utils.calculateViewCount(headerModel.getDislikeCount()));
-            }
-
-            if (headerModel.getFavoriteCount() == null) {
-                viewHeader.txtFavoriteCount.setVisibility(View.GONE);
-            } else {
-                viewHeader.txtFavoriteCount.setVisibility(View.VISIBLE);
-                viewHeader.txtFavoriteCount.setText(Utils.calculateViewCount(headerModel.getFavoriteCount()));
-            }
-
-            if (headerModel.getCommentCount() == null) {
-                viewHeader.txtCommentCount.setVisibility(View.GONE);
-            } else {
-                viewHeader.txtCommentCount.setVisibility(View.VISIBLE);
-                viewHeader.txtCommentCount.setText(Utils.calculateViewCount(headerModel.getCommentCount()));
-            }
 
         } else {
             VMOItem item = (VMOItem) mItems.get(i-1);
@@ -126,10 +99,7 @@ public class PlayerVMORecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         private final TextView txtViews;
         private final TextView txtPublishDate;
         private final TextView txtDescription;
-        private final TextView txtLikeCount;
-        private final TextView txtDislikeCount;
-        private final TextView txtFavoriteCount;
-        private final TextView txtCommentCount;
+        private final View btnShare;
         private final View btnShowHiddenSummary;
         private final View viewHiddenSummary;
 
@@ -141,10 +111,8 @@ public class PlayerVMORecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             txtViews = (TextView) v.findViewById(R.id.txt_views);
             txtPublishDate = (TextView) v.findViewById(R.id.txt_published_date);
             txtDescription = (TextView) v.findViewById(R.id.txt_description);
-            txtLikeCount = (TextView) v.findViewById(R.id.txt_like_count);
-            txtDislikeCount = (TextView) v.findViewById(R.id.txt_dislike_count);
-            txtFavoriteCount = (TextView) v.findViewById(R.id.txt_favorite_count);
-            txtCommentCount = (TextView) v.findViewById(R.id.txt_comment_count);
+            btnShare = v.findViewById(R.id.btn_share);
+            btnShare.setOnClickListener(this);
 
             btnShowHiddenSummary = v.findViewById(R.id.layout_visible_header);
             btnShowHiddenSummary.setOnClickListener(this);
@@ -155,13 +123,20 @@ public class PlayerVMORecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
         @Override
         public void onClick(View v) {
-            //listener.onHeadetItemSelected();
-            if (viewHiddenSummary.getVisibility() == View.VISIBLE) {
-                viewHiddenSummary.setVisibility(View.GONE);
-                txtPublishDate.setCompoundDrawablesWithIntrinsicBounds(null, null, activity.getResources().getDrawable(R.drawable.ic_arrow_drop_down_black), null);
-            } else {
-                viewHiddenSummary.setVisibility(View.VISIBLE);
-                txtPublishDate.setCompoundDrawablesWithIntrinsicBounds(null, null, activity.getResources().getDrawable(R.drawable.ic_arrow_drop_up_black), null);
+            switch (v.getId()) {
+                case R.id.layout_visible_header:
+                    if (viewHiddenSummary.getVisibility() == View.VISIBLE) {
+                        viewHiddenSummary.setVisibility(View.GONE);
+                        txtPublishDate.setCompoundDrawablesWithIntrinsicBounds(null, null, activity.getResources().getDrawable(R.drawable.ic_arrow_drop_down_black), null);
+                    } else {
+                        viewHiddenSummary.setVisibility(View.VISIBLE);
+                        txtPublishDate.setCompoundDrawablesWithIntrinsicBounds(null, null, activity.getResources().getDrawable(R.drawable.ic_arrow_drop_up_black), null);
+                    }
+                    break;
+
+                case R.id.btn_share:
+                    listener.onHeadetItemSelected();
+                    break;
             }
          }
     }

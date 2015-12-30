@@ -41,7 +41,7 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
     private ListView listView;
     private SearchView searchView;
     private InputFilter searchInputFilter;
-    //private int fragmentIndex = 0;
+    //private int currentTabIndex = 0;
 
     public static Intent newIntent(Activity activity) {
         return new Intent(activity, SearchActivity.class);
@@ -237,7 +237,7 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
         } else {
             Intent intent = new Intent();
             intent.putExtra(Constants.BUNDLE_QUERY, query);
-            //intent.putExtra(Constants.BUNDLE_FRAGMENT_INDEX, fragmentIndex);
+            //intent.putExtra(Constants.BUNDLE_FRAGMENT_INDEX, currentTabIndex);
             setResult(RESULT_OK, intent);
         }
         finish();

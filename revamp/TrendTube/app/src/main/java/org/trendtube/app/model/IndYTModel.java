@@ -2,13 +2,12 @@ package org.trendtube.app.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by shankar on 10/12/15.
  */
-public class YTModel extends ResponseMetadata {
+public class IndYTModel extends ResponseMetadata {
 
     @SerializedName("kind")
     private String kind;
@@ -26,7 +25,7 @@ public class YTModel extends ResponseMetadata {
     private PageInfo pageInfo;
 
     @SerializedName("items")
-    private List<YTItem> YTItems;
+    private List<IndYTItem> items;
 
     public String getKind() {
         return kind;
@@ -68,12 +67,12 @@ public class YTModel extends ResponseMetadata {
         this.pageInfo = pageInfo;
     }
 
-    public List<YTItem> getYTItems() {
-        return YTItems;
+    public List<IndYTItem> getItems() {
+        return items;
     }
 
-    public void setYTItems(List<YTItem> YTItems) {
-        this.YTItems = YTItems;
+    public void setItems(List<IndYTItem> items) {
+        this.items = items;
     }
 
     @Override
@@ -84,7 +83,7 @@ public class YTModel extends ResponseMetadata {
                 ", nextPageToken='" + nextPageToken + '\'' +
                 ", prevPageToken='" + prevPageToken + '\'' +
                 ", pageInfo=" + pageInfo +
-                ", YTItems=" + YTItems +
+                ", items=" + items +
                 '}';
     }
 }

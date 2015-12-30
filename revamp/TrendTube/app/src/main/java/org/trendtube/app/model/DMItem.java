@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by shankarprasad on 20-12-2015.
  */
-public class DMItem implements Serializable {
+public class DMItem extends ResponseMetadata {
 
     @SerializedName("thumbnail_large_url")
     private String thumbnailLargeUrl;

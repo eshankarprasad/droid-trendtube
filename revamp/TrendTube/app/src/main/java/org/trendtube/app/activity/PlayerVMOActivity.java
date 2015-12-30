@@ -36,15 +36,18 @@ import com.android.volley.VolleyError;
 import org.trendtube.app.R;
 import org.trendtube.app.adapter.PlayerVMORecyclerAdapter;
 import org.trendtube.app.constants.Constants;
+import org.trendtube.app.model.IndVMOModel;
 import org.trendtube.app.model.VMOItem;
 import org.trendtube.app.model.VideoDetailHeaderModel;
 import org.trendtube.app.model.VMOModel;
+import org.trendtube.app.ui.TTProgressDialog;
 import org.trendtube.app.ui.VideoEnabledWebChromeClient;
 import org.trendtube.app.ui.VideoEnabledWebView;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.SearchVimeoVideoVolleyTask;
+import org.trendtube.app.volleytasks.FetchIndVMOVolleyTask;
+import org.trendtube.app.volleytasks.SearchVMOVolleyTask;
 
 import java.util.ArrayList;
 
@@ -57,7 +60,8 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  * will cause re-buffering of the video.
  */
 public class PlayerVMOActivity extends AppCompatActivity implements
-        View.OnClickListener, PlayerVMORecyclerAdapter.SimilarVideoItemSelectedListener, SearchVimeoVideoVolleyTask.SearchVimeoVideoListener {
+        View.OnClickListener, PlayerVMORecyclerAdapter.SimilarVideoItemSelectedListener,
+        SearchVMOVolleyTask.SearchVimeoVideoListener, FetchIndVMOVolleyTask.FetchIndVideosListener {
 
     private static final int PORTRAIT_ORIENTATION = Build.VERSION.SDK_INT < 9
             ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -71,6 +75,8 @@ public class PlayerVMOActivity extends AppCompatActivity implements
     private VideoDetailHeaderModel headerModel;
     private VideoEnabledWebView mWebview;
     private VideoEnabledWebChromeClient webChromeClient;
+    private TTProgressDialog ttProgressDialog;
+    private String videoUrl;
 
     public static Intent newIntent(Activity activity) {
         return new Intent(activity, PlayerVMOActivity.class);
@@ -208,7 +214,7 @@ public class PlayerVMOActivity extends AppCompatActivity implements
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
 
-        SearchVimeoVideoVolleyTask task = new SearchVimeoVideoVolleyTask(this, this);
+        SearchVMOVolleyTask task = new SearchVMOVolleyTask(this, this);
         task.execute(nextPageToken, videoTitle);
     }
 
@@ -222,7 +228,15 @@ public class PlayerVMOActivity extends AppCompatActivity implements
 
     @Override
     public void onHeadetItemSelected() {
-        MyLog.e("onHeadetItemSelected");
+
+        showProgressDialog();
+        mWebview.onPause();
+        if (videoUrl == null) {
+            FetchIndVMOVolleyTask task = new FetchIndVMOVolleyTask(this, this);
+            task.execute(videoId);
+        } else {
+            openSharingIntent();
+        }
     }
 
     @Override
@@ -233,6 +247,24 @@ public class PlayerVMOActivity extends AppCompatActivity implements
     @Override
     public void onClick(View v) {
 
+    }
+
+    private void showProgressDialog() {
+        if (ttProgressDialog == null) {
+            ttProgressDialog = new TTProgressDialog(this);
+        }
+
+        if (!isFinishing() && !ttProgressDialog.isShowing()) {
+            ttProgressDialog.show();
+        }
+    }
+
+    private void dismissProgressDialog() {
+
+        if (ttProgressDialog != null && ttProgressDialog.isShowing()) {
+            ttProgressDialog.dismiss();
+            ttProgressDialog = null;
+        }
     }
 
     @Override
@@ -257,5 +289,36 @@ public class PlayerVMOActivity extends AppCompatActivity implements
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
         Utils.handleError(this, error);
+    }
+
+    @Override
+    public void onIndVideoFetched(IndVMOModel response) {
+        MyLog.e(response.toString());
+        videoUrl = response.getVideoUrl();
+        openSharingIntent();
+    }
+
+    @Override
+    public void onIndVideoFetchedError(VolleyError error) {
+        dismissProgressDialog();
+        Utils.handleError(this, error);
+    }
+
+    private void openSharingIntent() {
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, videoUrl);
+        sendIntent.setType("text/plain");
+        startActivityForResult(Intent.createChooser(sendIntent, getResources().getText(R.string.title_share)), Constants.REQUEST_SHARE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.REQUEST_SHARE) {
+            dismissProgressDialog();
+            mWebview.onResume();
+        }
     }
 }

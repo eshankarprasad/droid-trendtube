@@ -32,6 +32,8 @@
     <string name="title_categories">Categories</string>
     <string name="title_regions">Regions</string>
 
+    <string name="title_share">Share</string>
+
     <string name="title_activity_search">Search</string>
 
     <string name="label_remaining_videos">%1$s videos available</string>

@@ -23,14 +23,14 @@ import org.trendtube.app.model.VMOModel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.SearchVimeoVideoVolleyTask;
+import org.trendtube.app.volleytasks.SearchVMOVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
 public class VMOSearchFragment extends Fragment implements VMORecyclerAdapter.VimeoVideoItemSelectedListener,
-        SearchVimeoVideoVolleyTask.SearchVimeoVideoListener, View.OnClickListener {
+        SearchVMOVolleyTask.SearchVimeoVideoListener, View.OnClickListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private RecyclerView recyclerView;
@@ -69,6 +69,7 @@ public class VMOSearchFragment extends Fragment implements VMORecyclerAdapter.Vi
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            TTApplication.currentTabIndex = 2;
             if (!searchQuery.equals(TTApplication.query) && rootView != null) {
                 searchQuery = TTApplication.query;
                 initViews();
@@ -106,7 +107,7 @@ public class VMOSearchFragment extends Fragment implements VMORecyclerAdapter.Vi
         } else {
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
-        SearchVimeoVideoVolleyTask task = new SearchVimeoVideoVolleyTask(getActivity(), this);
+        SearchVMOVolleyTask task = new SearchVMOVolleyTask(getActivity(), this);
         task.execute(nextPageToken, searchQuery);
     }
 

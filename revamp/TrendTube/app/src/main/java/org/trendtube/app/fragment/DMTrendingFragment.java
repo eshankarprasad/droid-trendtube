@@ -23,14 +23,14 @@ import org.trendtube.app.model.DMItem;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.FetchDailyMotionTrendingVideosVolleyTask;
+import org.trendtube.app.volleytasks.FetchDMTrendingVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
 public class DMTrendingFragment extends Fragment implements DMRecyclerAdapter.DailyMotionVideoItemSelectedListener,
-        FetchDailyMotionTrendingVideosVolleyTask.FetchDailyMotionTrendingVideoListener, View.OnClickListener {
+        FetchDMTrendingVolleyTask.FetchDailyMotionTrendingVideoListener, View.OnClickListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private int navIndex = -1;
@@ -66,7 +66,7 @@ public class DMTrendingFragment extends Fragment implements DMRecyclerAdapter.Da
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             //getActivity().findViewById(R.id.fab_category).setVisibility(View.GONE);
-            TTApplication.fragmentIndex = 1;
+            TTApplication.currentTabIndex = 1;
             if (navIndex != TTApplication.navIndex) {
                 initViews();
             }
@@ -104,7 +104,7 @@ public class DMTrendingFragment extends Fragment implements DMRecyclerAdapter.Da
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
 
-        FetchDailyMotionTrendingVideosVolleyTask task = new FetchDailyMotionTrendingVideosVolleyTask(getActivity(), this);
+        FetchDMTrendingVolleyTask task = new FetchDMTrendingVolleyTask(getActivity(), this);
         task.execute(nextPageToken);
     }
 

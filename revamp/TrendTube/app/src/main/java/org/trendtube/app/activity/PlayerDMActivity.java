@@ -35,11 +35,14 @@ import org.trendtube.app.adapter.PlayerDMRecyclerAdapter;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.model.DMItem;
 import org.trendtube.app.model.DMModel;
+import org.trendtube.app.model.IndDMModel;
 import org.trendtube.app.model.VideoDetailHeaderModel;
+import org.trendtube.app.ui.TTProgressDialog;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.SearchDailyMotionVideoVolleyTask;
+import org.trendtube.app.volleytasks.FetchIndDMVolleyTask;
+import org.trendtube.app.volleytasks.SearchDMVolleyTask;
 
 import java.util.ArrayList;
 
@@ -52,7 +55,8 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  * will cause re-buffering of the video.
  */
 public class PlayerDMActivity extends AppCompatActivity implements
-        View.OnClickListener, PlayerDMRecyclerAdapter.SimilarVideoItemSelectedListener, SearchDailyMotionVideoVolleyTask.SearchDailyMotionVideoListener {
+        View.OnClickListener, PlayerDMRecyclerAdapter.SimilarVideoItemSelectedListener,
+        SearchDMVolleyTask.SearchDailyMotionVideoListener, FetchIndDMVolleyTask.FetchIndVideosListener {
 
     private static final int PORTRAIT_ORIENTATION = Build.VERSION.SDK_INT < 9
             ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -65,6 +69,8 @@ public class PlayerDMActivity extends AppCompatActivity implements
     private View progressWheel, footerProgressWheel;//, layoutHiddenSummary;
     private VideoDetailHeaderModel headerModel;
     private DMWebVideoView mVideoView;
+    private TTProgressDialog ttProgressDialog;
+    private String videoUrl;
 
     public static Intent newIntent(Activity activity) {
         return new Intent(activity, PlayerDMActivity.class);
@@ -169,7 +175,7 @@ public class PlayerDMActivity extends AppCompatActivity implements
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
 
-        SearchDailyMotionVideoVolleyTask task = new SearchDailyMotionVideoVolleyTask(this, this);
+        SearchDMVolleyTask task = new SearchDMVolleyTask(this, this);
         task.execute(nextPageToken, videoTitle);
     }
 
@@ -183,7 +189,15 @@ public class PlayerDMActivity extends AppCompatActivity implements
 
     @Override
     public void onHeadetItemSelected() {
-        MyLog.e("onHeadetItemSelected");
+
+        mVideoView.onPause();
+        showProgressDialog();
+        if (videoUrl == null) {
+            FetchIndDMVolleyTask task = new FetchIndDMVolleyTask(this, this);
+            task.execute(videoId);
+        } else {
+            openSharingIntent();
+        }
     }
 
     @Override
@@ -196,14 +210,28 @@ public class PlayerDMActivity extends AppCompatActivity implements
 
     }
 
+    private void showProgressDialog() {
+        if (ttProgressDialog == null) {
+            ttProgressDialog = new TTProgressDialog(this);
+        }
+
+        if (!isFinishing() && !ttProgressDialog.isShowing()) {
+            ttProgressDialog.show();
+        }
+    }
+
+    private void dismissProgressDialog() {
+
+        if (ttProgressDialog != null && ttProgressDialog.isShowing()) {
+            ttProgressDialog.dismiss();
+            ttProgressDialog = null;
+        }
+    }
+
     @Override
     public void onSuccessDailyMotionSearch(DMModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
-        /*if (adapter == null) {
-            adapter = new PlayerYTRecyclerAdapter(this, headerModel, response.getYTItems(), this);
-            recyclerView.setAdapter(adapter);
-        } else */
         if ("".equals(nextPageToken)) {
             adapter.setItems(response.getList());
             adapter.notifyDataSetChanged();
@@ -219,8 +247,37 @@ public class PlayerDMActivity extends AppCompatActivity implements
         error.printStackTrace();
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
-        progressWheel.setVisibility(View.GONE);
-        footerProgressWheel.setVisibility(View.GONE);
         Utils.handleError(this, error);
+    }
+
+    @Override
+    public void onIndVideoFetched(IndDMModel response) {
+        MyLog.e(response.toString());
+        videoUrl = response.getVideoUrl();
+        openSharingIntent();
+    }
+
+    @Override
+    public void onIndVideoFetchedError(VolleyError error) {
+        dismissProgressDialog();
+        Utils.handleError(this, error);
+    }
+
+    private void openSharingIntent() {
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, videoUrl);
+        sendIntent.setType("text/plain");
+        startActivityForResult(Intent.createChooser(sendIntent, getResources().getText(R.string.title_share)), Constants.REQUEST_SHARE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.REQUEST_SHARE) {
+            dismissProgressDialog();
+            mVideoView.onResume();
+        }
     }
 }

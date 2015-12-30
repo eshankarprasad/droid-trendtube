@@ -23,14 +23,14 @@ import org.trendtube.app.model.DMModel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.SearchDailyMotionVideoVolleyTask;
+import org.trendtube.app.volleytasks.SearchDMVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
 public class DMSearchFragment extends Fragment implements DMRecyclerAdapter.DailyMotionVideoItemSelectedListener,
-        SearchDailyMotionVideoVolleyTask.SearchDailyMotionVideoListener, View.OnClickListener {
+        SearchDMVolleyTask.SearchDailyMotionVideoListener, View.OnClickListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private int navIndex = -1;
@@ -66,7 +66,7 @@ public class DMSearchFragment extends Fragment implements DMRecyclerAdapter.Dail
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            TTApplication.fragmentIndex = 1;
+            TTApplication.currentTabIndex = 1;
             if (navIndex != TTApplication.navIndex || !searchQuery.equals(TTApplication.query)) {
                 searchQuery = TTApplication.query;
                 initViews();
@@ -104,7 +104,7 @@ public class DMSearchFragment extends Fragment implements DMRecyclerAdapter.Dail
         } else {
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
-        SearchDailyMotionVideoVolleyTask task = new SearchDailyMotionVideoVolleyTask(getActivity(), this);
+        SearchDMVolleyTask task = new SearchDMVolleyTask(getActivity(), this);
         task.execute(nextPageToken, searchQuery);
     }
 

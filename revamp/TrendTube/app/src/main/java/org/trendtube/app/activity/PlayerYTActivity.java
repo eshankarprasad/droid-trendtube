@@ -37,13 +37,18 @@ import com.google.android.youtube.player.YouTubePlayerView;
 import org.trendtube.app.R;
 import org.trendtube.app.adapter.PlayerYTRecyclerAdapter;
 import org.trendtube.app.constants.Constants;
+import org.trendtube.app.model.IndYTItem;
+import org.trendtube.app.model.IndYTModel;
 import org.trendtube.app.model.VideoDetailHeaderModel;
 import org.trendtube.app.model.YTItem;
 import org.trendtube.app.model.YTModel;
+import org.trendtube.app.ui.TTProgressDialog;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.SearchYouTubeVideoVolleyTask;
+import org.trendtube.app.volleytasks.FetchIndDMVolleyTask;
+import org.trendtube.app.volleytasks.FetchIndYTVolleyTask;
+import org.trendtube.app.volleytasks.SearchYTVolleyTask;
 
 import java.util.ArrayList;
 
@@ -60,7 +65,8 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  */
 public class PlayerYTActivity extends YTFailureRecoveryActivity implements
         View.OnClickListener, YouTubePlayer.OnFullscreenListener, YouTubePlayer.PlayerStateChangeListener,
-        SearchYouTubeVideoVolleyTask.SearchYouTubeVideoListener, PlayerYTRecyclerAdapter.SimilarVideoItemSelectedListener {
+        SearchYTVolleyTask.SearchYouTubeVideoListener, PlayerYTRecyclerAdapter.SimilarVideoItemSelectedListener,
+        FetchIndYTVolleyTask.FetchIndVideosListener {
 
     private static final int PORTRAIT_ORIENTATION = Build.VERSION.SDK_INT < 9
             ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -79,6 +85,8 @@ public class PlayerYTActivity extends YTFailureRecoveryActivity implements
     private View progressWheel, footerProgressWheel;//, layoutHiddenSummary;
     //private RecyclerViewHeader recyclerHeader;
     private VideoDetailHeaderModel headerModel;
+    private TTProgressDialog ttProgressDialog;
+    private String videoUrl;
 
     public static Intent newIntent(Activity activity) {
         return new Intent(activity, PlayerYTActivity.class);
@@ -103,10 +111,6 @@ public class PlayerYTActivity extends YTFailureRecoveryActivity implements
             headerModel.setViews(getString(R.string.views, Utils.getCommaSeperatedNumber(views)));
             headerModel.setPublishDate("Published on " + publishDate);
             headerModel.setDescription(description);
-            headerModel.setLikeCount(item.getStatistics().getLikeCount());
-            headerModel.setDislikeCount(item.getStatistics().getDislikeCount());
-            headerModel.setFavoriteCount(item.getStatistics().getFavoriteCount());
-            headerModel.setCommentCount(item.getStatistics().getCommentCount());
         }
 
         baseLayout = (LinearLayout) findViewById(R.id.layout);
@@ -224,15 +228,26 @@ public class PlayerYTActivity extends YTFailureRecoveryActivity implements
                 otherViewsParams.height = 0;
                 baseLayout.setOrientation(LinearLayout.VERTICAL);
             }
-            //setControlsEnabled();
         }
     }
 
-    /*private void setControlsEnabled() {
-        checkbox.setEnabled(player != null
-                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT);
-        fullscreenButton.setEnabled(player != null);
-    }*/
+    private void showProgressDialog() {
+        if (ttProgressDialog == null) {
+            ttProgressDialog = new TTProgressDialog(this);
+        }
+
+        if (!isFinishing() && !ttProgressDialog.isShowing()) {
+            ttProgressDialog.show();
+        }
+    }
+
+    private void dismissProgressDialog() {
+
+        if (ttProgressDialog != null && ttProgressDialog.isShowing()) {
+            ttProgressDialog.dismiss();
+            ttProgressDialog = null;
+        }
+    }
 
     @Override
     public void onFullscreen(boolean isFullscreen) {
@@ -268,7 +283,7 @@ public class PlayerYTActivity extends YTFailureRecoveryActivity implements
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
 
-        SearchYouTubeVideoVolleyTask task = new SearchYouTubeVideoVolleyTask(this, this);
+        SearchYTVolleyTask task = new SearchYTVolleyTask(this, this);
         task.execute(nextPageToken, videoTitle);
     }
 
@@ -276,10 +291,6 @@ public class PlayerYTActivity extends YTFailureRecoveryActivity implements
     public void onSuccessYouTubeSearch(YTModel response) {
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
-        /*if (adapter == null) {
-            adapter = new PlayerYTRecyclerAdapter(this, headerModel, response.getYTItems(), this);
-            recyclerView.setAdapter(adapter);
-        } else */
         if ("".equals(nextPageToken)) {
             adapter.setItems(response.getYTItems());
             adapter.notifyDataSetChanged();
@@ -295,8 +306,6 @@ public class PlayerYTActivity extends YTFailureRecoveryActivity implements
         error.printStackTrace();
         progressWheel.setVisibility(View.GONE);
         footerProgressWheel.setVisibility(View.GONE);
-        progressWheel.setVisibility(View.GONE);
-        footerProgressWheel.setVisibility(View.GONE);
         Utils.handleError(this, error);
     }
 
@@ -310,7 +319,18 @@ public class PlayerYTActivity extends YTFailureRecoveryActivity implements
 
     @Override
     public void onHeadetItemSelected() {
-        MyLog.e("onHeadetItemSelected");
+
+        if (player.isPlaying()) {
+            player.pause();
+        }
+
+        showProgressDialog();
+        if (videoUrl == null) {
+            FetchIndYTVolleyTask task = new FetchIndYTVolleyTask(this, this);
+            task.execute(videoId);
+        } else {
+            openSharingIntent();
+        }
     }
 
     @Override
@@ -344,8 +364,42 @@ public class PlayerYTActivity extends YTFailureRecoveryActivity implements
     public void onError(YouTubePlayer.ErrorReason errorReason) {
         MyLog.e("errorReason: " + errorReason.name());
     }
+
+    @Override
+    public void onIndVideoFetched(IndYTModel response) {
+        MyLog.e(response.toString());
+        dismissProgressDialog();
+        if (response.getItems() != null && response.getItems().size() > 0) {
+            videoUrl = response.getItems().get(0).getVideoUrl();
+            openSharingIntent();
+        }
+    }
+
+    @Override
+    public void onIndVideoFetchedError(VolleyError error) {
+        Utils.handleError(this, error);
+        dismissProgressDialog();
+    }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    private void openSharingIntent() {
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, videoUrl);
+        sendIntent.setType("text/plain");
+        startActivityForResult(Intent.createChooser(sendIntent, getResources().getText(R.string.title_share)), Constants.REQUEST_SHARE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.REQUEST_SHARE) {
+            dismissProgressDialog();
+        }
     }
 }

@@ -23,14 +23,14 @@ import org.trendtube.app.model.YTModel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.SearchYouTubeVideoVolleyTask;
+import org.trendtube.app.volleytasks.SearchYTVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
  */
 
 public class YTSearchFragment extends Fragment implements YTRecyclerAdapter.YouTubeVideoItemSelectedListener,
-        SearchYouTubeVideoVolleyTask.SearchYouTubeVideoListener, View.OnClickListener {
+        SearchYTVolleyTask.SearchYouTubeVideoListener, View.OnClickListener {
     private static final String TAB_POSITION = "tab_position";
     private View rootView;
     private RecyclerView recyclerView;
@@ -82,7 +82,7 @@ public class YTSearchFragment extends Fragment implements YTRecyclerAdapter.YouT
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            TTApplication.fragmentIndex = 0;
+            TTApplication.currentTabIndex = 0;
         }
     }
 
@@ -92,7 +92,7 @@ public class YTSearchFragment extends Fragment implements YTRecyclerAdapter.YouT
         } else {
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
-        SearchYouTubeVideoVolleyTask task = new SearchYouTubeVideoVolleyTask(getActivity(), this);
+        SearchYTVolleyTask task = new SearchYTVolleyTask(getActivity(), this);
         task.execute(nextPageToken, TTApplication.query);
     }
 

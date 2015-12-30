@@ -26,7 +26,7 @@ import org.trendtube.app.ui.TTProgressDialog;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.FetchYouTubeTrendingVideosVolleyTask;
+import org.trendtube.app.volleytasks.FetchYTTrendingVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
@@ -43,7 +43,7 @@ public class YTTrendingFragment extends Fragment
     private String nextPageToken;
     private View progressWheel, footerProgressWheel;
     private TTProgressDialog ttProgressDialog;
-    private FetchYouTubeTrendingVideosVolleyTask task;
+    private FetchYTTrendingVolleyTask task;
 
     public YTTrendingFragment() {
 
@@ -97,7 +97,7 @@ public class YTTrendingFragment extends Fragment
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            TTApplication.fragmentIndex = 0;
+            TTApplication.currentTabIndex = 0;
             //fabCategory.setVisibility(View.VISIBLE);
             if (adapter != null && adapter.getItemCount() == 0) {
                 registerReceiver();
@@ -161,7 +161,7 @@ public class YTTrendingFragment extends Fragment
             task.cancelTask();
         }
 
-        task = new FetchYouTubeTrendingVideosVolleyTask(getActivity(), this);
+        task = new FetchYTTrendingVolleyTask(getActivity(), this);
         task.execute(nextPageToken);
     }
 

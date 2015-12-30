@@ -25,7 +25,7 @@ import org.trendtube.app.model.YTModel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
-import org.trendtube.app.volleytasks.FetchYouTubeTopVideosVolleyTask;
+import org.trendtube.app.volleytasks.FetchYTTopVolleyTask;
 
 /**
  * Created by shankar on 9/12/15.
@@ -95,7 +95,7 @@ public class YTTopFragment extends Fragment
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            TTApplication.fragmentIndex = 0;
+            TTApplication.currentTabIndex = 0;
         }
     }
 
@@ -105,7 +105,7 @@ public class YTTopFragment extends Fragment
         } else {
             footerProgressWheel.setVisibility(View.VISIBLE);
         }
-        FetchYouTubeTopVideosVolleyTask task = new FetchYouTubeTopVideosVolleyTask(getActivity(), this);
+        FetchYTTopVolleyTask task = new FetchYTTopVolleyTask(getActivity(), this);
         task.execute(nextPageToken);
     }
 

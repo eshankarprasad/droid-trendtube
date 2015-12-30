@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by shankarprasad on 20-12-2015.
  */
-public class VMOItem implements Serializable {
+public class VMOItem extends ResponseMetadata {
 
     @SerializedName("id")
     private String id;

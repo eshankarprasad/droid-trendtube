@@ -22,7 +22,8 @@ public class TTApplication extends Application {
     public static String topViewedDateFilter = "TODAY";
 
     public static int navIndex;
-    public static int fragmentIndex;
+    public static int currentTabIndex;
+    public static int tabIndex;
     public static String query;
 
     @Override
@@ -33,7 +34,8 @@ public class TTApplication extends Application {
         categotyId = "0";
         regionId = "IN";
         navIndex = 0;
-        fragmentIndex = 0;
+        tabIndex = 0;
+        currentTabIndex = 0;
         query = "";
 
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()

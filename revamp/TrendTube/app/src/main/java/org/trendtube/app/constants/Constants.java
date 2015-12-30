@@ -26,6 +26,7 @@ public class Constants {
     public static final int REQUEST_REFRESH = 1;
     public static final int REQUEST_VIDEO_DETAIL = 3001;
     public static final int REQUEST_SEARCH = 3002;
+    public static final int REQUEST_SHARE = 3003;
 
     public static final String CONNECTION_ERROR = "Please check your internet connection and try again";
     public static final String SERVER_ERROR = "Server Error. Please Try Again after some time";
@@ -42,7 +43,7 @@ public class Constants {
     public static final int FLAG_DAILYMOTION_SEARCH_VIDEO = 1;
     public static final int FLAG_VIMEO_SEARCH_VIDEO = 2;
 
-    public static final String DATE_FILTER_ALLTIME = "ALL-TIME";
+    public static final String DATE_FILTER_ALLTIME = "";
     public static final String DATE_FILTER_TODAY = "TODAY";
     public static final String DATE_FILTER_THIS_WEEK = "THIS-WEEK";
     public static final String DATE_FILTER_THIS_MONTH = "THIS-MONTH";

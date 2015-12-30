@@ -88,4 +88,16 @@ public class Config extends ServerConfig {
             return REST_HOST_VIMEO + "/searchVideosByQuery?server_key=" + SERVER_KEY + "&resultPerPage=" + RESULT_PER_PAGE + "&pageToken=" + token + "&q=" + Utils.encodeBankSpaces(query);
         }
     }
+
+    public static String getIndYTUrl(String videoId) {
+        return REST_HOST_YOUTUBE + "/getVideoByVideoId?server_key=" + SERVER_KEY + "&videoIds=" + videoId;
+    }
+
+    public static String getIndDMUrl(String videoId) {
+        return REST_HOST_DAILYMOTION + "/getVideoByVideoId?server_key=" + SERVER_KEY + "&videoId=" + videoId;
+    }
+
+    public static String getIndVMOUrl(String videoId) {
+        return REST_HOST_VIMEO + "/getVideoByVideoId?server_key=" + SERVER_KEY + "&videoId=" + videoId;
+    }
 }

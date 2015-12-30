@@ -60,7 +60,7 @@ public class TTActivity extends AppCompatActivity
     private BasicItem selectedCategory, selectedRegion;
     private TextView txtRegion;
     //private FloatingActionButton fabCategory;
-    private TrendingPagerAdapter trendingVideoPagerAdapter;
+    private TrendingPagerAdapter trendingPagerAdapter;
     private TopPagerAdapter topPagerAdapter;
     private SearchPagerAdapter searchPagerAdapter;
     private TabLayout mTabLayout;
@@ -118,12 +118,12 @@ public class TTActivity extends AppCompatActivity
         mNavigationView.setCheckedItem(TTApplication.navIndex);
         setTitle(R.string.nav_item_trending_videos);
 
-        trendingVideoPagerAdapter = new TrendingPagerAdapter(getResources().getStringArray(R.array.tab_items_normal), getSupportFragmentManager());
+        trendingPagerAdapter = new TrendingPagerAdapter(getResources().getStringArray(R.array.tab_items_normal), getSupportFragmentManager());
         topPagerAdapter = new TopPagerAdapter(getResources().getStringArray(R.array.tab_items_normal), getSupportFragmentManager());
         searchPagerAdapter = new SearchPagerAdapter(getResources().getStringArray(R.array.tab_items_search),getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        mViewPager.setAdapter(trendingVideoPagerAdapter);
+        mViewPager.setAdapter(trendingPagerAdapter);
 
         mTabLayout = (TabLayout) findViewById(R.id.tablayout);
         mTabLayout.setupWithViewPager(mViewPager);
@@ -161,7 +161,11 @@ public class TTActivity extends AppCompatActivity
     }
 
     private void showSearchScreen() {
-        MyLog.e("TTApplication.fragmentIndex: " + TTApplication.fragmentIndex);
+        MyLog.e("TTApplication.currentTabIndex: " + TTApplication.currentTabIndex);
+
+        // Saving current tab index
+        TTApplication.tabIndex = TTApplication.currentTabIndex;
+
         Intent intent = SearchActivity.newIntent(this);
         startActivityForResult(intent, Constants.REQUEST_SEARCH);
         Utils.animateActivity(this, "zero");
@@ -201,9 +205,12 @@ public class TTActivity extends AppCompatActivity
         TTApplication.query = "";
         TTApplication.topViewedDateFilter = dateFilter;
 
-        mViewPager.setAdapter(topPagerAdapter);
-        mTabLayout.setupWithViewPager(mViewPager);
+        //Replacing Vimeo tab index to youtube
+        TTApplication.tabIndex = TTApplication.currentTabIndex == 2 ? 0 : TTApplication.currentTabIndex;
 
+        mViewPager.setAdapter(navIndex == 0 ? trendingPagerAdapter : topPagerAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+        mViewPager.setCurrentItem(TTApplication.tabIndex);
         txtRegion.setVisibility(regionVisibility);
 
         new Handler().postDelayed(new Runnable() {
@@ -232,7 +239,7 @@ public class TTActivity extends AppCompatActivity
 
     private void regionButtonClicked() {
 
-        if (TTApplication.fragmentIndex != 0) {
+        if (TTApplication.currentTabIndex != 0) {
             mDrawerLayout.closeDrawers();
             Snackbar.make(findViewById(R.id.coordinator), "Region is not available for DailyMotion videos", Snackbar.LENGTH_SHORT).show();
             return;
@@ -315,17 +322,13 @@ public class TTActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.REQUEST_SEARCH && resultCode == RESULT_OK) {
             String query = data.getExtras().getString(Constants.BUNDLE_QUERY);
-            //int fragmentIndex = data.getExtras().getInt(Constants.BUNDLE_FRAGMENT_INDEX);
             MyLog.e("Query Received: " + query);
             TTApplication.query = query;
-            //finish();
-            //startActivity(TrendTubeSearchResultActivity.newIntent(this));
-            //Utils.animateActivity(this, "zero");
             mViewPager.setAdapter(null);
             mViewPager.setAdapter(searchPagerAdapter);
             mTabLayout.setupWithViewPager(mViewPager);
             setTitle(R.string.hint_search);
-            //fabCategory.setVisibility(View.GONE);
+            mViewPager.setCurrentItem(TTApplication.tabIndex);
             txtRegion.setVisibility(View.GONE);
             mNavigationView.getMenu().getItem(0).setChecked(false);
             mNavigationView.getMenu().getItem(1).setChecked(false);
@@ -342,7 +345,7 @@ public class TTActivity extends AppCompatActivity
             Utils.setPreference(this, Constants.KEY_REGION_ID, selectedRegion.getId());
             Utils.setPreference(this, Constants.KEY_REGION_NAME, selectedRegion.getName());
             if (TTApplication.navIndex == 0) {
-                mViewPager.setAdapter(trendingVideoPagerAdapter);
+                mViewPager.setAdapter(trendingPagerAdapter);
             } else {
                 mViewPager.setAdapter(topPagerAdapter);
             }
@@ -354,7 +357,7 @@ public class TTActivity extends AppCompatActivity
             Utils.setPreference(this, Constants.KEY_CATEGORY_ID, selectedCategory.getId());
             Utils.setPreference(this, Constants.KEY_CATEGORY_NAME, selectedCategory.getName());
             if (TTApplication.navIndex == 0) {
-                mViewPager.setAdapter(trendingVideoPagerAdapter);
+                mViewPager.setAdapter(trendingPagerAdapter);
             } else {
                 mViewPager.setAdapter(topPagerAdapter);
             }
@@ -363,7 +366,7 @@ public class TTActivity extends AppCompatActivity
 
     public void categoryButtonClicked() {
 
-        MyLog.e("Fragment Index: " + TTApplication.fragmentIndex);
+        MyLog.e("Fragment Index: " + TTApplication.currentTabIndex);
 
         if (TTApplication.categories != null && TTApplication.categories.size() > 0) {
             showCategoryListDialog();
