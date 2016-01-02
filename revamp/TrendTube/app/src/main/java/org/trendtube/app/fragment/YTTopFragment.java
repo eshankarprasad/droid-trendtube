@@ -15,8 +15,8 @@ import com.android.volley.VolleyError;
 
 import org.trendtube.app.R;
 import org.trendtube.app.activity.PlayerYTActivity;
-import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.activity.TTActivity;
+import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.adapter.YTRecyclerAdapter;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.interfaces.FetchVideosListener;
@@ -89,6 +89,8 @@ public class YTTopFragment extends Fragment
                 }
             }
         });
+
+        Utils.sendTracker(Constants.SCREEN_YOUTUBE_TOP_LIST);
     }
 
     @Override

@@ -99,6 +99,7 @@ public class VMOSearchFragment extends Fragment implements VMORecyclerAdapter.Vi
         }
         loadVideoContent();
         searchQuery = TTApplication.query;
+        Utils.sendTracker(Constants.SCREEN_VIMEO_SEARCH_LIST);
     }
 
     private void loadVideoContent() {

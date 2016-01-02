@@ -402,4 +402,10 @@ public class PlayerYTActivity extends YTFailureRecoveryActivity implements
             dismissProgressDialog();
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Utils.sendTracker(Constants.SCREEN_YOUTUBE);
+    }
 }

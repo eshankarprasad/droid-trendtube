@@ -18,8 +18,8 @@ import org.trendtube.app.activity.PlayerDMActivity;
 import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.adapter.DMRecyclerAdapter;
 import org.trendtube.app.constants.Constants;
-import org.trendtube.app.model.DMModel;
 import org.trendtube.app.model.DMItem;
+import org.trendtube.app.model.DMModel;
 import org.trendtube.app.utils.EndlessScrollVideosListener;
 import org.trendtube.app.utils.MyLog;
 import org.trendtube.app.utils.Utils;
@@ -95,6 +95,7 @@ public class DMTrendingFragment extends Fragment implements DMRecyclerAdapter.Da
         }
         loadVideoContent();
         navIndex = TTApplication.navIndex;
+        Utils.sendTracker(Constants.SCREEN_DAILYMOTION_TRENDING_LIST);
     }
 
     private void loadVideoContent() {

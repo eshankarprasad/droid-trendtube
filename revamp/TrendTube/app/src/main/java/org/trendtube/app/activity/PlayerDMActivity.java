@@ -160,6 +160,8 @@ public class PlayerDMActivity extends AppCompatActivity implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             mVideoView.onResume();
         }
+
+        Utils.sendTracker(Constants.SCREEN_DAILYMOTION);
     }
 
     @Override

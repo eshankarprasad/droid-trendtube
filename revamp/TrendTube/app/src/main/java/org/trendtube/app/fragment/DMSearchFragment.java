@@ -96,6 +96,7 @@ public class DMSearchFragment extends Fragment implements DMRecyclerAdapter.Dail
         }
         loadVideoContent();
         navIndex = TTApplication.navIndex;
+        Utils.sendTracker(Constants.SCREEN_DAILYMOTION_SEARCH_LIST);
     }
 
     private void loadVideoContent() {

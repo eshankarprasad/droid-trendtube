@@ -91,6 +91,7 @@ public class YTTrendingFragment extends Fragment
                 }
             }
         });
+        Utils.sendTracker(Constants.SCREEN_YOUTUBE_TRENDING_LIST);
     }
 
     @Override

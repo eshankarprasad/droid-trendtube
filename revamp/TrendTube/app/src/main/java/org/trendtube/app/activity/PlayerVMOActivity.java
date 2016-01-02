@@ -199,6 +199,7 @@ public class PlayerVMOActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         mWebview.onResume();
+        Utils.sendTracker(Constants.SCREEN_VIMEO);
     }
 
     @Override

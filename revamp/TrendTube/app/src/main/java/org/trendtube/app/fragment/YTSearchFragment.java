@@ -145,4 +145,10 @@ public class YTSearchFragment extends Fragment implements YTRecyclerAdapter.YouT
                 break;
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Utils.sendTracker(Constants.SCREEN_YOUTUBE_SEARCH_LIST);
+    }
 }

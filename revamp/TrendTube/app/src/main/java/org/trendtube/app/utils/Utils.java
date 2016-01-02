@@ -38,6 +38,7 @@ import org.joda.time.Years;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormatter;
 import org.trendtube.app.R;
+import org.trendtube.app.activity.TTApplication;
 import org.trendtube.app.constants.Constants;
 import org.trendtube.app.volley.NullResponseError;
 
@@ -482,5 +483,9 @@ public class Utils {
 
     public static int getProportionalHeight(Activity activity) {
         return (getScreenSize(activity).x * 9) / 16;
+    }
+
+    public static void sendTracker(String screenName) {
+        TTApplication.getInstance().trackScreenView(screenName);
     }
 }

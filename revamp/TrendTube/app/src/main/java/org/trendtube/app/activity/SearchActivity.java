@@ -242,8 +242,15 @@ public class SearchActivity extends AppCompatActivity implements FetchSuggestion
         }
         finish();
     }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Utils.sendTracker(Constants.SCREEN_SEARCH);
     }
 }

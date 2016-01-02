@@ -94,6 +94,7 @@ public class DMTopFragment extends Fragment implements DMRecyclerAdapter.DailyMo
         }
         loadVideoContent();
         navIndex = TTApplication.navIndex;
+        Utils.sendTracker(Constants.SCREEN_DAILYMOTION_TOP_LIST);
     }
 
     private void loadVideoContent() {

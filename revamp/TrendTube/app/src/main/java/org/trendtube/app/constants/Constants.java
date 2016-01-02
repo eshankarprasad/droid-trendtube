@@ -51,6 +51,19 @@ public class Constants {
     public static final String DATE_FILTER_LAST_SIX_MONTH = "LAST-SIX-MONTHS";
     public static final String DATE_FILTER_THIS_YEAR = "THIS-YEAR";
 
+    public static final String SCREEN_DAILYMOTION_SEARCH_LIST = "Daily Motion Search Video List";
+    public static final String SCREEN_DAILYMOTION_TOP_LIST = "Daily Motion Top Viewed Video List";
+    public static final String SCREEN_DAILYMOTION_TRENDING_LIST = "Daily Motion Trending Video List";
+    public static final String SCREEN_VIMEO_SEARCH_LIST = "Vimeo Search Video List";
+    public static final String SCREEN_YOUTUBE_SEARCH_LIST = "YouTube Search Video List";
+    public static final String SCREEN_YOUTUBE_TOP_LIST = "YouTube Top Viewed Video List";
+    public static final String SCREEN_YOUTUBE_TRENDING_LIST = "YouTube Trending Video List";
+
+    public static final String SCREEN_DAILYMOTION = "Daily Motion Video";
+    public static final String SCREEN_VIMEO = "Vimeo Search Video";
+    public static final String SCREEN_YOUTUBE = "YouTube Video";
+    public static final String SCREEN_SEARCH = "Search Video";
+
     public static final SparseArray<String> filter = new SparseArray<String>() {
         {
             put(R.id.item_all_time, DATE_FILTER_ALLTIME);
